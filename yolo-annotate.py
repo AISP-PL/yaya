@@ -1,5 +1,7 @@
+#!/usr/bin/python3
 import cv2
 import numpy as np
+from helpers.selector import *
 
 if __name__ == '__main__' :
 
@@ -7,7 +9,7 @@ if __name__ == '__main__' :
     im = cv2.imread("input/image.png")
 
     # Select ROI
-    r = cv2.selectROI(im)
+    r = select_roi('Selector',im)
 
     # Crop image
     imCrop = im[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]
