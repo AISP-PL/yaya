@@ -4,7 +4,7 @@ import numpy as np
 if __name__ == '__main__' :
 
     # Read image
-    im = cv2.imread("image.jpg")
+    im = cv2.imread("input/image.png")
 
     # Select ROI
     r = cv2.selectROI(im)
