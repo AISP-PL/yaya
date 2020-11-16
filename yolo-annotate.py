@@ -46,10 +46,12 @@ for f in filenames:
     im = cv2.imread(dirpath+f)
 
     # Select ROI
-    r = select_roi('Selector',im)
+    p1,p2 = select_roi('Selector',im)
+    x1,y1 = p1
+    x2,y2 = p2
 
     # Crop image
-    imCrop = im[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]
+    imCrop = im[y1:y2, x1:x2]
 
     # Display cropped image
     cv2.imshow("Image", imCrop)
