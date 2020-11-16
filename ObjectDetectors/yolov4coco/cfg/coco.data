@@ -1,0 +1,6 @@
+classes= 80
+train  = /home/pjreddie/data/coco/trainvalno5k.txt
+valid  = coco_testdev
+names = ./ObjectDetectors/yolov4coco/cfg/coco.names
+backup = /home/pjreddie/backup/
+eval=coco
