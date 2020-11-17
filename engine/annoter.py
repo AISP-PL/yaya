@@ -45,27 +45,39 @@ class Annoter():
         '''True if files ended.'''
         return (self.offset == len(self.filenames))
 
+    def Process(self, f):
+        ''' process file.'''
+        # Read image
+        im = cv2.imread(self.dirpath+f)
+
+        # If exists annotations file
+        if (IsExistsAnnotations(self.dirpath+f)):
+            annotations = ReadAnnotations(self.dirpath+f)
+            annotations = [annote.fromTxtAnnote(el) for el in annotations]
+        # else detect by YOLO
+        else:
+            annotations = self.detector.Detect(
+                im, confidence=0.3, boxRelative=True)
+            annotations = [annote.fromDetection(el) for el in annotations]
+
+        return im, annotations
+
     def ProcessNext(self):
         ''' Process next image.'''
         if (self.offset < len(self.filenames)):
             f = self.filenames[self.offset]
-
-            # Read image
-            im = cv2.imread(self.dirpath+f)
-
-            # If exists annotations file
-            if (IsExistsAnnotations(self.dirpath+f)):
-                annotations = ReadAnnotations(self.dirpath+f)
-                annotations = [annote.fromTxtAnnote(el) for el in annotations]
-            # else detect by YOLO
-            else:
-                annotations = self.detector.Detect(
-                    im, confidence=0.3, boxRelative=True)
-                annotations = [annote.fromDetection(el) for el in annotations]
-
-            self.image = im
-            self.annotations = annotations
+            self.image, self.annotations = self.Process(f)
             self.offset += 1
+            return True
+
+        return False
+
+    def ProcessPrev(self):
+        ''' Process next image.'''
+        if (self.offset > 0):
+            f = self.filenames[self.offset]
+            self.image, self.annotations = self.Process(f)
+            self.offset -= 1
             return True
 
         return False

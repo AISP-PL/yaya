@@ -24,10 +24,11 @@ class Gui(object):
         ''' Start gui running.'''
         # GUI keyboard loop
         key = 0
-        while (key != 27) and (self.annoter.IsEnd() == False):
+        self.annoter.ProcessNext()
+        while (key != 27):
+            key = 0
 
             # Resize image
-            self.annoter.ProcessNext()
             self.image = self.annoter.GetImage()
             self.image = ResizeToWidth(self.image)
 
@@ -45,8 +46,11 @@ class Gui(object):
             # Update window
             self._update()
 
-            key = cv2.waitKey()
-            self._keyboard_cb(key)
+            # Loop waiting for specific keys
+            keyAction = False
+            while (keyAction == False):
+                key = cv2.waitKeyEx()
+                keyAction = self._keyboard_cb(key)
 
         cv2.destroyWindow(self.winname)
         return self.coords if self.coords else None
@@ -55,7 +59,23 @@ class Gui(object):
         ''' Callback from trackbar.'''
 
     def _keyboard_cb(self, key):
-        ''' Keyboard callback.'''
+        '''
+            Keyboard callback.
+            - Return True - exit from keyboard loop.
+        '''
+        # Application exit
+        if (key == 27):
+            return True
+        # Next image
+        elif (key == 65363) or (key == ord('.')):
+            self.annoter.ProcessNext()
+            return True
+        # Prev image
+        elif (key == 65361) or (key == ord(',')):
+            self.annoter.ProcessPrev()
+            return True
+
+        return False
 
     def _mouse_cb(self, event, x, y, flags, parameters):
         # Record starting (x,y) coordinates on left mouse button click
