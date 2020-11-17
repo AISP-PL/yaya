@@ -75,7 +75,7 @@ class Annoter():
 
     def ProcessNext(self):
         ''' Process next image.'''
-        if (self.offset < len(self.filenames)):
+        if (self.offset < (len(self.filenames)-1)):
             self.offset += 1
             self.Process()
             return True
