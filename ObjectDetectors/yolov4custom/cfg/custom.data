@@ -1,5 +1,5 @@
 classes = 8
 train  = data/train.txt
 valid  = data/test.txt
-names = data/obj.names
+names = ./ObjectDetectors/yolov4custom/cfg/custom.names
 backup = backup/

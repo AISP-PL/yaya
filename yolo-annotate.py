@@ -17,6 +17,8 @@ parser.add_argument('-i', '--input', type=str,
                     required=True, help='Input path')
 parser.add_argument('-on', '--onlyNewFiles', action='store_true',
                     required=False, help='Process only files without detections file.')
+parser.add_argument('-yc', '--yoloCustom', action='store_true',
+                    required=False, help='Use custom YOLO.')
 parser.add_argument('-v', '--verbose', action='store_true',
                     required=False, help='Show verbose finded and processed data')
 args = parser.parse_args()
@@ -35,7 +37,11 @@ logging.debug('Logging enabled!')
 excludes = ['.', '..', './', '.directory']
 dirpath = args.input
 filenames = os.listdir(dirpath)
-detector = DetectorYOLOv4COCO()
+# Create detector
+if (args.yoloCustom):
+    detector = DetectorYOLOv4custom()
+else:
+    detector = DetectorYOLOv4COCO()
 annote.Init(detector.GetClassNames())
 
 # Step 0 - filter only images
