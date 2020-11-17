@@ -55,11 +55,11 @@ for f in filenames:
 
     # If exists annotations file
     if (IsExistsAnnotations(dirpath+f)):
-        annotations = ReadAnnotations(dirpath+f, width, height)
+        annotations = ReadAnnotations(dirpath+f)
         annotations = [annote.fromTxtAnnote(el) for el in annotations]
     # else detect by YOLO
     else:
-        annotations = detector.Detect(im)
+        annotations = detector.Detect(im, boxRelative=True)
         annotations = [annote.fromDetection(el) for el in annotations]
 
     # Start Gui

@@ -19,7 +19,7 @@ def IsExistsAnnotations(imagePath):
     return os.path.isfile(path) and os.access(path, os.R_OK)
 
 
-def ReadAnnotations(imagePath, width, height):
+def ReadAnnotations(imagePath):
     '''Read annotations from file.'''
     annotations = []
     path = __getAnnotationFilepath(imagePath)
@@ -30,7 +30,6 @@ def ReadAnnotations(imagePath, width, height):
             box = (float(txtAnnote[1]), float(txtAnnote[2]),
                    float(txtAnnote[3]), float(txtAnnote[4]))
             box = boxes.Bbox2Rect(box)
-            box = boxes.ToAbsolute(box, width, height)
             annotations.append((classNumber, box))
 
     return annotations
