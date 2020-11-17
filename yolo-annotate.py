@@ -5,7 +5,7 @@ import logging
 import argparse
 import sys
 import engine.annote as annote
-from helpers.selector import *
+from engine.gui import *
 from helpers.files import *
 from helpers.textAnnotations import *
 from ObjectDetectors.DetectorYOLOv4COCO import DetectorYOLOv4COCO
@@ -55,14 +55,7 @@ for f in filenames:
         annotations = detector.Detect(im, boxRelative=True)
         annotations = [annote.fromDetection(el) for el in annotations]
 
-    # Select ROI
-    p1, p2 = select_roi('Selector', im)
-    x1, y1 = p1
-    x2, y2 = p2
-
-    # Crop image
-    imCrop = im[y1:y2, x1:x2]
-
-    # Display cropped image
-    cv2.imshow('Image', imCrop)
-    cv2.waitKey(0)
+    # Start Gui
+    g = Gui('YoloAnnotate', im)
+    g.SetAnnotations(annotations)
+    g.Start()
