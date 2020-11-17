@@ -49,20 +49,20 @@ for f in filenames:
     # If exists annotations file
     if (IsExistsAnnotations(dirpath+f)):
         annotations = ReadAnnotations(dirpath+f)
-        annotations = [ annote.fromTxtAnnote(el) for el in annotations ]
+        annotations = [annote.fromTxtAnnote(el) for el in annotations]
     # else detect by YOLO
     else:
-        annotations = detector.Detect(im)
-        annotations = [ annote.fromDetection(el) for el in annotations ]
+        annotations = detector.Detect(im, boxRelative=True)
+        annotations = [annote.fromDetection(el) for el in annotations]
 
     # Select ROI
-    p1,p2 = select_roi('Selector',im)
-    x1,y1 = p1
-    x2,y2 = p2
+    p1, p2 = select_roi('Selector', im)
+    x1, y1 = p1
+    x2, y2 = p2
 
     # Crop image
     imCrop = im[y1:y2, x1:x2]
 
     # Display cropped image
-    cv2.imshow("Image", imCrop)
+    cv2.imshow('Image', imCrop)
     cv2.waitKey(0)

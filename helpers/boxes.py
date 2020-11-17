@@ -122,11 +122,22 @@ def GetIntersectionArea(box1, box2):
     height = GetCommonsectionLength(y1, y1e, y2, y2e)
     return (width*height)
 
-def IsInside(point,box):
+
+def ToRelative(box, width, height):
+    '''Rescale all coordinates to relative.'''
+    x1, y1, x2, y2 = box
+    x1 = x1/width
+    x2 = x2/width
+    y1 = y1/height
+    y2 = y2/height
+    return (x1, y1, x2, y2)
+
+
+def IsInside(point, box):
     ''' Return true if point is inside a box.'''
-    x,y=point
-    x1,y1,x2,y2=box
-    return ((x>=x1) and (x<=x2)) and ((y>=y1) and (y<=y2))
+    x, y = point
+    x1, y1, x2, y2 = box
+    return ((x >= x1) and (x <= x2)) and ((y >= y1) and (y <= y2))
 
 
 def IsContaining(box1, box2):

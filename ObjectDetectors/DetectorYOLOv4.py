@@ -4,6 +4,7 @@ Created on 22 sie 2020
 @author: spasz
 '''
 from ObjectDetectors.yolov4 import darknet
+from helpers.boxes import ToRelative
 
 
 class DetectorYOLOv4():
@@ -19,7 +20,7 @@ class DetectorYOLOv4():
             cfgPath, metaPath, weightPath)
         self.image = None
 
-    def Detect(self, image, confidence=0.5, nms_thresh=0.45):
+    def Detect(self, image, confidence=0.5, nms_thresh=0.45, boxRelative=False):
         ''' Detect objects in given image'''
         # Create image object we will use each time
         if (self.image is None):
@@ -31,9 +32,16 @@ class DetectorYOLOv4():
         darknet.copy_image_from_bytes(self.image, image.tobytes())
         detections = darknet.detect_image(
             self.net, self.classes, self.image, thresh=confidence, nms=nms_thresh)
-        
-        return detections
 
+        # Change box coordinates to relative to image
+        if (boxRelative is True):
+            h, w = image.shape[0:2]
+            for i, d in enumerate(detections):
+                className, confidence, box = d
+                box = ToRelative(box, w, h)
+                detections[i] = (className, confidence, box)
+
+        return detections
 
     def Draw(self, image, bboxes, labels, confidences):
         ''' Draw all boxes on image'''
