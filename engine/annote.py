@@ -36,10 +36,8 @@ def GetClassNumber(name):
 
 def fromTxtAnnote(txtAnnote):
     ''' Creates Annote from txt annote.'''
-    classNumber = int(txtAnnote[0])
-    box = [float(txtAnnote[1]), float(txtAnnote[2]),
-           float(txtAnnote[3]), float(txtAnnote[4])]
-    return Annote(box, classNumber == classNumber)
+    classNumber, box = txtAnnote
+    return Annote(box, classNumber=classNumber)
 
 
 def fromDetection(detection):
@@ -73,7 +71,7 @@ class Annote():
     def Draw(self, image):
         ''' Draw self.'''
         h, w = image.shape[0:2]
-        x1, y1, x2, y2 = boxes.ToAbsolute(self.box, w, h)
+        x1, y1, x2, y2 = self.box
         cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 1)
         cv2.putText(image, '{} [{:.2f}]'.format(self.className, float(self.confidence)),
                     (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,

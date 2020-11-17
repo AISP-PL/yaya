@@ -51,14 +51,15 @@ filenames = [f for f in filenames if (f not in excludes) and (IsImageFile(f))]
 for f in filenames:
     # Read image
     im = cv2.imread(dirpath+f)
+    width, height = im.shape[0:2]
 
     # If exists annotations file
     if (IsExistsAnnotations(dirpath+f)):
-        annotations = ReadAnnotations(dirpath+f)
+        annotations = ReadAnnotations(dirpath+f, width, height)
         annotations = [annote.fromTxtAnnote(el) for el in annotations]
     # else detect by YOLO
     else:
-        annotations = detector.Detect(im, boxRelative=True)
+        annotations = detector.Detect(im)
         annotations = [annote.fromDetection(el) for el in annotations]
 
     # Start Gui

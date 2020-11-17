@@ -33,13 +33,15 @@ class DetectorYOLOv4():
         detections = darknet.detect_image(
             self.net, self.classes, self.image, thresh=confidence, nms=nms_thresh)
 
-        # Change box coordinates to relative to image
-        if (boxRelative is True):
-            h, w = image.shape[0:2]
-            for i, d in enumerate(detections):
-                className, confidence, box = d
+        # Change box coordinates to rectangle
+        h, w = image.shape[0:2]
+        for i, d in enumerate(detections):
+            className, confidence, box = d
+            if (boxRelative is True):
                 box = ToRelative(darknet.bbox2points(box), w, h)
-                detections[i] = (className, confidence, box)
+            else:
+                box = darknet.bbox2points(box)
+            detections[i] = (className, confidence, box)
 
         return detections
 

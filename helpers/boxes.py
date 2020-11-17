@@ -48,6 +48,19 @@ class BoxState:
         return symbol
 
 
+def Bbox2Rect(bbox):
+    """
+    From bounding box yolo format
+    to corner points cv2 rectangle
+    """
+    x, y, w, h = bbox
+    xmin = int(round(x - (w / 2)))
+    xmax = int(round(x + (w / 2)))
+    ymin = int(round(y - (h / 2)))
+    ymax = int(round(y + (h / 2)))
+    return xmin, ymin, xmax, ymax
+
+
 def GetCenter(box):
     ''' Get center of tracker pos'''
     x, y, x2, y2 = box
