@@ -75,6 +75,9 @@ class Annote():
         h, w = image.shape[0:2]
         x1, y1, x2, y2 = boxes.ToAbsolute(self.box, w, h)
         cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 1)
+        cv2.putText(image, '{} [{:.2f}]'.format(self.className, float(self.confidence)),
+                    (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                    (0, 255, 0), 1)
 
     def IsInside(self, point):
         ''' True if point is inside note box.'''
