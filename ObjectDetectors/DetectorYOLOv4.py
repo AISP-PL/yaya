@@ -38,7 +38,7 @@ class DetectorYOLOv4():
             h, w = image.shape[0:2]
             for i, d in enumerate(detections):
                 className, confidence, box = d
-                box = ToRelative(box, w, h)
+                box = ToRelative(darknet.bbox2points(box), w, h)
                 detections[i] = (className, confidence, box)
 
         return detections
