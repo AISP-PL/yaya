@@ -22,27 +22,29 @@ class Gui(object):
 
     def Start(self):
         ''' Start gui running.'''
-        # Resize image
-        self.annoter.ProcessNext()
-        self.image = self.annoter.GetImage()
-        self.image = ResizeToWidth(self.image)
-
-        # Create CV2 window
-        cv2.namedWindow(self.winname)
-        # Images slider
-        cv2.createTrackbar('Images', self.winname, 0, 255, self._trackbar_cb)
-        # Classes slider
-        cv2.createTrackbar('Classes', self.winname, 0,
-                           len(GetClasses())-1, self._trackbar_cb)
-        # Mouse handling
-        cv2.setMouseCallback(self.winname, self._mouse_cb)
-
-        # Update window
-        self._update()
-
         # GUI keyboard loop
         key = 0
-        while (key != 27):
+        while (key != 27) and (self.annoter.IsEnd() == False):
+
+            # Resize image
+            self.annoter.ProcessNext()
+            self.image = self.annoter.GetImage()
+            self.image = ResizeToWidth(self.image)
+
+            # Create CV2 window
+            cv2.namedWindow(self.winname)
+            # Images slider
+            cv2.createTrackbar('Images', self.winname,
+                               0, 255, self._trackbar_cb)
+            # Classes slider
+            cv2.createTrackbar('Classes', self.winname, 0,
+                               len(GetClasses())-1, self._trackbar_cb)
+            # Mouse handling
+            cv2.setMouseCallback(self.winname, self._mouse_cb)
+
+            # Update window
+            self._update()
+
             key = cv2.waitKey()
             self._keyboard_cb(key)
 
