@@ -31,17 +31,9 @@ class DetectorYOLOv4():
         darknet.copy_image_from_bytes(self.image, image.tobytes())
         detections = darknet.detect_image(
             self.net, self.classes, self.image, thresh=confidence, nms=nms_thresh)
+        
+        return detections
 
-        # Separate to 3 lists
-        labels = []
-        confs = []
-        boxes = []
-        for label, conf, box in detections:
-            labels.append(label)
-            confs.append(float(conf))
-            boxes.append(darknet.bbox2points(box))
-
-        return boxes, labels, confs
 
     def Draw(self, image, bboxes, labels, confidences):
         ''' Draw all boxes on image'''

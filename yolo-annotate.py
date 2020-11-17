@@ -4,8 +4,10 @@ import numpy as np
 import logging
 import argparse
 import sys
+import engine.annote as annote
 from helpers.selector import *
 from helpers.files import *
+from helpers.textAnnotations import *
 from ObjectDetectors.DetectorYOLOv4COCO import DetectorYOLOv4COCO
 from ObjectDetectors.DetectorYOLOv4custom import DetectorYOLOv4custom
 
@@ -13,10 +15,8 @@ from ObjectDetectors.DetectorYOLOv4custom import DetectorYOLOv4custom
 parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--input', type=str,
                     required=True, help='Input path')
-parser.add_argument('-o', '--output', type=str, nargs='?', const='', default='',
-                    required=False, help='Output subdirectory name')
-parser.add_argument('-ar', '--augmentation', action='store_true',
-                    required=False, help='Process extra image augmentation.')
+parser.add_argument('-on', '--onlyNewFiles', action='store_true',
+                    required=False, help='Process only files without detections file.')
 parser.add_argument('-v', '--verbose', action='store_true',
                     required=False, help='Show verbose finded and processed data')
 args = parser.parse_args()
@@ -32,10 +32,11 @@ else:
     logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 logging.debug('Logging enabled!')
 
-
 excludes = ['.', '..', './', '.directory']
 dirpath = args.input
 filenames = os.listdir(dirpath)
+detector = DetectorYOLOv4COCO()
+annote.Init(detector.GetClassNames())
 
 # Step 0 - filter only images
 filenames = [f for f in filenames if (f not in excludes) and (IsImageFile(f))]
@@ -44,6 +45,15 @@ filenames = [f for f in filenames if (f not in excludes) and (IsImageFile(f))]
 for f in filenames:
     # Read image
     im = cv2.imread(dirpath+f)
+
+    # If exists annotations file
+    if (IsExistsAnnotations(dirpath+f)):
+        annotations = ReadAnnotations(dirpath+f)
+        annotations = [ annote.fromTxtAnnote(el) for el in annotations ]
+    # else detect by YOLO
+    else:
+        annotations = detector.Detect(im)
+        annotations = [ annote.fromDetection(el) for el in annotations ]
 
     # Select ROI
     p1,p2 = select_roi('Selector',im)

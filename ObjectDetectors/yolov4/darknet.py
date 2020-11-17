@@ -157,7 +157,7 @@ def draw_boxes(image, bboxes, labels, confidences, colors):
 def decode_detection(detections):
     decoded = []
     for label, confidence, bbox in detections:
-        confidence = str(round(confidence * 100, 2))
+        confidence = (round(confidence * 100, 2))
         decoded.append((str(label), confidence, bbox))
     return decoded
 
