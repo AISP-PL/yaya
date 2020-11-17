@@ -54,10 +54,10 @@ def Bbox2Rect(bbox):
     to corner points cv2 rectangle
     """
     x, y, w, h = bbox
-    xmin = int(round(x - (w / 2)))
-    xmax = int(round(x + (w / 2)))
-    ymin = int(round(y - (h / 2)))
-    ymax = int(round(y + (h / 2)))
+    xmin = (x - (w / 2))
+    xmax = (x + (w / 2))
+    ymin = (y - (h / 2))
+    ymax = (y + (h / 2))
     return xmin, ymin, xmax, ymax
 
 

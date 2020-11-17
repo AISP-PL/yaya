@@ -51,7 +51,7 @@ filenames = [f for f in filenames if (f not in excludes) and (IsImageFile(f))]
 for f in filenames:
     # Read image
     im = cv2.imread(dirpath+f)
-    width, height = im.shape[0:2]
+    height, width = im.shape[0:2]
 
     # If exists annotations file
     if (IsExistsAnnotations(dirpath+f)):
