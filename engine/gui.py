@@ -116,4 +116,6 @@ class Gui(object):
             for annotate in annotations:
                 annotate.Draw(im)
 
+        cv2.setTrackbarPos('Images', self.winname,
+                           self.annoter.GetImageNumber())
         cv2.imshow(self.winname, im)
