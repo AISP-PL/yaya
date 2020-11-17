@@ -24,7 +24,7 @@ class Gui(object):
         ''' Start gui running.'''
         # GUI keyboard loop
         key = 0
-        self.annoter.ProcessNext()
+        self.annoter.Process()
         while (key != 27):
             key = 0
 

@@ -37,6 +37,10 @@ class Annoter():
         ''' Returns current image.'''
         return self.image
 
+    def GetImageNumber(self):
+        ''' Returns current image number.'''
+        return self.offset
+
     def GetAnnotations(self):
         ''' Returns current annotations.'''
         return self.annotations
@@ -45,29 +49,35 @@ class Annoter():
         '''True if files ended.'''
         return (self.offset == len(self.filenames))
 
-    def Process(self, f):
+    def Process(self):
         ''' process file.'''
-        # Read image
-        im = cv2.imread(self.dirpath+f)
+        if (self.offset >= 0) and (self.offset < len(self.filenames)):
+            f = self.filenames[self.offset]
 
-        # If exists annotations file
-        if (IsExistsAnnotations(self.dirpath+f)):
-            annotations = ReadAnnotations(self.dirpath+f)
-            annotations = [annote.fromTxtAnnote(el) for el in annotations]
-        # else detect by YOLO
-        else:
-            annotations = self.detector.Detect(
-                im, confidence=0.3, boxRelative=True)
-            annotations = [annote.fromDetection(el) for el in annotations]
+            # Read image
+            im = cv2.imread(self.dirpath+f)
 
-        return im, annotations
+            # If exists annotations file
+            if (IsExistsAnnotations(self.dirpath+f)):
+                annotations = ReadAnnotations(self.dirpath+f)
+                annotations = [annote.fromTxtAnnote(el) for el in annotations]
+            # else detect by YOLO
+            else:
+                annotations = self.detector.Detect(
+                    im, confidence=0.3, boxRelative=True)
+                annotations = [annote.fromDetection(el) for el in annotations]
+
+            self.image = im
+            self.annotations = annotations
+            return True
+
+        return False
 
     def ProcessNext(self):
         ''' Process next image.'''
         if (self.offset < len(self.filenames)):
-            f = self.filenames[self.offset]
-            self.image, self.annotations = self.Process(f)
             self.offset += 1
+            self.Process()
             return True
 
         return False
@@ -75,9 +85,8 @@ class Annoter():
     def ProcessPrev(self):
         ''' Process next image.'''
         if (self.offset > 0):
-            f = self.filenames[self.offset]
-            self.image, self.annotations = self.Process(f)
             self.offset -= 1
+            self.Process()
             return True
 
         return False
