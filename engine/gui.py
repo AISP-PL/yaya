@@ -4,26 +4,29 @@ Created on 16 lis 2020
 @author: spasz
 '''
 from engine.annote import GetClasses
+from helpers.images import ResizeToWidth
 import cv2
 
 
 class Gui(object):
-    def __init__(self, name, im):
-        self.image = im
+    def __init__(self, name):
+        self.image = None
         self.winname = name
-        self.annotations = None
+        self.annoter = None
         self.coords = []
         self.dragging = False
 
-    def SetImage(self, im):
-        ''' Set new image.'''
-
-    def SetAnnotations(self, annotations):
-        ''' Set annotations list.'''
-        self.annotations = annotations
+    def SetAnnoter(self, annoter):
+        ''' Set annoter .'''
+        self.annoter = annoter
 
     def Start(self):
         ''' Start gui running.'''
+        # Resize image
+        self.annoter.ProcessNext()
+        self.image = self.annoter.GetImage()
+        self.image = ResizeToWidth(self.image)
+
         # Create CV2 window
         cv2.namedWindow(self.winname)
         # Images slider
@@ -86,8 +89,9 @@ class Gui(object):
             cv2.rectangle(im, self.coords[0], self.coords[1], (0, 255, 0), 1)
 
         # Draw all annotations
-        if (self.annotations is not None) and (len(self.annotations)):
-            for annotate in self.annotations:
+        annotations = self.annoter.GetAnnotations()
+        if (annotations is not None) and (len(annotations)):
+            for annotate in annotations:
                 annotate.Draw(im)
 
         cv2.imshow(self.winname, im)
