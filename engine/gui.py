@@ -34,13 +34,23 @@ class Gui(object):
         # Mouse handling
         cv2.setMouseCallback(self.winname, self._mouse_cb)
 
+        # Update window
         self._update()
-        cv2.waitKey()
+
+        # GUI keyboard loop
+        key = 0
+        while (key != 27):
+            key = cv2.waitKey()
+            self._keyboard_cb(key)
+
         cv2.destroyWindow(self.winname)
         return self.coords if self.coords else None
 
     def _trackbar_cb(self):
         ''' Callback from trackbar.'''
+
+    def _keyboard_cb(self, key):
+        ''' Keyboard callback.'''
 
     def _mouse_cb(self, event, x, y, flags, parameters):
         # Record starting (x,y) coordinates on left mouse button click
