@@ -20,7 +20,7 @@ def ReadAnnotations(imagePath):
     annotations=[]
     path = __getAnnotationFilepath(imagePath)
     with open(path, 'r') as f:
-        entry = f.readline()
-        annotations.append(entry.split(' '))
+        for line in f:
+            annotations.append(line.rstrip('\n').split(' '))
     
     return annotations

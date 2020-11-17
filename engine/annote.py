@@ -26,8 +26,8 @@ def GetClassNumber(name):
 
 def fromTxtAnnote(txtAnnote):
     ''' Creates Annote from txt annote.'''
-    classNumber = txtAnnote[0]
-    box = [ txtAnnote[1], txtAnnote[2], txtAnnote[3], txtAnnote[4] ]
+    classNumber = int(txtAnnote[0])
+    box = [ float(txtAnnote[1]), float(txtAnnote[2]), float(txtAnnote[3]), float(txtAnnote[4]) ]
     return Annote(box, classNumber==classNumber)
 
 def fromDetection(detection):
