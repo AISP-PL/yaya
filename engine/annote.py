@@ -95,21 +95,27 @@ class Annote():
         ''' Returns author type.'''
         return self.authorType
 
-    def Draw(self, image):
+    def Draw(self, image, highlight=False):
         ''' Draw self.'''
         h, w = image.shape[0:2]
         x1, y1, x2, y2 = boxes.ToAbsolute(self.box, w, h)
+
+        # Highlighted annotations have thicker border
+        thickness = 1
+        if (highlight is True):
+            thickness = 2
+
         # Human orignal from file detection
         if (self.authorType == AnnoteAuthorType.byHuman):
-            cv2.rectangle(image, (x1, y1), (x2, y2), (0, 0, 255), 1)
+            cv2.rectangle(image, (x1, y1), (x2, y2), (0, 0, 255), thickness)
         # Created by detector YOLO
         elif (self.authorType == AnnoteAuthorType.byDetector):
-            cv2.rectangle(image, (x1, y1), (x2, y2), (255, 0, 0), 1)
-            image = cv2.line(image, (x1, y1), (x2, y2), (255, 0, 0), 1)
-            image = cv2.line(image, (x1, y2), (x2, y1), (255, 0, 0), 1)
+            cv2.rectangle(image, (x1, y1), (x2, y2), (255, 0, 0), thickness)
+            image = cv2.line(image, (x1, y1), (x2, y2), (255, 0, 0), thickness)
+            image = cv2.line(image, (x1, y2), (x2, y1), (255, 0, 0), thickness)
         # Created by hand
         elif (self.authorType == AnnoteAuthorType.byHand):
-            cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 1)
+            cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), thickness)
         # Text
         cv2.putText(image, '{} [{:.2f}]'.format(self.className, float(self.confidence)),
                     (x1-1, y1 - 6), cv2.FONT_HERSHEY_SIMPLEX, 0.5,

@@ -167,6 +167,22 @@ def ToAbsolute(box, width, height):
     return (x1, y1, x2, y2)
 
 
+def PointToAbsolute(point, width, height):
+    '''Rescale all coordinates to absolute.'''
+    x1, y1 = point
+    x1 = x1*width
+    y1 = y1*height
+    return x1, y1
+
+
+def PointToRelative(point, width, height):
+    '''Rescale all coordinates to relative.'''
+    x1, y1 = point
+    x1 = x1/width
+    y1 = y1/height
+    return x1, y1
+
+
 def IsInside(point, box):
     ''' Return true if point is inside a box.'''
     x, y = point

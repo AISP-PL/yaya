@@ -142,6 +142,7 @@ class Gui(object):
     def _update(self):
         ''' Update image view.'''
         im = self.image.copy()
+        h, w = im.shape[0:2]
 
         # Draw currrent rectangle
         if len(self.coords) == 2:
@@ -151,7 +152,10 @@ class Gui(object):
         annotations = self.annoter.GetAnnotations()
         if (annotations is not None) and (len(annotations)):
             for annotate in annotations:
-                annotate.Draw(im)
+                if (len(self.lastPos) == 2) and (annotate.IsInside(boxes.PointToRelative(self.lastPos, w, h)) == True):
+                    annotate.Draw(im, highlight=True)
+                else:
+                    annotate.Draw(im)
 
         # Draw status bar
         im = self.__drawStatusBar(im)
