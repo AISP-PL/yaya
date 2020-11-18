@@ -54,8 +54,7 @@ class Gui(object):
             key = 0
 
             # Resize image
-            self.image = self.annoter.GetImage()
-            self.image = ResizeToHeight(self.image, 900)
+            self.image = ResizeToHeight(self.annoter.GetImage(), 900)
             self.height, self.width = self.image.shape[0:2]
 
             # Update window
@@ -79,8 +78,7 @@ class Gui(object):
         ''' Callback from trackbar.'''
         imageNumber = cv2.getTrackbarPos('Images', self.winname)
         self.annoter.SetImageNumber(imageNumber)
-        self.image = self.annoter.GetImage()
-        self.image = ResizeToWidth(self.image)
+        self.image = ResizeToHeight(self.annoter.GetImage(), 900)
         self._update()
 
     def _keyboard_cb(self, key):
@@ -226,6 +224,9 @@ class Gui(object):
         label = '[Class : %s.] ' % GetClassName(
             cv2.getTrackbarPos('Classes', self.winname))
         cv2.putText(im, label,
+                    (textXmargin-1, textYmargin-1), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                    (255, 255, 255), textThickness)
+        cv2.putText(im, label,
                     (textXmargin, textYmargin), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                     (0, 0, 0), textThickness)
         (label_width, label_height), baseline = cv2.getTextSize(
@@ -236,12 +237,20 @@ class Gui(object):
         if (self.annoter.IsSynchronized() == True):
             label = '[Synchronized.] '
             cv2.putText(im, label,
+                        (textXmargin-1, textYmargin -
+                         1), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                        (255, 255, 255), textThickness)
+            cv2.putText(im, label,
                         (textXmargin, textYmargin), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                         (0, 255, 0), textThickness)
             (label_width, label_height), baseline = cv2.getTextSize(
                 label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, textThickness)
         else:
             label = '[De-synchronized!] '
+            cv2.putText(im, label,
+                        (textXmargin-1, textYmargin -
+                         1), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                        (255, 255, 255), textThickness)
             cv2.putText(im, label,
                         (textXmargin, textYmargin), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                         (0, 0, 255), textThickness)
@@ -250,5 +259,5 @@ class Gui(object):
         textXmargin += label_width
 
         im[0:barHeight, 0:w] = cv2.addWeighted(
-            im[0:barHeight, 0:w], 0.5, bar, 0.2, 0)
+            im[0:barHeight, 0:w], 0.5, bar, 0.5, 0)
         return im
