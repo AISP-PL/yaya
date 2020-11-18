@@ -16,6 +16,9 @@ class Gui(object):
         self.image = None
         self.winname = name
         self.annoter = None
+
+        # Mouse
+        self.lastPos = []
         self.coords = []
         self.dragging = False
 
@@ -127,6 +130,7 @@ class Gui(object):
             self.coords = []
             self.dragging = False
 
+        self.lastPos = [x, y]
         self._update()
 
     def _update(self):
@@ -146,9 +150,23 @@ class Gui(object):
         # Draw status bar
         im = self.__drawStatusBar(im)
 
+        # Draw crosshair
+        im = self.__drawCrosshair(im)
+
         cv2.setTrackbarPos('Images', self.winname,
                            self.annoter.GetImageNumber())
         cv2.imshow(self.winname, im)
+
+    def __drawCrosshair(self, im):
+        ''' Draws mouse cursor crosshair.'''
+        if (len(self.lastPos) == 2):
+            x, y = self.lastPos
+            h, w = im.shape[0:2]
+            color = (55, 55, 55)
+            im = cv2.line(im, (x, 0), (x, h), color, 1)
+            im = cv2.line(im, (0, y), (w, y), color, 1)
+
+        return im
 
     def __drawStatusBar(self, im):
         ''' Draws status bar.'''
