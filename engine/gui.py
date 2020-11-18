@@ -5,7 +5,7 @@ Created on 16 lis 2020
 '''
 
 from engine.annote import GetClasses, GetClassName
-from helpers.images import ResizeToWidth
+from helpers.images import ResizeToWidth, ResizeToHeight
 import cv2
 import logging
 import helpers.boxes as boxes
@@ -55,7 +55,7 @@ class Gui(object):
 
             # Resize image
             self.image = self.annoter.GetImage()
-            self.image = ResizeToWidth(self.image)
+            self.image = ResizeToHeight(self.image, 900)
             self.height, self.width = self.image.shape[0:2]
 
             # Update window
