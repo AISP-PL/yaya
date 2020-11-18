@@ -79,6 +79,8 @@ class Annoter():
         annotations = [annote.toTxtAnnote(el) for el in self.annotations]
         annotations = SaveAnnotations(
             self.dirpath+self.__getFilename(), annotations)
+        logging.debug('(Annoter) Saved annotations for %s!',
+                      self.__getFilename())
         # Process file again after save
         self.Process()
 
@@ -89,19 +91,20 @@ class Annoter():
     def Process(self):
         ''' process file.'''
         if (self.offset >= 0) and (self.offset < len(self.filenames)):
-            f = self.filenames[self.offset]
+            f = self.__getFilename()
 
             # Read image
             im = cv2.imread(self.dirpath+f)
 
+            annotations = []
             # If exists annotations file
             if (IsExistsAnnotations(self.dirpath+f)):
                 annotations = ReadAnnotations(self.dirpath+f)
                 annotations = [annote.fromTxtAnnote(el) for el in annotations]
                 logging.debug(
                     '(Annoter) Loaded annotations from %s!', self.dirpath+f)
-            # else detect by YOLO
-            else:
+            # if annotations file not exists or empty then detect.
+            if (len(annotations) == 0):
                 annotations = self.detector.Detect(
                     im, confidence=0.3, boxRelative=True)
                 annotations = [annote.fromDetection(el) for el in annotations]
