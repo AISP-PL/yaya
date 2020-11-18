@@ -57,14 +57,16 @@ class Gui(object):
         cv2.destroyWindow(self.winname)
         return self.coords if self.coords else None
 
-    def _classes_trackbar_cb(self):
+    def _classes_trackbar_cb(self, arg):
         ''' Callback from trackbar.'''
         # do nothing
 
-    def _images_trackbar_cb(self):
+    def _images_trackbar_cb(self, arg):
         ''' Callback from trackbar.'''
         imageNumber = cv2.getTrackbarPos('Images', self.winname)
         self.annoter.SetImageNumber(imageNumber)
+        self.image = self.annoter.GetImage()
+        self.image = ResizeToWidth(self.image)
         self._update()
 
     def _keyboard_cb(self, key):
