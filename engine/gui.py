@@ -4,10 +4,11 @@ Created on 16 lis 2020
 @author: spasz
 '''
 
-from engine.annote import GetClasses
+from engine.annote import GetClasses, GetClassName
 from helpers.images import ResizeToWidth
 import cv2
 import helpers.boxes as boxes
+import numpy as np
 
 
 class Gui(object):
@@ -142,6 +143,35 @@ class Gui(object):
             for annotate in annotations:
                 annotate.Draw(im)
 
+        # Draw status bar
+        im = self.__drawStatusBar(im)
+
         cv2.setTrackbarPos('Images', self.winname,
                            self.annoter.GetImageNumber())
         cv2.imshow(self.winname, im)
+
+    def __drawStatusBar(self, im):
+        ''' Draws status bar.'''
+        h, w = im.shape[0:2]
+        barHeight = min(40, int(h*0.10))
+        bar = np.full([barHeight, w, 3], 255, dtype=np.uint8)
+
+        # Text values
+        textXmargin = 5
+        textYmargin = int(barHeight/2)
+
+        # Write current class name
+        label = '%s' % GetClassName(
+            cv2.getTrackbarPos('Classes', self.winname))
+        cv2.putText(im, label,
+                    (textXmargin, textYmargin), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                    (0, 0, 255), 1)
+        (label_width, label_height), baseline = cv2.getTextSize(
+            label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+        textXmargin += label_width
+
+        # Write status of image
+
+        im[0:barHeight, 0:w] = cv2.addWeighted(
+            im[0:barHeight, 0:w], 0.5, bar, 0.2, 0)
+        return im
