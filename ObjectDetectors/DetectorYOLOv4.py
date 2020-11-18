@@ -32,6 +32,8 @@ class DetectorYOLOv4():
         darknet.copy_image_from_bytes(self.image, image.tobytes())
         detections = darknet.detect_image(
             self.net, self.classes, self.image, thresh=confidence, nms=nms_thresh)
+        darknet.free_image(self.image)
+        self.image = None
 
         # Change box coordinates to rectangle
         h, w = image.shape[0:2]
