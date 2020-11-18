@@ -16,6 +16,8 @@ from ObjectDetectors.DetectorYOLOv4custom import DetectorYOLOv4custom
 parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--input', type=str,
                     required=True, help='Input path')
+parser.add_argument('-c', '--config', type=str,
+                    required=False, help='Config path')
 parser.add_argument('-on', '--onlyNewFiles', action='store_true',
                     required=False, help='Process only files without detections file.')
 parser.add_argument('-yc', '--yoloCustom', action='store_true',
