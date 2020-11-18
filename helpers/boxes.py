@@ -61,10 +61,21 @@ def Bbox2Rect(bbox):
     return xmin, ymin, xmax, ymax
 
 
+def Rect2Bbox(rect):
+    """
+    From bounding box yolo format
+    to corner points cv2 rectangle
+    """
+    x, y = GetCenter(rect)
+    w = GetWidth(rect)
+    h = GetHeight(rect)
+    return x, y, w, h
+
+
 def GetCenter(box):
     ''' Get center of tracker pos'''
     x, y, x2, y2 = box
-    return int((x+x2)/2), int((y+y2)/2)
+    return ((x+x2)/2), ((y+y2)/2)
 
 
 def GetTopCenter(box):

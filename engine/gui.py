@@ -75,11 +75,13 @@ class Gui(object):
             Keyboard callback.
             - Return True - exit from keyboard loop.
         '''
+        # TODO key remove 'r'
         # Application exit
         if (key == 27):
             return True
-        # TODO key save 'Ctrl+s'
-        # TODO key remove 'r'
+        elif (key == ord('s')):
+            self.annoter.Save()
+            return True
         elif (key >= ord('0')) and (key <= ord('9')):
             classNumber = key - ord('0')
             cv2.setTrackbarPos('Classes', self.winname, classNumber)

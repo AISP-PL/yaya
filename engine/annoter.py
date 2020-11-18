@@ -5,9 +5,10 @@ Created on 17 lis 2020
 '''
 import os
 import cv2
+import logging
 import engine.annote as annote
 from helpers.files import IsImageFile
-from helpers.textAnnotations import ReadAnnotations, IsExistsAnnotations
+from helpers.textAnnotations import ReadAnnotations, SaveAnnotations, IsExistsAnnotations
 
 
 class Annoter():
@@ -32,6 +33,10 @@ class Annoter():
         self.offset = 0
         self.image = None
         self.annotations = None
+
+    def __getFilename(self):
+        ''' Returns current filepath.'''
+        return self.filenames[self.offset]
 
     def GetImage(self):
         ''' Returns current image.'''
@@ -62,10 +67,20 @@ class Annoter():
         ''' Adds new annotation by human.'''
         self.annotations.append(annote.Annote(
             box, classNumber=classNumber, authorType=annote.AnnoteAuthorType.byHuman))
+        logging.debug('(Annoter) Added annotation class %u!', classNumber)
 
     def ClearAnnotations(self):
         ''' Clear all annotations.'''
         self.annotations = []
+        logging.debug('(Annoter) Cleared annotations!')
+
+    def Save(self):
+        ''' Save current annotations.'''
+        annotations = [annote.toTxtAnnote(el) for el in self.annotations]
+        annotations = SaveAnnotations(
+            self.dirpath+self.__getFilename(), annotations)
+        # Process file again after save
+        self.Process()
 
     def IsEnd(self):
         '''True if files ended.'''
@@ -83,11 +98,15 @@ class Annoter():
             if (IsExistsAnnotations(self.dirpath+f)):
                 annotations = ReadAnnotations(self.dirpath+f)
                 annotations = [annote.fromTxtAnnote(el) for el in annotations]
+                logging.debug(
+                    '(Annoter) Loaded annotations from %s!', self.dirpath+f)
             # else detect by YOLO
             else:
                 annotations = self.detector.Detect(
                     im, confidence=0.3, boxRelative=True)
                 annotations = [annote.fromDetection(el) for el in annotations]
+                logging.debug(
+                    '(Annoter) Detected annotations for %s!', self.dirpath+f)
 
             self.image = im
             self.annotations = annotations

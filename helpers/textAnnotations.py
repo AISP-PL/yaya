@@ -33,3 +33,14 @@ def ReadAnnotations(imagePath):
             annotations.append((classNumber, box))
 
     return annotations
+
+
+def SaveAnnotations(imagePath, annotations):
+    '''Save annotations for file.'''
+    path = __getAnnotationFilepath(imagePath)
+    with open(path, 'w') as f:
+        for element in annotations:
+            classNumber, box = element
+            box = boxes.Rect2Bbox(box)
+            f.write('%u %2.6f %2.6f %2.6f %2.6f\n' %
+                    (classNumber, box[0], box[1], box[2], box[3]))

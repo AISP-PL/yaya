@@ -40,6 +40,13 @@ class AnnoteAuthorType(Enum):
     byDetector = 1
 
 
+def toTxtAnnote(annote):
+    ''' Creates txt annote from object Annote.'''
+    classNumber = annote.GetClassNumber()
+    box = annote.GetBox()
+    return (classNumber, box)
+
+
 def fromTxtAnnote(txtAnnote):
     ''' Creates Annote from txt annote.'''
     classNumber, box = txtAnnote
@@ -74,6 +81,14 @@ class Annote():
         else:
             self.classNumber = classNumber
             self.className = className
+
+    def GetClassNumber(self):
+        ''' Returns class number.'''
+        return self.classNumber
+
+    def GetBox(self):
+        ''' Returns box.'''
+        return self.box
 
     def Draw(self, image):
         ''' Draw self.'''
