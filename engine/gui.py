@@ -38,10 +38,10 @@ class Gui(object):
             cv2.namedWindow(self.winname)
             # Images slider
             cv2.createTrackbar('Images', self.winname,
-                               0, 255, self._trackbar_cb)
+                               0, self.annoter.GetImagesCount()-1, self._images_trackbar_cb)
             # Classes slider
             cv2.createTrackbar('Classes', self.winname, 0,
-                               len(GetClasses())-1, self._trackbar_cb)
+                               len(GetClasses())-1, self._classes_trackbar_cb)
             # Mouse handling
             cv2.setMouseCallback(self.winname, self._mouse_cb)
 
@@ -57,8 +57,15 @@ class Gui(object):
         cv2.destroyWindow(self.winname)
         return self.coords if self.coords else None
 
-    def _trackbar_cb(self):
+    def _classes_trackbar_cb(self):
         ''' Callback from trackbar.'''
+        # do nothing
+
+    def _images_trackbar_cb(self):
+        ''' Callback from trackbar.'''
+        imageNumber = cv2.getTrackbarPos('Images', self.winname)
+        self.annoter.SetImageNumber(imageNumber)
+        self._update()
 
     def _keyboard_cb(self, key):
         '''

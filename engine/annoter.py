@@ -41,6 +41,19 @@ class Annoter():
         ''' Returns current image number.'''
         return self.offset
 
+    def GetImagesCount(self):
+        ''' Returns count of processed images number.'''
+        return len(self.filenames)
+
+    def SetImageNumber(self, number):
+        ''' Sets current image number.'''
+        if (number >= 0) and (number < len(self.filenames)):
+            self.offset = number
+            self.Process()
+            return True
+
+        return False
+
     def GetAnnotations(self):
         ''' Returns current annotations.'''
         return self.annotations
