@@ -77,6 +77,13 @@ class Gui(object):
         # Application exit
         if (key == 27):
             return True
+        # TODO keys 0-9
+        # TODO key save 'Ctrl+s'
+        # TODO key clear 'c'
+        # TODO key remove 'r'
+        elif (key >= ord('0')) and (key <= ord('9')):
+            classNumber = key - ord('0')
+            cv2.setTrackbarPos('Classes', self.winname, classNumber)
         # Next image
         elif (key == 65363) or (key == ord('.')):
             self.annoter.ProcessNext()
