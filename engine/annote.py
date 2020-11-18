@@ -91,6 +91,10 @@ class Annote():
         ''' Returns box.'''
         return self.box
 
+    def GetAuthorType(self):
+        ''' Returns author type.'''
+        return self.authorType
+
     def Draw(self, image):
         ''' Draw self.'''
         h, w = image.shape[0:2]

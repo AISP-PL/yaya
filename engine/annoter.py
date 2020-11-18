@@ -74,6 +74,16 @@ class Annoter():
         self.annotations = []
         logging.debug('(Annoter) Cleared annotations!')
 
+    def IsSynchronized(self):
+        ''' Is image synchronized with file annotations.'''
+        isSynchronized = True
+        for element in self.annotations:
+            if (element.GetAuthorType() != annote.AnnoteAuthorType.byHuman):
+                isSynchronized = False
+                break
+
+        return isSynchronized
+
     def Save(self):
         ''' Save current annotations.'''
         annotations = [annote.toTxtAnnote(el) for el in self.annotations]

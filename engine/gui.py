@@ -61,7 +61,7 @@ class Gui(object):
 
     def _classes_trackbar_cb(self, arg):
         ''' Callback from trackbar.'''
-        # do nothing
+        self._update()
 
     def _images_trackbar_cb(self, arg):
         ''' Callback from trackbar.'''
@@ -159,18 +159,34 @@ class Gui(object):
         # Text values
         textXmargin = 5
         textYmargin = int(barHeight/2)
+        textThickness = 2
 
         # Write current class name
-        label = '%s' % GetClassName(
+        label = '[Class : %s.] ' % GetClassName(
             cv2.getTrackbarPos('Classes', self.winname))
         cv2.putText(im, label,
                     (textXmargin, textYmargin), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                    (0, 0, 255), 1)
+                    (0, 0, 0), textThickness)
         (label_width, label_height), baseline = cv2.getTextSize(
-            label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+            label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, textThickness)
         textXmargin += label_width
 
         # Write status of image
+        if (self.annoter.IsSynchronized() == True):
+            label = '[Synchronized.] '
+            cv2.putText(im, label,
+                        (textXmargin, textYmargin), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                        (0, 255, 0), textThickness)
+            (label_width, label_height), baseline = cv2.getTextSize(
+                label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, textThickness)
+        else:
+            label = '[De-synchronized!] '
+            cv2.putText(im, label,
+                        (textXmargin, textYmargin), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                        (0, 0, 255), textThickness)
+            (label_width, label_height), baseline = cv2.getTextSize(
+                label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, textThickness)
+        textXmargin += label_width
 
         im[0:barHeight, 0:w] = cv2.addWeighted(
             im[0:barHeight, 0:w], 0.5, bar, 0.2, 0)
