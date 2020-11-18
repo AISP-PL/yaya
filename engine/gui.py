@@ -85,12 +85,14 @@ class Gui(object):
             Keyboard callback.
             - Return True - exit from keyboard loop.
         '''
-        # TODO key remove 'r'
         # Application exit
         if (key == 27):
             return True
         elif (key == ord('s')):
             self.annoter.Save()
+            return True
+        elif (key == ord('r')):
+            self.annoter.RemoveAnnotation()
             return True
         elif (key >= ord('0')) and (key <= ord('9')):
             classNumber = key - ord('0')
@@ -139,6 +141,23 @@ class Gui(object):
         self.lastPos = [x, y]
         self._update()
 
+    def __getHoveredAnnotation(self, point):
+        ''' Finds currently hovered annotation.'''
+        founded = None
+        if (len(self.lastPos) == 2):
+            annotations = self.annoter.GetAnnotations()
+            for element in annotations:
+                if (element.IsInside(point) == True):
+                    if (founded is not None):
+                        area1 = boxes.GetArea(element.GetBox())
+                        area2 = boxes.GetArea(founded.GetBox())
+                        if (area1 < area2):
+                            founded = element
+                    else:
+                        founded = element
+
+        return founded
+
     def _update(self):
         ''' Update image view.'''
         im = self.image.copy()
@@ -152,10 +171,14 @@ class Gui(object):
         annotations = self.annoter.GetAnnotations()
         if (annotations is not None) and (len(annotations)):
             for annotate in annotations:
-                if (len(self.lastPos) == 2) and (annotate.IsInside(boxes.PointToRelative(self.lastPos, w, h)) == True):
-                    annotate.Draw(im, highlight=True)
-                else:
-                    annotate.Draw(im)
+                annotate.Draw(im)
+
+        # Get hovered annotation
+        if (len(self.lastPos) == 2):
+            annote = self.__getHoveredAnnotation(
+                boxes.PointToRelative(self.lastPos, w, h))
+            if (annote is not None):
+                annote.Draw(im, highlight=True)
 
         # Draw status bar
         im = self.__drawStatusBar(im)
