@@ -15,6 +15,8 @@ import numpy as np
 class Gui(object):
     def __init__(self, name):
         self.image = None
+        self.width = None
+        self.height = None
         self.winname = name
         self.annoter = None
 
@@ -54,6 +56,7 @@ class Gui(object):
             # Resize image
             self.image = self.annoter.GetImage()
             self.image = ResizeToWidth(self.image)
+            self.height, self.width = self.image.shape[0:2]
 
             # Update window
             self._update()
@@ -92,7 +95,10 @@ class Gui(object):
             self.annoter.Save()
             return True
         elif (key == ord('r')):
-            self.annoter.RemoveAnnotation()
+            annote = self.__getHoveredAnnotation(
+                boxes.PointToRelative(self.lastPos, self.width, self.height))
+            if (annote is not None):
+                self.annoter.RemoveAnnotation(annote)
             return True
         elif (key >= ord('0')) and (key <= ord('9')):
             classNumber = key - ord('0')
@@ -112,6 +118,8 @@ class Gui(object):
         return False
 
     def _mouse_cb(self, event, x, y, flags, parameters):
+        self.lastPos = [x, y]
+
         # Record starting (x,y) coordinates on left mouse button click
         if event == cv2.EVENT_LBUTTONDOWN:
             self.coords[:] = [(x, y)]
@@ -138,7 +146,6 @@ class Gui(object):
             self.coords = []
             self.dragging = False
 
-        self.lastPos = [x, y]
         self._update()
 
     def __getHoveredAnnotation(self, point):

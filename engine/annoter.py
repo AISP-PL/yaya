@@ -78,6 +78,11 @@ class Annoter():
         self.annotations = []
         logging.debug('(Annoter) Cleared annotations!')
 
+    def RemoveAnnotation(self, element):
+        '''Remove annotation .'''
+        if (len(self.annotations) != 0):
+            self.annotations.remove(element)
+
     def IsSynchronized(self):
         ''' Is image synchronized with file annotations.'''
         isSynchronized = True
