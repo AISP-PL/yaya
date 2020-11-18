@@ -7,6 +7,7 @@ Created on 16 lis 2020
 from engine.annote import GetClasses, GetClassName
 from helpers.images import ResizeToWidth
 import cv2
+import logging
 import helpers.boxes as boxes
 import numpy as np
 
@@ -28,11 +29,16 @@ class Gui(object):
 
     def Start(self):
         ''' Start gui running.'''
+        # Check - of existence of images.
+        if (self.annoter.GetImagesCount() == 0):
+            logging.error('(Gui) No images to process!')
+            return False
+
         # Create CV2 window
         cv2.namedWindow(self.winname)
         # Images slider
         cv2.createTrackbar('Images', self.winname,
-                           0, self.annoter.GetImagesCount()-1, self._images_trackbar_cb)
+                           0, self.annoter.GetImagesCount(), self._images_trackbar_cb)
         # Classes slider
         cv2.createTrackbar('Classes', self.winname, 0,
                            len(GetClasses())-1, self._classes_trackbar_cb)

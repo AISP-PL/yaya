@@ -24,9 +24,15 @@ parser.add_argument('-v', '--verbose', action='store_true',
                     required=False, help='Show verbose finded and processed data')
 args = parser.parse_args()
 
+# Check - input argument
 if (args.input is None):
     print('Error! No arguments!')
     sys.exit(-1)
+
+# Check - files filter
+isOnlyNewFiles = False
+if (args.onlyNewFiles):
+    isOnlyNewFiles = True
 
 # Enabled logging
 if (__debug__ is True):
@@ -43,7 +49,7 @@ else:
 annote.Init(detector.GetClassNames())
 
 # Create annoter
-annoter = Annoter(args.input, detector)
+annoter = Annoter(args.input, detector, isOnlyNewFiles)
 
 # Start Gui
 g = Gui('YoloAnnotate')

@@ -16,7 +16,7 @@ class Annoter():
     classdocs
     '''
 
-    def __init__(self, filepath, detector):
+    def __init__(self, filepath, detector, isOnlyNewFiles=False):
         '''
         Constructor
         '''
@@ -28,6 +28,10 @@ class Annoter():
         filenames = os.listdir(self.dirpath)
         self.filenames = [f for f in filenames if (
             f not in excludes) and (IsImageFile(f))]
+        # if only new files - then filter all files with annotation.
+        if (isOnlyNewFiles == True):
+            self.filenames = [f for f in self.filenames if (
+                IsExistsAnnotations(self.dirpath+f) == False)]
 
         # Current file number offset
         self.offset = 0
