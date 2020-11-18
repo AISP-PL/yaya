@@ -94,6 +94,9 @@ class Gui(object):
         elif (key == ord('s')):
             self.annoter.Save()
             return True
+        elif (key == ord('d')):
+            self.annoter.Process(forceDetector=True)
+            self._update()
         elif (key == ord('r')):
             annote = self.__getHoveredAnnotation(
                 boxes.PointToRelative(self.lastPos, self.width, self.height))

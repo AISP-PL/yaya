@@ -107,7 +107,7 @@ class Annoter():
         '''True if files ended.'''
         return (self.offset == len(self.filenames))
 
-    def Process(self):
+    def Process(self, forceDetector=False):
         ''' process file.'''
         if (self.offset >= 0) and (self.offset < len(self.filenames)):
             f = self.__getFilename()
@@ -118,17 +118,20 @@ class Annoter():
             annotations = []
             # If exists annotations file
             if (IsExistsAnnotations(self.dirpath+f)):
-                annotations = ReadAnnotations(self.dirpath+f)
-                annotations = [annote.fromTxtAnnote(el) for el in annotations]
+                txtAnnotes = ReadAnnotations(self.dirpath+f)
+                txtAnnotes = [annote.fromTxtAnnote(el) for el in txtAnnotes]
                 logging.debug(
                     '(Annoter) Loaded annotations from %s!', self.dirpath+f)
+                annotations += txtAnnotes
+
             # if annotations file not exists or empty then detect.
-            if (len(annotations) == 0):
-                annotations = self.detector.Detect(
-                    im, confidence=0.3, boxRelative=True)
-                annotations = [annote.fromDetection(el) for el in annotations]
+            if (len(annotations) == 0) or (forceDetector is True):
+                detAnnotes = self.detector.Detect(
+                    im, confidence=0.1, boxRelative=True)
+                detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
                 logging.debug(
                     '(Annoter) Detected annotations for %s!', self.dirpath+f)
+                annotations += detAnnotes
 
             self.image = im
             self.annotations = annotations
