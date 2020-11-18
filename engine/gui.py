@@ -3,9 +3,11 @@ Created on 16 lis 2020
 
 @author: spasz
 '''
+
 from engine.annote import GetClasses
 from helpers.images import ResizeToWidth
 import cv2
+import helpers.boxes as boxes
 
 
 class Gui(object):
@@ -88,12 +90,16 @@ class Gui(object):
 
         # Record ending (x,y) coordintes on left mouse bottom release
         elif event == cv2.EVENT_LBUTTONUP:
-            self.coords[1:] = [(x, y)]
             self.dragging = False
+            self.coords[1:] = [(x, y)]
             xs, ys = list(zip(*self.coords))
-            self.coords = [(min(xs), min(ys)),
-                           (max(xs), max(ys))]
-            print('roi:', self.coords)
+            self.coords = (min(xs), min(ys),
+                           max(xs), max(ys))
+            height, width = self.image.shape[0:2]
+            box = boxes.ToRelative(self.coords, width, height)
+            classNumber = cv2.getTrackbarPos('Classes', self.winname)
+            self.annoter.AddAnnotation(box, classNumber)
+            self.coords = []
 
         # Clear drawing boxes on right mouse button click
         elif event == cv2.EVENT_RBUTTONDOWN:

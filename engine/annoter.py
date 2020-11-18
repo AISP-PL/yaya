@@ -45,6 +45,11 @@ class Annoter():
         ''' Returns current annotations.'''
         return self.annotations
 
+    def AddAnnotation(self, box, classNumber):
+        ''' Adds new annotation by human.'''
+        self.annotations.append(annote.Annote(
+            box, classNumber=classNumber, authorType=annote.AnnoteAuthorType.byHuman))
+
     def IsEnd(self):
         '''True if files ended.'''
         return (self.offset == len(self.filenames))
