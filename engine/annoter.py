@@ -66,7 +66,7 @@ class Annoter():
     def AddAnnotation(self, box, classNumber):
         ''' Adds new annotation by human.'''
         self.annotations.append(annote.Annote(
-            box, classNumber=classNumber, authorType=annote.AnnoteAuthorType.byHuman))
+            box, classNumber=classNumber, authorType=annote.AnnoteAuthorType.byHand))
         logging.debug('(Annoter) Added annotation class %u!', classNumber)
 
     def ClearAnnotations(self):
