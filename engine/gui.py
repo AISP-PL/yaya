@@ -24,6 +24,17 @@ class Gui(object):
 
     def Start(self):
         ''' Start gui running.'''
+        # Create CV2 window
+        cv2.namedWindow(self.winname)
+        # Images slider
+        cv2.createTrackbar('Images', self.winname,
+                           0, self.annoter.GetImagesCount()-1, self._images_trackbar_cb)
+        # Classes slider
+        cv2.createTrackbar('Classes', self.winname, 0,
+                           len(GetClasses())-1, self._classes_trackbar_cb)
+        # Mouse handling
+        cv2.setMouseCallback(self.winname, self._mouse_cb)
+
         # GUI keyboard loop
         key = 0
         self.annoter.Process()
@@ -34,17 +45,6 @@ class Gui(object):
             self.image = self.annoter.GetImage()
             self.image = ResizeToWidth(self.image)
 
-            # Create CV2 window
-            cv2.namedWindow(self.winname)
-            # Images slider
-            cv2.createTrackbar('Images', self.winname,
-                               0, self.annoter.GetImagesCount()-1, self._images_trackbar_cb)
-            # Classes slider
-            cv2.createTrackbar('Classes', self.winname, 0,
-                               len(GetClasses())-1, self._classes_trackbar_cb)
-            # Mouse handling
-            cv2.setMouseCallback(self.winname, self._mouse_cb)
-
             # Update window
             self._update()
 
@@ -54,8 +54,9 @@ class Gui(object):
                 key = cv2.waitKeyEx()
                 keyAction = self._keyboard_cb(key)
 
+        # Destroy gui
         cv2.destroyWindow(self.winname)
-        return self.coords if self.coords else None
+        return True
 
     def _classes_trackbar_cb(self, arg):
         ''' Callback from trackbar.'''
@@ -77,13 +78,14 @@ class Gui(object):
         # Application exit
         if (key == 27):
             return True
-        # TODO keys 0-9
         # TODO key save 'Ctrl+s'
-        # TODO key clear 'c'
         # TODO key remove 'r'
         elif (key >= ord('0')) and (key <= ord('9')):
             classNumber = key - ord('0')
             cv2.setTrackbarPos('Classes', self.winname, classNumber)
+        elif (key == ord('c')):
+            self.annoter.ClearAnnotations()
+            self._update()
         # Next image
         elif (key == 65363) or (key == ord('.')):
             self.annoter.ProcessNext()

@@ -63,6 +63,10 @@ class Annoter():
         self.annotations.append(annote.Annote(
             box, classNumber=classNumber, authorType=annote.AnnoteAuthorType.byHuman))
 
+    def ClearAnnotations(self):
+        ''' Clear all annotations.'''
+        self.annotations = []
+
     def IsEnd(self):
         '''True if files ended.'''
         return (self.offset == len(self.filenames))
