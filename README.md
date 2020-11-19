@@ -17,7 +17,7 @@
 
 ### Key codes
 
-'''shell
+```shell
 LPM - create annotation
 d - run detector
 r - remove annotation
@@ -25,12 +25,12 @@ c - clear all annotations
 s - save all (if errors not exists)
 arrow -> or . - next image
 arrow <- or , - previous image
-'''
+```
 
 
 ### Command line
 
-'''shell
+```shell
 usage: yolo-annotate.py [-h] -i INPUT [-c CONFIG] [-on] [-yc] [-v]
 
 optional arguments:
@@ -42,7 +42,7 @@ optional arguments:
   -on, --onlyNewFiles  Process only files without detections file.
   -yc, --yoloCustom   Use custom YOLO.
   -v, --verbose     Show verbose finded and processed data
-'''
+```
 
 ## Quick start
 
