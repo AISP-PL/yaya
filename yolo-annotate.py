@@ -20,6 +20,8 @@ parser.add_argument('-c', '--config', type=str,
                     required=False, help='Config path')
 parser.add_argument('-on', '--onlyNewFiles', action='store_true',
                     required=False, help='Process only files without detections file.')
+parser.add_argument('-oe', '--onlyFilesWithErrors', action='store_true',
+                    required=False, help='Process only files with errors.')
 parser.add_argument('-yc', '--yoloCustom', action='store_true',
                     required=False, help='Use custom YOLO.')
 parser.add_argument('-v', '--verbose', action='store_true',
@@ -36,6 +38,11 @@ isOnlyNewFiles = False
 if (args.onlyNewFiles):
     isOnlyNewFiles = True
 
+# Check - files filter
+isOnlyErrorFiles = False
+if (args.onlyFilesWithErrors):
+    isOnlyErrorFiles = True
+
 # Enabled logging
 if (__debug__ is True):
     logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
@@ -51,7 +58,7 @@ else:
 annote.Init(detector.GetClassNames())
 
 # Create annoter
-annoter = Annoter(args.input, detector, isOnlyNewFiles)
+annoter = Annoter(args.input, detector, isOnlyNewFiles, isOnlyErrorFiles)
 
 # Start Gui
 g = Gui('YoloAnnotate')
