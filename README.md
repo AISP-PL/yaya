@@ -1,4 +1,4 @@
-![title](/home/spasz/python/pyAiCarTraffic/tools/yolo-annotate/doc/title.png)
+![title](doc/title.png)
 
 # yolo-annotate
 
