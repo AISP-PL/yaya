@@ -9,7 +9,7 @@ from . import boxes
 from . import metrics
 
 
-def FilterIOUbyConfidence(annotations, maxIOU=0.8):
+def FilterIOUbyConfidence(annotations, maxIOU=0.75):
     '''
         Filter annotation if has bigger IOU > maxIOU.
         Annotation with bigger confidence stays!

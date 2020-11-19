@@ -78,16 +78,19 @@ class Annoter():
         self.annotations.append(annote.Annote(
             box, classNumber=classNumber, authorType=annote.AnnoteAuthorType.byHand))
         logging.debug('(Annoter) Added annotation class %u!', classNumber)
+        self.errors = self.__checkOfErrors()
 
     def ClearAnnotations(self):
         ''' Clear all annotations.'''
         self.annotations = []
+        self.errors = self.__checkOfErrors()
         logging.debug('(Annoter) Cleared annotations!')
 
     def RemoveAnnotation(self, element):
         '''Remove annotation .'''
         if (len(self.annotations) != 0):
             self.annotations.remove(element)
+            self.errors = self.__checkOfErrors()
 
     def IsSynchronized(self):
         ''' Is image synchronized with file annotations.'''
