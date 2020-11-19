@@ -1,1 +1,17 @@
-./example1-yolo/.travis.yml
+language: python
+python:
+  - "3.6"
+  - "3.7"
+  - "3.8"
+# Handle git submodules yourself
+git:
+    submodules: false
+# Use sed to replace the SSH URL with the public URL, then initialize submodules
+before_install:
+    - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
+    - git submodule update --init --recursive || echo "Some repository failed! Workaround!"
+# command to install dependencies
+install:
+  - pip install -r requirements.txt
+# command to run tests
+script: cd example1-yolo/ && pytest
