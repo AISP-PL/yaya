@@ -258,6 +258,22 @@ class Gui(object):
                 label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, textThickness)
         textXmargin += label_width
 
+        # Write errors status
+        errors = self.annoter.GetErrors()
+        if (len(errors) != 0):
+            for error in errors:
+                label = '[%s] ' % error
+                cv2.putText(im, label,
+                            (textXmargin-1, textYmargin -
+                             1), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                            (255, 255, 255), textThickness)
+                cv2.putText(im, label,
+                            (textXmargin, textYmargin), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                            (0, 0, 255), textThickness)
+                (label_width, label_height), baseline = cv2.getTextSize(
+                    label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, textThickness)
+                textXmargin += label_width
+
         im[0:barHeight, 0:w] = cv2.addWeighted(
             im[0:barHeight, 0:w], 0.5, bar, 0.5, 0)
         return im

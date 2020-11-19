@@ -38,10 +38,15 @@ class Annoter():
         self.offset = 0
         self.image = None
         self.annotations = None
+        self.errors = []
 
     def __getFilename(self):
         ''' Returns current filepath.'''
         return self.filenames[self.offset]
+
+    def GetErrors(self):
+        ''' Returns current errors list.'''
+        return self.errors
 
     def GetImage(self):
         ''' Returns current image.'''
@@ -96,17 +101,30 @@ class Annoter():
 
     def Save(self):
         ''' Save current annotations.'''
-        annotations = [annote.toTxtAnnote(el) for el in self.annotations]
-        annotations = SaveAnnotations(
-            self.dirpath+self.__getFilename(), annotations)
-        logging.debug('(Annoter) Saved annotations for %s!',
-                      self.__getFilename())
-        # Process file again after save
-        self.Process()
+        self.errors = self.__checkOfErrors()
+        if (len(self.errors) == 0):
+            annotations = [annote.toTxtAnnote(el) for el in self.annotations]
+            annotations = SaveAnnotations(
+                self.dirpath+self.__getFilename(), annotations)
+            logging.debug('(Annoter) Saved annotations for %s!',
+                          self.__getFilename())
+            # Process file again after save
+            self.Process()
+        else:
+            logging.error('(Annoter) Errors exists in annotations!')
 
     def IsEnd(self):
         '''True if files ended.'''
         return (self.offset == len(self.filenames))
+
+    def __checkOfErrors(self):
+        '''Check current image/annotations for errors.'''
+        errors = []
+        if (len(self.annotations) != len(prefilters.FilterIOUbyConfidence(self.annotations))):
+            logging.error('(Annoter) Annotations overrides each other!')
+            errors.append('Override error!')
+
+        return errors
 
     def Process(self, forceDetector=False):
         ''' process file.'''
@@ -137,6 +155,10 @@ class Annoter():
 
             self.image = im
             self.annotations = annotations
+
+            # Post-check of errors
+            self.errors = self.__checkOfErrors()
+
             return True
 
         return False

@@ -31,7 +31,7 @@ def FilterIOUbyConfidence(annotations, maxIOU=0.8):
             # If IOU >= maxIOU
             if (results[i, j] >= maxIOU):
                 # If confidence is smaller
-                if (annote.GetConfidence() < annotations[j].GetConfidence()):
+                if (annote.GetConfidence() <= annotations[j].GetConfidence()):
                     isFiltered = True
                     break
 
