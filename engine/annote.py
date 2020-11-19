@@ -87,6 +87,10 @@ class Annote():
         ''' Returns class number.'''
         return self.classNumber
 
+    def GetClassName(self):
+        ''' Returns class name.'''
+        return self.className
+
     def GetBox(self):
         ''' Returns box.'''
         return self.box
@@ -94,6 +98,10 @@ class Annote():
     def GetAuthorType(self):
         ''' Returns author type.'''
         return self.authorType
+
+    def GetConfidence(self):
+        ''' Returns confidence.'''
+        return self.confidence
 
     def Draw(self, image, highlight=False):
         ''' Draw self.'''

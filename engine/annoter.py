@@ -7,6 +7,7 @@ import os
 import cv2
 import logging
 import engine.annote as annote
+import helpers.prefilters as prefilters
 from helpers.files import IsImageFile
 from helpers.textAnnotations import ReadAnnotations, SaveAnnotations, IsExistsAnnotations
 
@@ -129,6 +130,7 @@ class Annoter():
                 detAnnotes = self.detector.Detect(
                     im, confidence=0.1, boxRelative=True)
                 detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
+                detAnnotes = prefilters.FilterIOUbyConfidence(detAnnotes)
                 logging.debug(
                     '(Annoter) Detected annotations for %s!', self.dirpath+f)
                 annotations += detAnnotes
