@@ -148,7 +148,8 @@ class Annoter():
     def __isClearImageSynchronized(self):
         ''' True if image was modified.'''
         result = not ('ImageModified!' in self.errors)
-        self.errors.remove('ImageModified!')
+        if (result is False):
+            self.errors.remove('ImageModified!')
         return result
 
     def Delete(self):
