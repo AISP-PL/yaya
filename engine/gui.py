@@ -110,8 +110,10 @@ class Gui(object):
             self._update()
         # x - delete image
         elif (key == ord('x')):
-            self.__popupYesNo(self.image, text='Delete?')
-            return True
+            if (self.__popupYesNo(self.image, text='Delete?') == True):
+                self.annoter.Delete()
+                self.annoter.Process()
+                return True
         # Next image
         elif (key == 65363) or (key == ord('.')):
             self.annoter.ProcessNext()

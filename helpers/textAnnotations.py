@@ -4,7 +4,7 @@ Created on 16 lis 2020
 @author: spasz
 '''
 import os
-from helpers.files import GetFilename
+from helpers.files import GetFilename, DeleteFile
 import helpers.boxes as boxes
 
 
@@ -33,6 +33,12 @@ def ReadAnnotations(imagePath):
             annotations.append((classNumber, box))
 
     return annotations
+
+
+def DeleteAnnotations(imagePath):
+    '''Delete annotations file.'''
+    path = __getAnnotationFilepath(imagePath)
+    DeleteFile(path)
 
 
 def SaveAnnotations(imagePath, annotations):

@@ -8,8 +8,9 @@ import cv2
 import logging
 import engine.annote as annote
 import helpers.prefilters as prefilters
-from helpers.files import IsImageFile
-from helpers.textAnnotations import ReadAnnotations, SaveAnnotations, IsExistsAnnotations
+from helpers.files import IsImageFile, DeleteFile
+from helpers.textAnnotations import ReadAnnotations, SaveAnnotations, IsExistsAnnotations,\
+    DeleteAnnotations
 
 
 class Annoter():
@@ -131,6 +132,16 @@ class Annoter():
                 break
 
         return isSynchronized
+
+    def Delete(self):
+        ''' Deletes current image and annotations.'''
+        f = self.__getFilename()
+        if (f in self.filenames):
+            DeleteAnnotations(self.dirpath+f)
+            self.ClearAnnotations()
+            DeleteFile(self.dirpath+f)
+            self.filenames.remove(f)
+            # TODO correct offset
 
     def Save(self):
         ''' Save current annotations.'''

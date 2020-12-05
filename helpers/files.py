@@ -5,6 +5,7 @@ Created on 10 wrz 2020
 '''
 
 from pathlib import Path
+import logging
 import os
 
 
@@ -29,3 +30,8 @@ def IsImageFile(filepath):
     return GetExtension(filepath).lower() in ['.gif', '.png', '.jpg', '.jpeg', '.tiff']
 
 
+def DeleteFile(path):
+    '''Delete annotations file.'''
+    if os.path.exists(path):
+        os.remove(path)
+        logging.info('Deleted %s.', path)
