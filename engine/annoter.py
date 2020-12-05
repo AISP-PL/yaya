@@ -104,6 +104,8 @@ class Annoter():
                 a.box = boxes.FlipHorizontally(1, a.box)
 
         # Store image modification info
+        for a in self.annotations:
+            a.authorType = annote.AnnoteAuthorType.byHuman
         self.errors.append('ImageModified!')
 
     def GetAnnotations(self):
