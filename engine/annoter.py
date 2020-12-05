@@ -17,7 +17,7 @@ class Annoter():
     classdocs
     '''
 
-    def __init__(self, filepath, detector, isOnlyNewFiles=False, isOnlyErrorFiles=False):
+    def __init__(self, filepath, detector, isOnlyNewFiles=False, isOnlyErrorFiles=False, isOnlySpecificClass=None):
         '''
         Constructor
         '''
@@ -45,6 +45,18 @@ class Annoter():
                     filesWithErrors.append(filename)
 
             self.filenames = filesWithErrors
+
+        # Use only files with specific class
+        if (isOnlySpecificClass is not None):
+            filesForClass = []
+            for offset, filename in enumerate(self.filenames):
+                self.offset = offset
+                self.Process()
+                if (len(self.annotations) != 0) and  \
+                        (len(self.GetAnnotationsForClass(isOnlySpecificClass)) != 0):
+                    filesForClass.append(filename)
+
+            self.filenames = filesForClass
 
         # Current file number offset
         self.offset = 0
@@ -84,6 +96,12 @@ class Annoter():
     def GetAnnotations(self):
         ''' Returns current annotations.'''
         return self.annotations
+
+    def GetAnnotationsForClass(self, classNumber):
+        ''' Returns current annotations.'''
+        annotations = [a for a in self.annotations if (
+            a.classNumber == classNumber)]
+        return annotations
 
     def AddAnnotation(self, box, classNumber):
         ''' Adds new annotation by human.'''
