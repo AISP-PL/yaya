@@ -52,7 +52,7 @@ class Annoter():
             filesForClass = []
             for offset, filename in enumerate(self.filenames):
                 self.offset = offset
-                self.Process()
+                self.Process(processImage=False)
                 if (len(self.annotations) != 0) and  \
                         (len(self.GetAnnotationsForClass(isOnlySpecificClass)) != 0):
                     filesForClass.append(filename)
@@ -170,13 +170,15 @@ class Annoter():
 
         return errors
 
-    def Process(self, forceDetector=False):
+    def Process(self, processImage=True, forceDetector=False):
         ''' process file.'''
         if (self.offset >= 0) and (self.offset < len(self.filenames)):
             f = self.__getFilename()
 
             # Read image
-            im = cv2.imread(self.dirpath+f)
+            if (processImage is True):
+                im = cv2.imread(self.dirpath+f)
+                self.image = im
 
             annotations = []
             # If exists annotations file
@@ -188,7 +190,7 @@ class Annoter():
                 annotations += txtAnnotes
 
             # if annotations file not exists or empty then detect.
-            if (len(annotations) == 0) or (forceDetector is True):
+            if (processImage is True) and ((len(annotations) == 0) or (forceDetector is True)):
                 detAnnotes = self.detector.Detect(
                     im, confidence=0.1, boxRelative=True)
                 detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
@@ -197,7 +199,6 @@ class Annoter():
                     '(Annoter) Detected annotations for %s!', self.dirpath+f)
                 annotations += detAnnotes
 
-            self.image = im
             self.annotations = annotations
 
             # Post-check of errors
