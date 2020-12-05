@@ -105,9 +105,14 @@ class Gui(object):
         elif (key >= ord('0')) and (key <= ord('9')):
             classNumber = key - ord('0')
             cv2.setTrackbarPos('Classes', self.winname, classNumber)
+        # Clear all annotations
         elif (key == ord('c')):
             self.annoter.ClearAnnotations()
             self._update()
+        # Flip whole image
+        elif (key == ord('f')):
+            self.annoter.TransformShape('Flip')
+            return True
         # x - delete image
         elif (key == ord('x')):
             if (self.__popupYesNo(self.image, text='Delete?') == True):

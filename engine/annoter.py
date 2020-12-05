@@ -8,7 +8,9 @@ import cv2
 import logging
 import engine.annote as annote
 import helpers.prefilters as prefilters
-from helpers.files import IsImageFile, DeleteFile
+import helpers.transformations as transformations
+import helpers.boxes as boxes
+from helpers.files import IsImageFile, DeleteFile, GetNotExistingSha1Filepath
 from helpers.textAnnotations import ReadAnnotations, SaveAnnotations, IsExistsAnnotations,\
     DeleteAnnotations
 
@@ -60,9 +62,9 @@ class Annoter():
             self.filenames = filesForClass
 
         # Current file number offset
-        self.offset = 0
-        self.image = None
         self.annotations = None
+        self.image = None
+        self.offset = 0
         self.errors = []
 
     def __getFilename(self):
@@ -94,6 +96,16 @@ class Annoter():
 
         return False
 
+    def TransformShape(self, mode='Flip'):
+        ''' Transform image and annotations shape.'''
+        if (mode == 'Flip'):
+            self.image = transformations.Flip(self.image)
+            for a in self.annotations:
+                a.box = boxes.FlipHorizontally(1, a.box)
+
+        # Store image modification info
+        self.errors.append('ImageModified!')
+
     def GetAnnotations(self):
         ''' Returns current annotations.'''
         return self.annotations
@@ -124,7 +136,7 @@ class Annoter():
             self.errors = self.__checkOfErrors()
 
     def IsSynchronized(self):
-        ''' Is image synchronized with file annotations.'''
+        ''' Is all annotations synchronized with file.'''
         isSynchronized = True
         for element in self.annotations:
             if (element.GetAuthorType() != annote.AnnoteAuthorType.byHuman):
@@ -132,6 +144,12 @@ class Annoter():
                 break
 
         return isSynchronized
+
+    def __isClearImageSynchronized(self):
+        ''' True if image was modified.'''
+        result = not ('ImageModified!' in self.errors)
+        self.errors.remove('ImageModified!')
+        return result
 
     def Delete(self):
         ''' Deletes current image and annotations.'''
@@ -145,13 +163,30 @@ class Annoter():
 
     def Save(self):
         ''' Save current annotations.'''
+        isNewFileCreated = False
+        filename = self.__getFilename()
+
+        # If image was modified, then generate new filepath
+        if (self.__isClearImageSynchronized() == False):
+            filename, filepath = GetNotExistingSha1Filepath(
+                filename, self.dirpath)
+            isNewFileCreated = True
+
+        # Check other errors
         self.errors = self.__checkOfErrors()
         if (len(self.errors) == 0):
+            # Save image if new is created
+            if (isNewFileCreated is True):
+                cv2.imwrite('%s' % (filepath), self.image)
+                self.filenames.insert(self.offset, filename)
+                logging.info('(Annoter) New image %s created!', filename)
+
+            # Save annotations
             annotations = [annote.toTxtAnnote(el) for el in self.annotations]
             annotations = SaveAnnotations(
-                self.dirpath+self.__getFilename(), annotations)
-            logging.debug('(Annoter) Saved annotations for %s!',
-                          self.__getFilename())
+                self.dirpath+filename, annotations)
+            logging.debug('(Annoter) Saved annotations for %s!', filename)
+
             # Process file again after save
             self.Process()
         else:

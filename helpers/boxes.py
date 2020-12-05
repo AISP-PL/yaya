@@ -108,6 +108,12 @@ def GetHeight(box):
     return abs(y2-y)
 
 
+def FlipHorizontally(width, box):
+    ''' Flip horizontally box.'''
+    x, y, x2, y2 = box
+    return width-x, y, width-x2, y2
+
+
 def GetArea(box):
     ''' Get Area of box'''
     x, y, x2, y2 = box
