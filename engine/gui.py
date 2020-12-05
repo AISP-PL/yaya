@@ -10,6 +10,7 @@ import cv2
 import logging
 import helpers.boxes as boxes
 import numpy as np
+from Gui.drawing import DrawText
 
 
 class Gui(object):
@@ -107,6 +108,10 @@ class Gui(object):
         elif (key == ord('c')):
             self.annoter.ClearAnnotations()
             self._update()
+        # x - delete image
+        elif (key == ord('x')):
+            self.__popupYesNo(self.image, text='Delete?')
+            return True
         # Next image
         elif (key == 65363) or (key == ord('.')):
             self.annoter.ProcessNext()
@@ -197,6 +202,20 @@ class Gui(object):
         cv2.setTrackbarPos('Images', self.winname,
                            self.annoter.GetImageNumber())
         cv2.imshow(self.winname, im)
+
+    def __popupYesNo(self, im, text=''):
+        ''' Draw popup and wait in loop yes/no.'''
+        # Show message
+        h, w = im.shape[0:2]
+        x, y = (int(w/2), int(h/2))
+        DrawText(self.image, '%s Yes(y) / No(n)?' %
+                 text, (x, y), bgColor=(0, 0, 0))
+        # Wait in loop
+        key = 0
+        while ((key != ord('y')) and (key != ord('n'))):
+            key = cv2.waitKeyEx()
+
+        return (key == ord('y'))
 
     def __drawCrosshair(self, im):
         ''' Draws mouse cursor crosshair.'''
