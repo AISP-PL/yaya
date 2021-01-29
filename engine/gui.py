@@ -229,7 +229,7 @@ class Gui(object):
         if (len(self.lastPos) == 2):
             x, y = self.lastPos
             h, w = im.shape[0:2]
-            color = (55, 55, 55)
+            color = (255, 255, 255)
             im = cv2.line(im, (x, 0), (x, h), color, 1)
             im = cv2.line(im, (0, y), (w, y), color, 1)
 
