@@ -109,8 +109,8 @@ class Gui(object):
         # Application exit
         if (key == 27):
             return True
-        elif (key == ord('c')):
-            self.annoter.CreateNew()
+        elif (key == ord('n')):
+            self.annoter.Create()
             return True
         elif (key == ord('s')):
             self.annoter.Save()

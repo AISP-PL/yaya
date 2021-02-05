@@ -170,7 +170,7 @@ class Annoter():
             self.filenames.remove(f)
             # TODO correct offset
 
-    def CreateNew(self):
+    def Create(self):
         ''' Creates new filepath for new image file.'''
         filename = self.__getFilename()
         filename, filepath = GetNotExistingSha1Filepath(
