@@ -7,6 +7,12 @@ import cv2
 import logging
 
 
+def PointRescale(point, ratio):
+    ''' Rescale point by ratio.'''
+    x, y = point
+    return int(x*ratio), int(y*ratio)
+
+
 def GetResizedHeightToWidth(width, height, maxWidth=1280):
     ''' Returns resized values.'''
     if (width > maxWidth):
@@ -21,7 +27,7 @@ def GetResizedWidthToHeight(width, height, maxHeight=1080):
     ''' Returns resized values.'''
     if (height > maxHeight):
         ratio = maxHeight/height
-        width = int(ratio*height)-1
+        width = int(ratio*width)-1
         height = maxHeight
 
     return width, height

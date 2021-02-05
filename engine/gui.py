@@ -5,26 +5,40 @@ Created on 16 lis 2020
 '''
 
 from engine.annote import GetClasses, GetClassName
-from helpers.images import ResizeToWidth, ResizeToHeight
+from helpers.images import ResizeToWidth, ResizeToHeight, PointRescale
 import cv2
 import logging
 import helpers.boxes as boxes
 import numpy as np
 from Gui.drawing import DrawText
+from Gui.colors import GetRandomColor
 
 
 class Gui(object):
+
+    GuiModeNone = 0
+    GuiModeRectangle = 1
+    GuiModePaint = 2
+
     def __init__(self, name):
+        # Current image copy
         self.image = None
+        # Image scale ration - each image is scaled
+        self.imageScaleRatio = 1
+        # Image width
         self.width = None
         self.height = None
         self.winname = name
         self.annoter = None
+        self.guiMode = self.GuiModeNone
 
         # Mouse
         self.lastPos = []
         self.coords = []
-        self.dragging = False
+
+        # Painting
+        self.paintRadius = 36
+        self.paintColor = GetRandomColor()
 
     def SetAnnoter(self, annoter):
         ''' Set annoter .'''
@@ -56,7 +70,12 @@ class Gui(object):
 
             # Resize image
             self.image = ResizeToHeight(self.annoter.GetImage(), 900)
+            self.imageScaleRatio = 900/self.annoter.GetImage().shape[0]
             self.height, self.width = self.image.shape[0:2]
+            logging.debug('(Gui) Image %ux%u scaled to %ux%u.',
+                          self.annoter.GetImage(
+                          ).shape[1], self.annoter.GetImage().shape[0],
+                          self.image.shape[1], self.image.shape[0])
 
             # Update window
             self._update()
@@ -89,6 +108,9 @@ class Gui(object):
         '''
         # Application exit
         if (key == 27):
+            return True
+        elif (key == ord('c')):
+            self.annoter.CreateNew()
             return True
         elif (key == ord('s')):
             self.annoter.Save()
@@ -133,31 +155,49 @@ class Gui(object):
     def _mouse_cb(self, event, x, y, flags, parameters):
         self.lastPos = [x, y]
 
-        # Record starting (x,y) coordinates on left mouse button click
-        if event == cv2.EVENT_LBUTTONDOWN:
-            self.coords[:] = [(x, y)]
-            self.dragging = True
+        # MODE : None
+        if (self.guiMode == self.GuiModeNone):
+            # Start Rectangle
+            if event == cv2.EVENT_LBUTTONDOWN:
+                self.coords[:] = [(x, y)]
+                self.guiMode = self.GuiModeRectangle
+            # Start Painting
+            elif event == cv2.EVENT_RBUTTONDOWN:
+                self.coords[:] = [(x, y)]
+                self.paintColor = GetRandomColor()
+                self.guiMode = self.GuiModePaint
 
-        elif event == 0 and self.dragging:
-            self.coords[1:] = [(x, y)]
+        # MODE : Rectangle
+        elif (self.guiMode == self.GuiModeRectangle):
+            if (event == 0):
+                self.coords[1:] = [(x, y)]
+            # Record ending (x,y) coordintes on left mouse bottom release
+            elif event == cv2.EVENT_LBUTTONUP:
+                self.coords[1:] = [(x, y)]
+                xs, ys = list(zip(*self.coords))
+                self.coords = (min(xs), min(ys),
+                               max(xs), max(ys))
+                height, width = self.image.shape[0:2]
+                box = boxes.ToRelative(self.coords, width, height)
+                classNumber = cv2.getTrackbarPos('Classes', self.winname)
+                self.annoter.AddAnnotation(box, classNumber)
+                self.coords = []
+                self.guiMode = self.GuiModeNone
 
-        # Record ending (x,y) coordintes on left mouse bottom release
-        elif event == cv2.EVENT_LBUTTONUP:
-            self.dragging = False
-            self.coords[1:] = [(x, y)]
-            xs, ys = list(zip(*self.coords))
-            self.coords = (min(xs), min(ys),
-                           max(xs), max(ys))
-            height, width = self.image.shape[0:2]
-            box = boxes.ToRelative(self.coords, width, height)
-            classNumber = cv2.getTrackbarPos('Classes', self.winname)
-            self.annoter.AddAnnotation(box, classNumber)
-            self.coords = []
-
-        # Clear drawing boxes on right mouse button click
-        elif event == cv2.EVENT_RBUTTONDOWN:
-            self.coords = []
-            self.dragging = False
+        # MODE : Painting
+        elif (self.guiMode == self.GuiModePaint):
+            if (event == 0):
+                self.coords.append((x, y))
+            elif (event == cv2.EVENT_RBUTTONUP):
+                # Rescale coords to original image positions
+                self.coords = [PointRescale(
+                    point, 1/self.imageScaleRatio) for point in self.coords]
+                # Add drawing to original image
+                self.annoter.PaintCircles(self.coords, int(
+                    self.paintRadius/self.imageScaleRatio), self.paintColor)
+                # Get back to none mode and choose new color
+                self.paintColor = GetRandomColor()
+                self.guiMode = self.GuiModeNone
 
         self._update()
 
@@ -183,9 +223,18 @@ class Gui(object):
         im = self.image.copy()
         h, w = im.shape[0:2]
 
-        # Draw currrent rectangle
-        if len(self.coords) == 2:
-            cv2.rectangle(im, self.coords[0], self.coords[1], (0, 255, 0), 1)
+        # MODE : Rect
+        if (self.guiMode == self.GuiModeRectangle):
+            if len(self.coords) == 2:
+                cv2.rectangle(im, self.coords[0],
+                              self.coords[1], (0, 255, 0), 1)
+        # MODE : Paint
+        if (self.guiMode == self.GuiModePaint):
+            # Draw paint coords
+            if (len(self.coords) != 0):
+                for point in self.coords:
+                    self.image = cv2.circle(
+                        self.image, point, self.paintRadius, self.paintColor, -1)
 
         # Draw all annotations
         annotations = self.annoter.GetAnnotations()

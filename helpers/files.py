@@ -58,3 +58,13 @@ def RenameToSha1Filepath(filename, dirpath):
     os.rename(oldFilepath, newFilepath)
     logging.debug('%s -> %s.' % (oldFilepath, newFilepath))
     return newFilename
+
+
+def FixPath(path):
+    '''
+        Fix path / character at the end.
+        Only works with directory paths.
+    '''
+    if (path[-1] == '/'):
+        return path
+    return path+'/'
