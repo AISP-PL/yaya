@@ -207,7 +207,7 @@ class Annoter():
 
     def __checkOfErrors(self):
         '''Check current image/annotations for errors.'''
-        errors = self.errors
+        errors = set()
         if (len(self.annotations) != len(prefilters.FilterIOUbyConfidence(self.annotations))):
             logging.error('(Annoter) Annotations overrides each other!')
             errors.add('Override error!')

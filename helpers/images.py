@@ -15,33 +15,35 @@ def PointRescale(point, ratio):
 
 def GetResizedHeightToWidth(width, height, maxWidth=1280):
     ''' Returns resized values.'''
+    ratio = 1
     if (width > maxWidth):
         ratio = maxWidth/width
         height = int(ratio*height)-1
         width = maxWidth
 
-    return width, height
+    return width, height, ratio
 
 
 def GetResizedWidthToHeight(width, height, maxHeight=1080):
     ''' Returns resized values.'''
+    ratio = 1
     if (height > maxHeight):
         ratio = maxHeight/height
         width = int(ratio*width)-1
         height = maxHeight
 
-    return width, height
+    return width, height, ratio
 
 
 def ResizeToWidth(image, maxWidth=1280):
     ''' Resize image with handling aspect ratio.'''
     height, width = image.shape[:2]
-    width, height = GetResizedHeightToWidth(width, height, maxWidth)
-    return cv2.resize(image, (width, height), interpolation=cv2.INTER_AREA)
+    width, height, ratio = GetResizedHeightToWidth(width, height, maxWidth)
+    return cv2.resize(image, (width, height), interpolation=cv2.INTER_AREA), ratio
 
 
 def ResizeToHeight(image, maxHeight=1080):
     ''' Resize image with handling aspect ratio.'''
     height, width = image.shape[:2]
-    width, height = GetResizedWidthToHeight(width, height, maxHeight)
-    return cv2.resize(image, (width, height), interpolation=cv2.INTER_AREA)
+    width, height, ratio = GetResizedWidthToHeight(width, height, maxHeight)
+    return cv2.resize(image, (width, height), interpolation=cv2.INTER_AREA), ratio

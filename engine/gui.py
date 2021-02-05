@@ -69,13 +69,15 @@ class Gui(object):
             key = 0
 
             # Resize image
-            self.image = ResizeToHeight(self.annoter.GetImage(), 900)
-            self.imageScaleRatio = 900/self.annoter.GetImage().shape[0]
+            self.image, self.imageScaleRatio = ResizeToHeight(
+                self.annoter.GetImage(), 900)
             self.height, self.width = self.image.shape[0:2]
             logging.debug('(Gui) Image %ux%u scaled to %ux%u.',
                           self.annoter.GetImage(
                           ).shape[1], self.annoter.GetImage().shape[0],
                           self.image.shape[1], self.image.shape[0])
+            logging.debug('(Gui) Image scale ratio is %2.2f.',
+                          self.imageScaleRatio)
 
             # Update window
             self._update()
@@ -98,7 +100,8 @@ class Gui(object):
         ''' Callback from trackbar.'''
         imageNumber = cv2.getTrackbarPos('Images', self.winname)
         self.annoter.SetImageNumber(imageNumber)
-        self.image = ResizeToHeight(self.annoter.GetImage(), 900)
+        self.image, self.imageScaleRatio = ResizeToHeight(
+            self.annoter.GetImage(), 900)
         self._update()
 
     def _keyboard_cb(self, key):
