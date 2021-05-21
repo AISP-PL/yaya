@@ -12,6 +12,7 @@ import helpers.boxes as boxes
 import numpy as np
 from Gui.drawing import DrawText
 from Gui.colors import GetRandomColor
+from engine.GuiClassKeycodes import GuiClassKeycodes
 
 
 class Gui(object):
@@ -31,6 +32,8 @@ class Gui(object):
         self.winname = name
         self.annoter = None
         self.guiMode = self.GuiModeNone
+        # GUI for keycodes
+        self.guiClassKeycodes = GuiClassKeycodes()
 
         # Mouse
         self.lastPos = []
@@ -127,9 +130,6 @@ class Gui(object):
             if (annote is not None):
                 self.annoter.RemoveAnnotation(annote)
             return True
-        elif (key >= ord('0')) and (key <= ord('9')):
-            classNumber = key - ord('0')
-            cv2.setTrackbarPos('Classes', self.winname, classNumber)
         # Clear all annotations
         elif (key == ord('c')):
             self.annoter.ClearAnnotations()
@@ -152,6 +152,10 @@ class Gui(object):
         elif (key == 65361) or (key == ord(',')):
             self.annoter.ProcessPrev()
             return True
+        # Key was used to set class number
+        elif (self.guiClassKeycodes.IsClassKeycode(key)):
+            classNumber = self.guiClassKeycodes.GetClassNumber(key)
+            cv2.setTrackbarPos('Classes', self.winname, classNumber)
 
         return False
 
