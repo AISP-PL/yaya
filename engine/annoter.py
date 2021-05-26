@@ -32,6 +32,11 @@ class Annoter():
         # filter only images and not excludes
         excludes = ['.', '..', './', '.directory']
         filenames = os.listdir(self.dirpath)
+
+        # Sorting : by datetime
+        filenames = sorted(filenames, key=lambda f: -
+                           os.stat(self.dirpath+'/'+f).st_mtime)
+
         self.filenames = [f for f in filenames if (
             f not in excludes) and (IsImageFile(f))]
 
