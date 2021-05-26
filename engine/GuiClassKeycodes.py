@@ -20,7 +20,9 @@ class GuiClassKeycodes(object):
 
     def IsClassKeycode(self, keycode) -> bool:
         ''' True if it's class keycode.'''
-        return chr(keycode) in self.keycodes
+        if (keycode < 0x110000):
+            return chr(keycode) in self.keycodes
+        return False
 
     def GetClassNumber(self, keycode) -> int:
         ''' Returns class number from keycode.'''
