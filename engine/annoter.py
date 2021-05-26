@@ -33,6 +33,14 @@ class Annoter():
         '''
         self.detector = detector
         self.dirpath = filepath
+        # Use of detector
+        self.noDetector = noDetector
+
+        # Current file number offset
+        self.annotations = None
+        self.image = None
+        self.offset = 0
+        self.errors = set()
 
         # filter only images and not excludes
         excludes = ['.', '..', './', '.directory']
@@ -76,15 +84,6 @@ class Annoter():
                     filesForClass.append(filename)
 
             self.filenames = filesForClass
-
-        # Use of detector
-        self.noDetector = noDetector
-
-        # Current file number offset
-        self.annotations = None
-        self.image = None
-        self.offset = 0
-        self.errors = set()
 
     def __getFilename(self):
         ''' Returns current filepath.'''

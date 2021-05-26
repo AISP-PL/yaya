@@ -57,6 +57,11 @@ isOnlySpecificClass = None
 if (args.onlyClass is not None):
     isOnlySpecificClass = args.onlyClass
 
+# Check - detector
+noDetector = False
+if (args.noDetector is not None):
+    noDetector = args.noDetector
+
 # Enabled logging
 if (__debug__ is True):
     logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
@@ -74,7 +79,7 @@ else:
 annote.Init(detector.GetClassNames())
 
 # Create annoter
-annoter = Annoter(args.input, detector, args.noDetector, args.sortBy,
+annoter = Annoter(args.input, detector, noDetector, args.sortBy,
                   isOnlyNewFiles, isOnlyErrorFiles, isOnlySpecificClass)
 
 # Start Gui
