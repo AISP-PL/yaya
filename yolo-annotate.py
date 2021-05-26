@@ -22,6 +22,8 @@ parser.add_argument('-oc', '--onlyClass', type=int,
                     required=False, help='Only specific class number')
 parser.add_argument('-on', '--onlyNewFiles', action='store_true',
                     required=False, help='Process only files without detections file.')
+parser.add_argument('-nd', '--noDetector', action='store_true',
+                    required=False, help='Disable detector pre processing of files.')
 parser.add_argument('-oe', '--onlyFilesWithErrors', action='store_true',
                     required=False, help='Process only files with errors.')
 parser.add_argument('-yc', '--yoloCustom', action='store_true',
@@ -65,8 +67,8 @@ else:
 annote.Init(detector.GetClassNames())
 
 # Create annoter
-annoter = Annoter(args.input, detector, isOnlyNewFiles,
-                  isOnlyErrorFiles, isOnlySpecificClass)
+annoter = Annoter(args.input, detector, args.noDetector,
+                  isOnlyNewFiles, isOnlyErrorFiles, isOnlySpecificClass)
 
 # Start Gui
 g = Gui('YoloAnnotate')

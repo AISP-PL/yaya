@@ -20,7 +20,9 @@ class Annoter():
     classdocs
     '''
 
-    def __init__(self, filepath, detector, isOnlyNewFiles=False, isOnlyErrorFiles=False, isOnlySpecificClass=None):
+    def __init__(self, filepath, detector, noDetector=False,
+                 isOnlyNewFiles=False, isOnlyErrorFiles=False,
+                 isOnlySpecificClass=None):
         '''
         Constructor
         '''
@@ -60,6 +62,9 @@ class Annoter():
                     filesForClass.append(filename)
 
             self.filenames = filesForClass
+
+        # Use of detector
+        self.noDetector = noDetector
 
         # Current file number offset
         self.annotations = None
@@ -234,9 +239,11 @@ class Annoter():
                 annotations += txtAnnotes
 
             # if annotations file not exists or empty then detect.
-            if (processImage is True) and ((len(annotations) == 0) or (forceDetector is True)):
+            if (self.noDetector is False) and (processImage is True) and ((len(annotations) == 0) or (forceDetector is True)):
                 detAnnotes = self.detector.Detect(
-                    im, confidence=0.5, boxRelative=True)
+                    im, confidence=0.3, boxRelative=True)
+                logging.debug(
+                    '(Annoter) %u annotations to process.', len(detAnnotes))
                 detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
                 detAnnotes = prefilters.FilterIOUbyConfidence(detAnnotes)
                 logging.debug(
