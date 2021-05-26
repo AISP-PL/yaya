@@ -5,6 +5,8 @@ Created on 21 lip 2020
 @author: spasz
 '''
 import math
+from numba import njit, float64, float64, boolean, int8
+from numba.types import UniTuple
 
 
 class BoxState:
@@ -78,16 +80,18 @@ def GetCenter(box):
     return ((x+x2)/2), ((y+y2)/2)
 
 
-def GetTopCenter(box):
+@njit(cache=True)
+def GetTopCenter(box, height=0):
     ''' Get center of tracker pos'''
     x, y, x2, y2 = box
-    return int((x+x2)/2), int(max(y, y2))
+    return int((x+x2)/2), int(max(y, y2) - abs(y-y2)*height)
 
 
-def GetBottomCenter(box):
+@njit(cache=True)
+def GetBottomCenter(box, height=0):
     ''' Get center of tracker pos'''
     x, y, x2, y2 = box
-    return int((x+x2)/2), int(min(y, y2))
+    return int((x+x2)/2), int(min(y, y2) + abs(y-y2)*height)
 
 
 def GetDiagonal(box):
@@ -96,16 +100,17 @@ def GetDiagonal(box):
     return int(math.sqrt((x-x2)*(x-x2)+(y-y2)*(y-y2)))
 
 
+@njit(cache=True)
 def GetWidth(box):
     ''' Get W of box'''
-    x, y, x2, y2 = box
-    return abs(x2-x)
+    return abs(box[2]-box[0])
 
 
+@njit(cache=True)
 def GetHeight(box):
     ''' Get H of box'''
     x, y, x2, y2 = box
-    return abs(y2-y)
+    return abs(box[3]-box[1])
 
 
 def FlipHorizontally(width, box):
@@ -114,43 +119,50 @@ def FlipHorizontally(width, box):
     return width-x, y, width-x2, y2
 
 
+@njit(cache=True)
 def GetArea(box):
     ''' Get Area of box'''
     x, y, x2, y2 = box
     return abs((x2-x)*(y2-y))
 
 
+@njit(cache=True)
 def GetDistance(box1, box2):
     ''' Get distance between two boxes'''
-    x, y = GetCenter(box1)
-    x2, y2 = GetCenter(box2)
-    return math.sqrt((x-x2)*(x-x2)+(y-y2)*(y-y2))
+    # Get center as float
+    x1, y1, x2, y2 = box1
+    p1 = ((x1+x2)/2, (y1+y2)/2)
+    # Get center as float
+    x1, y1, x2, y2 = box2
+    p2 = ((x1+x2)/2, (y1+y2)/2)
+    return algebra.EuclideanDistance(p1, p2)
 
 
+@njit(cache=True)
 def GetCommonsection(x1, x1e, x2, x2e):
     ''' Returns common section  of cooridantes'''
-    begin = max(x1, x2)
-    end = min(x1e, x2e)
+    begin = max(min(x1, x1e), min(x2, x2e))
+    end = min(max(x1, x1e), max(x2, x2e))
     if (begin < end):
         return begin, end
     return 0, 0
 
 
+@njit(cache=True)
 def GetCommonsectionLength(x1, x1e, x2, x2e):
     ''' Returns common section  of cooridantes'''
     begin, end = GetCommonsection(x1, x1e, x2, x2e)
-    if (begin < end):
-        return end-begin
-    return 0
+    return end-begin
 
 
+@njit(cache=True)
 def GetIntersectionArea(box1, box2):
     ''' Returns area of intersection box'''
     x1, y1, x1e, y1e = box1
     x2, y2, x2e, y2e = box2
     width = GetCommonsectionLength(x1, x1e, x2, x2e)
     height = GetCommonsectionLength(y1, y1e, y2, y2e)
-    return (width*height)
+    return width*height
 
 
 def ToRelative(box, width, height):
@@ -163,6 +175,7 @@ def ToRelative(box, width, height):
     return (x1, y1, x2, y2)
 
 
+@njit(cache=True)
 def ToAbsolute(box, width, height):
     '''Rescale all coordinates to relative.'''
     x1, y1, x2, y2 = box
@@ -173,6 +186,14 @@ def ToAbsolute(box, width, height):
     return (x1, y1, x2, y2)
 
 
+@njit(cache=True)
+def ToPolygon(box):
+    ''' Transfer bbox to polygon vector.'''
+    x, y, x2, y2 = box
+    return [(x, y), (x2, y), (x2, y2), (x, y2)]
+
+
+@njit(cache=True)
 def PointToAbsolute(point, width, height):
     '''Rescale all coordinates to absolute.'''
     x1, y1 = point
@@ -181,6 +202,7 @@ def PointToAbsolute(point, width, height):
     return x1, y1
 
 
+@njit(cache=True)
 def PointToRelative(point, width, height):
     '''Rescale all coordinates to relative.'''
     x1, y1 = point

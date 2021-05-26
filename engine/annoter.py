@@ -236,7 +236,7 @@ class Annoter():
             # if annotations file not exists or empty then detect.
             if (processImage is True) and ((len(annotations) == 0) or (forceDetector is True)):
                 detAnnotes = self.detector.Detect(
-                    im, confidence=0.3, boxRelative=True)
+                    im, confidence=0.5, boxRelative=True)
                 detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
                 detAnnotes = prefilters.FilterIOUbyConfidence(detAnnotes)
                 logging.debug(
