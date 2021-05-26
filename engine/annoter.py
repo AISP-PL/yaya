@@ -85,6 +85,12 @@ class Annoter():
 
             self.filenames = filesForClass
 
+        # Reset values at the end
+        self.annotations = None
+        self.image = None
+        self.offset = 0
+        self.errors = set()
+
     def __getFilename(self):
         ''' Returns current filepath.'''
         return self.filenames[self.offset]
