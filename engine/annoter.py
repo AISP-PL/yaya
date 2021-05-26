@@ -19,8 +19,13 @@ class Annoter():
     '''
     classdocs
     '''
+    # Sort methods
+    NoSort = 0
+    SortByDatetime = 1
+    SortByAlphabet = 2
 
     def __init__(self, filepath, detector, noDetector=False,
+                 sortMethod=NoSort,
                  isOnlyNewFiles=False, isOnlyErrorFiles=False,
                  isOnlySpecificClass=None):
         '''
@@ -34,8 +39,12 @@ class Annoter():
         filenames = os.listdir(self.dirpath)
 
         # Sorting : by datetime
-        filenames = sorted(filenames, key=lambda f: -
-                           os.stat(self.dirpath+'/'+f).st_mtime)
+        if (sortMethod == self.SortByDatetime):
+            filenames = sorted(filenames, key=lambda f: -
+                               os.stat(self.dirpath+'/'+f).st_mtime)
+        # Sorting : by alphabet
+        elif (sortMethod == self.SortByDatetime):
+            filenames = sorted(filenames)
 
         self.filenames = [f for f in filenames if (
             f not in excludes) and (IsImageFile(f))]

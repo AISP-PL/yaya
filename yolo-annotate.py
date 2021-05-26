@@ -19,6 +19,8 @@ parser.add_argument('-i', '--input', type=str,
                     required=True, help='Input path')
 parser.add_argument('-c', '--config', type=str,
                     required=False, help='Config path')
+parser.add_argument('-sb', '--sortBy', type=int, nargs='?', const=0, default=0,
+                    required=False, help='Sort by method number (0 None, 1 Datetime, 2 Alphabet)')
 parser.add_argument('-oc', '--onlyClass', type=int,
                     required=False, help='Only specific class number')
 parser.add_argument('-on', '--onlyNewFiles', action='store_true',
@@ -72,7 +74,7 @@ else:
 annote.Init(detector.GetClassNames())
 
 # Create annoter
-annoter = Annoter(args.input, detector, args.noDetector,
+annoter = Annoter(args.input, detector, args.noDetector, args.sortBy,
                   isOnlyNewFiles, isOnlyErrorFiles, isOnlySpecificClass)
 
 # Start Gui
