@@ -22,7 +22,8 @@ class Annoter():
     # Sort methods
     NoSort = 0
     SortByDatetime = 1
-    SortByAlphabet = 2
+    SortByInvDatetime = 2
+    SortByAlphabet = 3
 
     def __init__(self, filepath, detector, noDetector=False,
                  sortMethod=NoSort,
@@ -50,6 +51,9 @@ class Annoter():
         if (sortMethod == self.SortByDatetime):
             filenames = sorted(filenames, key=lambda f: -
                                os.stat(self.dirpath+'/'+f).st_mtime)
+        elif (sortMethod == self.SortByInvDatetime):
+            filenames = sorted(filenames, key=lambda f: os.stat(
+                self.dirpath+'/'+f).st_mtime)
         # Sorting : by alphabet
         elif (sortMethod == self.SortByDatetime):
             filenames = sorted(filenames)
