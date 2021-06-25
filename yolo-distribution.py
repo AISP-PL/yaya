@@ -8,6 +8,7 @@ import engine.annote as annote
 from engine.annoter import *
 from helpers.files import *
 from helpers.textAnnotations import *
+from yolohelpers.distribution import Distribution
 
 # Arguments and config
 parser = argparse.ArgumentParser()
@@ -45,11 +46,5 @@ else:
     logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 logging.debug('Logging enabled!')
 
-# Create annoter
-annoter = Annoter(args.input,
-                  None,
-                  False,
-                  args.sortBy,
-                  isOnlyNewFiles,
-                  False,
-                  isOnlySpecificClass)
+d = Distribution(args.input)
+d.Save(args.input)
