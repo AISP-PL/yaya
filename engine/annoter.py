@@ -10,7 +10,7 @@ import engine.annote as annote
 import helpers.prefilters as prefilters
 import helpers.transformations as transformations
 import helpers.boxes as boxes
-from helpers.files import IsImageFile, DeleteFile, GetNotExistingSha1Filepath, FixPath
+from helpers.files import IsImageFile, DeleteFile, GetNotExistingSha1Filepath, FixPath, GetFilename
 from helpers.textAnnotations import ReadAnnotations, SaveAnnotations, IsExistsAnnotations,\
     DeleteAnnotations
 
@@ -27,7 +27,8 @@ class Annoter():
 
     def __init__(self, filepath, detector, noDetector=False,
                  sortMethod=NoSort,
-                 isOnlyNewFiles=False, isOnlyErrorFiles=False,
+                 isOnlyNewFiles=False,
+                 isOnlyErrorFiles=False,
                  isOnlySpecificClass=None):
         '''
         Constructor
@@ -58,6 +59,7 @@ class Annoter():
         elif (sortMethod == self.SortByDatetime):
             filenames = sorted(filenames)
 
+        # Filter images only
         self.filenames = [f for f in filenames if (
             f not in excludes) and (IsImageFile(f))]
 
@@ -110,6 +112,14 @@ class Annoter():
     def GetImageNumber(self):
         ''' Returns current image number.'''
         return self.offset
+
+    def GetImagesList(self):
+        ''' Returns images list'''
+        return self.filenames
+
+    def GetAnnotationsList(self):
+        ''' Returns annotations list'''
+        return [GetFilename(f)+'.txt' for f in self.filenames]
 
     def GetImagesCount(self):
         ''' Returns count of processed images number.'''
