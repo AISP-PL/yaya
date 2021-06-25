@@ -6,6 +6,10 @@ Created on 25 cze 2021
 import os
 import pandas as pd
 from helpers.files import FixPath, GetExtension
+import matplotlib.pyplot as plt
+import matplotlib
+
+matplotlib.use('Agg')
 
 
 class Distribution:
@@ -59,9 +63,22 @@ class Distribution:
 
     def Save(self, dirpath):
         ''' Save & plot distribution.'''
-
+        # Save .csv
         df = pd.DataFrame({'Labels': [key for key in self.labels.keys()],
                            'Counts': [key for key in self.labels.values()]})
         df = df.sort_values(by=['Labels'])
         df.to_csv(dirpath+'distribution.csv',
                   sep=';', decimal=',', index=False)
+
+        # Save .png
+        plt.bar(df['Labels'].values, df['Counts'].values, label='Labels')
+
+        # Description
+        plt.xlabel('Labels')
+        plt.ylabel('Counts [j]')
+        plt.legend()
+        plt.grid()
+        plt.xticks(rotation=45)
+
+        # Save figure
+        plt.savefig(dirpath+'distribution.png')
