@@ -4,12 +4,15 @@ Created on 25 cze 2021
 @author: spasz
 '''
 import os
+import logging
 import pandas as pd
 from helpers.files import FixPath, GetExtension
 import matplotlib.pyplot as plt
 import matplotlib
+from lib2to3.fixes.fix_paren import FixParen
 
 matplotlib.use('Agg')
+logging.getLogger('matplotlib.font_manager').disabled = True
 
 
 class Distribution:
@@ -43,6 +46,9 @@ class Distribution:
                         if (entry is not None):
                             self.__AddEntryToDistribution(entry)
 
+        logging.info('(Distribution) Processed distribution. Found:')
+        logging.info(self.labels)
+
     def __ReadYoloEntry(self, line):
         '''Read oneline yolo entry.'''
         words = line.split()
@@ -63,12 +69,15 @@ class Distribution:
 
     def Save(self, dirpath):
         ''' Save & plot distribution.'''
+        dirpath = FixPath(dirpath)
         # Save .csv
         df = pd.DataFrame({'Labels': [key for key in self.labels.keys()],
                            'Counts': [key for key in self.labels.values()]})
         df = df.sort_values(by=['Labels'])
         df.to_csv(dirpath+'distribution.csv',
                   sep=';', decimal=',', index=False)
+        logging.info('(Distribution) Created `%s`.',
+                     dirpath+'distribution.csv')
 
         # Save .png
         plt.bar(df['Labels'].values, df['Counts'].values, label='Labels')
@@ -82,3 +91,5 @@ class Distribution:
 
         # Save figure
         plt.savefig(dirpath+'distribution.png')
+        logging.info('(Distribution) Created `%s`.',
+                     dirpath+'distribution.png')
