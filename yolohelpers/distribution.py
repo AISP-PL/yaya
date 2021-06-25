@@ -78,7 +78,7 @@ class Distribution:
         plt.ylabel('Counts [j]')
         plt.legend()
         plt.grid()
-        plt.xticks(rotation=45)
+        plt.xticks(ticks=range(len(df['Labels'])), rotation=45)
 
         # Save figure
         plt.savefig(dirpath+'distribution.png')
