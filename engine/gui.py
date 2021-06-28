@@ -160,6 +160,11 @@ class Gui(object):
         return False
 
     def _mouse_cb(self, event, x, y, flags, parameters):
+        # Limit mouse click according to image size
+        height, width = self.image.shape[0:2]
+        x = max(0, min(x, width))
+        y = max(0, min(y, height))
+        # Store last position
         self.lastPos = [x, y]
 
         # MODE : None
