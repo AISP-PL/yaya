@@ -87,6 +87,7 @@ class Distribution:
         plt.ylabel('Counts [j]')
         plt.legend()
         plt.grid()
+        plt.yticks(ticks=range(0, max(df['Counts'].values), 1000))
         plt.xticks(ticks=range(len(df['Labels'])), rotation=45)
 
         # Save figure
