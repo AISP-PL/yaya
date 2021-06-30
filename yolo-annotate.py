@@ -12,6 +12,7 @@ from helpers.textAnnotations import *
 from ObjectDetectors.DetectorYOLOv4COCO import DetectorYOLOv4COCO
 from ObjectDetectors.DetectorYOLOv4custom import DetectorYOLOv4custom
 from ObjectDetectors.DetectorYOLOv4Gpr import DetectorYOLOv4Gpr
+from ObjectDetectors import IsCuda
 
 # Arguments and config
 parser = argparse.ArgumentParser()
@@ -70,13 +71,18 @@ else:
 logging.debug('Logging enabled!')
 
 # Create detector
-if (args.yoloCustom):
-    detector = DetectorYOLOv4custom()
-elif (args.yoloGpr):
-    detector = DetectorYOLOv4Gpr()
+detector = None
+if (IsCuda()):
+    if (args.yoloCustom):
+        detector = DetectorYOLOv4custom()
+    elif (args.yoloGpr):
+        detector = DetectorYOLOv4Gpr()
+    else:
+        detector = DetectorYOLOv4COCO()
+    annote.Init(detector.GetClassNames())
+# CUDA not installed
 else:
-    detector = DetectorYOLOv4COCO()
-annote.Init(detector.GetClassNames())
+    noDetector = True
 
 # Create annoter
 annoter = Annoter(args.input, detector, noDetector, args.sortBy,
