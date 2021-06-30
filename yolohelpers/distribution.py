@@ -9,7 +9,8 @@ import pandas as pd
 from helpers.files import FixPath, GetExtension
 import matplotlib.pyplot as plt
 import matplotlib
-from helpers.textAnnotations import ReadAnnotations, SaveAnnotations
+from helpers.textAnnotations import ReadAnnotations, SaveAnnotations,\
+    IsExistsImage, GetImageFilepath
 
 matplotlib.use('Agg')
 logging.getLogger('matplotlib.font_manager').disabled = True
@@ -20,7 +21,7 @@ class Distribution:
     classdocs
     '''
 
-    def __init__(self, dirpath):
+    def __init__(self, dirpath, checks):
         '''
         Constructor
         '''
@@ -28,6 +29,8 @@ class Distribution:
         self.dirpath = dirpath
         # Labels and values
         self.labels = {}
+        # Extra checks
+        self.checks = checks
 
         self.Process(dirpath)
 
@@ -49,6 +52,17 @@ class Distribution:
                 # Add annotations to distribution
                 for entry in annotations:
                     self.__AddEntryToDistribution(entry)
+
+                # Do extra checks
+                if (self.checks is True):
+                    if (IsExistsImage(dirpath+filepath) is True):
+                        path = GetImageFilepath(dirpath+filepath)
+                        # Check file size
+                        if (os.stat(path).st_size == 0):
+                            logging.error('Image %s size equal to zero!',path)
+                        
+                    else:
+                        logging.error('Not existing image for %s.',dirpath+filepath)
 
         logging.info('(Distribution) Processed distribution. Found:')
         logging.info(self.labels)

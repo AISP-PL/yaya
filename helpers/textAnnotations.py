@@ -12,12 +12,28 @@ def __getAnnotationFilepath(imagePath):
     ''' Returns annotation filepath.'''
     return GetFilename(imagePath) + '.txt'
 
+def GetImageFilepath(annotationPath):
+    ''' Returns image filepath.'''
+    path = GetFilename(annotationPath)
+    for suffix in [ '.png', '.jpeg', '.jpg', '.PNG', '.JPEG', '.JPG']:
+        if (os.path.isfile(path+suffix) and os.access(path+suffix, os.R_OK)):
+            return path+suffix
+
+    return None
 
 def IsExistsAnnotations(imagePath):
     ''' True if exists annotations file.'''
     path = __getAnnotationFilepath(imagePath)
     return os.path.isfile(path) and os.access(path, os.R_OK)
 
+def IsExistsImage(annotationPath):
+    ''' True if exists annotations file.'''
+    path = GetFilename(annotationPath)
+    for suffix in [ '.png', '.jpeg', '.jpg', '.PNG', '.JPEG', '.JPG']:
+        if (os.path.isfile(path+suffix) and os.access(path+suffix, os.R_OK)):
+            return True
+
+    return False
 
 def ReadAnnotations(imagePath):
     '''Read annotations from file.'''
