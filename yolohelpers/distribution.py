@@ -6,6 +6,7 @@ Created on 25 cze 2021
 import os
 import logging
 import pandas as pd
+import cv2
 from helpers.files import FixPath, GetExtension
 import matplotlib.pyplot as plt
 import matplotlib
@@ -60,6 +61,10 @@ class Distribution:
                         # Check file size
                         if (os.stat(path).st_size == 0):
                             logging.error('Image %s size equal to zero!',path)
+                        
+                        # Check if image is readable
+                        if (cv2.imread(path) is None):
+                            logging.error('Image %s not readable!',path)
                         
                     else:
                         logging.error('Not existing image for %s.',dirpath+filepath)
