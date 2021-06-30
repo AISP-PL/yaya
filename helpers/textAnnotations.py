@@ -34,7 +34,6 @@ def ReadAnnotations(imagePath):
 
     return annotations
 
-
 def DeleteAnnotations(imagePath):
     '''Delete annotations file.'''
     path = __getAnnotationFilepath(imagePath)
