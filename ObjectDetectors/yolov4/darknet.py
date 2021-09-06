@@ -24,6 +24,7 @@ Windows Python 2.7 version: https://github.com/AlexeyAB/darknet/blob/fc496d52bf2
 from ctypes import *
 import random
 import os
+from numba import njit
 
 
 class BOX(Structure):
@@ -73,6 +74,7 @@ def network_height(net):
     return lib.network_height(net)
 
 
+@njit(cache=True)
 def bbox2points(bbox):
     """
     From bounding box yolo format
@@ -130,35 +132,28 @@ def print_detections(detections, coordinates=False):
             print('{}: {}%'.format(label, confidence))
 
 
-def draw_boxes(detections, image, colors):
+def draw_boxes(image, detections, colors):
     import cv2
-    for label, confidence, bbox in detections:
-        left, top, right, bottom = bbox2points(bbox)
-        cv2.rectangle(image, (left, top), (right, bottom), colors[label], 1)
-        cv2.putText(image, '{} [{:.2f}]'.format(label, float(confidence)),
-                    (left, top - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                    colors[label], 2)
-    return image
-
-
-def draw_boxes(image, bboxes, labels, confidences, colors):
-    import cv2
-    for i, label in enumerate(labels):
-        bbox = bboxes[i]
-        confidence = confidences[i]
+    for i, detection in enumerate(detections):
+        label, confidence, bbox = detection
         left, top, right, bottom = bbox
         cv2.rectangle(image, (left, top), (right, bottom), colors[label], 1)
         cv2.putText(image, '{} [{:.2f}]'.format(label, float(confidence)),
+                    (left+2, top - 3), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                    (0, 0, 0), 2)
+        cv2.putText(image, '{} [{:.2f}]'.format(label, float(confidence)),
                     (left, top - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                    colors[label], 2)
+                    (255, 255, 255), 1)
     return image
 
 
 def decode_detection(detections):
+    ''' Decode detection - confidence to 0..100% and
+    bbox points to rectangle.'''
     decoded = []
     for label, confidence, bbox in detections:
-        confidence = (round(confidence * 100, 2))
-        decoded.append((str(label), confidence, bbox))
+        confidence = round(confidence * 100, 2)
+        decoded.append((str(label), confidence, bbox2points(bbox)))
     return decoded
 
 
@@ -176,25 +171,43 @@ def remove_negatives(detections, class_names, num):
     return predictions
 
 
+def postprocess_detections(detections, class_names, num):
+    """
+    Remove all classes with 0% confidence within the detection
+    and changed format
+    """
+    predictions = []
+    for det in detections[:num]:
+        for idx, name in enumerate(class_names):
+            # Add only confidence > 0%
+            if det.prob[idx] > 0:
+                confidence = round(det.prob[idx] * 100, 2)
+                bbox = (det.bbox.x, det.bbox.y, det.bbox.w, det.bbox.h)
+                predictions.append((str(name), confidence, bbox2points(bbox)))
+
+    return predictions
+
+
 def detect_image(network, class_names, image, thresh=.5, hier_thresh=.5, nms=.45):
     """
         Returns a list with highest confidence class and their bbox
     """
+    # Get detections
     pnum = pointer(c_int(0))
     predict_image(network, image)
     detections = get_network_boxes(network, image.w, image.h,
                                    thresh, hier_thresh, None, 0, pnum, 0)
     num = pnum[0]
+
+    # Filter NMS
     if nms:
         do_nms_sort(detections, num, len(class_names), nms)
-    predictions = remove_negatives(detections, class_names, num)
-    predictions = decode_detection(predictions)
+    # Postprocess : Filter 0% confidences and reformat
+    predictions = postprocess_detections(detections, class_names, num)
     free_detections(detections, num)
-    return sorted(predictions, key=lambda x: x[1])
+    return predictions
 
 
-#  lib = CDLL("/home/pjreddie/documents/darknet/libdarknet.so", RTLD_GLOBAL)
-#  lib = CDLL("libdarknet.so", RTLD_GLOBAL)
 hasGPU = True
 if os.name == 'nt':
     cwd = os.path.dirname(__file__)
@@ -216,7 +229,6 @@ if os.name == 'nt':
                 if int(os.environ['CUDA_VISIBLE_DEVICES']) < 0:
                     raise ValueError('ForceCPU')
             try:
-                global DARKNET_FORCE_CPU
                 if DARKNET_FORCE_CPU:
                     raise ValueError('ForceCPU')
             except NameError as cpu_error:

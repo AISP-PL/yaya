@@ -60,8 +60,11 @@ class Gui(object):
         cv2.createTrackbar('Images', self.winname,
                            0, self.annoter.GetImagesCount(), self._images_trackbar_cb)
         # Classes slider
-        cv2.createTrackbar('Classes', self.winname, 0,
-                           len(GetClasses())-1, self._classes_trackbar_cb)
+        cv2.createTrackbar('Classes',
+                           self.winname,
+                           0,
+                           max(1, len(GetClasses())-1),
+                           self._classes_trackbar_cb)
         # Mouse handling
         cv2.setMouseCallback(self.winname, self._mouse_cb)
 
