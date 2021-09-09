@@ -22,6 +22,10 @@ class DetectorYOLOv4():
 
     def Detect(self, image, confidence=0.5, nms_thresh=0.45, boxRelative=False):
         ''' Detect objects in given image'''
+        # Handle wrong input
+        if (image is None):
+            return []
+
         # Create image object we will use each time
         if (self.image is None):
             imheight, imwidth, channels = image.shape
