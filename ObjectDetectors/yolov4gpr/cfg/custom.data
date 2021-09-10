@@ -1,5 +1,0 @@
-classes = 8
-train  = data/train.txt
-valid  = data/test.txt
-names = ./ObjectDetectors/yolov4gpr/cfg/custom.names
-backup = backup/
