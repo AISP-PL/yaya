@@ -302,7 +302,7 @@ class Gui(object):
     def __drawStatusBar(self, im):
         ''' Draws status bar.'''
         h, w = im.shape[0:2]
-        barHeight = min(40, int(h*0.10))
+        barHeight = max(30, int(h*0.10))
         bar = np.full([barHeight, w, 3], 255, dtype=np.uint8)
 
         # Text values
