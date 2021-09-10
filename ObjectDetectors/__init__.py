@@ -1,4 +1,5 @@
 import os
+import logging
 from helpers.files import GetFiles, GetFilename, FixPath
 from ObjectDetectors.DetectorYOLOv4 import DetectorYOLOv4
 from lib2to3.fixes.fix_paren import FixParen
@@ -26,6 +27,8 @@ def ListDetectors():
             # If any file found
             if (len(files) != 0):
                 outpath = filepath+GetFilename(files[0])
+                logging.info('(Found detector) %u - %s.',
+                             len(detectors), outpath)
                 detectors.append(
                     (outpath+'.cfg', outpath+'.weights', outpath+'.data'))
 
