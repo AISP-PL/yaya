@@ -113,6 +113,8 @@ class Annote():
         if (highlight is True):
             thickness = 2
 
+        # Label text
+        label = self.className
         # Human orignal from file detection
         if (self.authorType == AnnoteAuthorType.byHuman):
             cv2.rectangle(image, (x1, y1), (x2, y2), (0, 0, 255), thickness)
@@ -121,14 +123,16 @@ class Annote():
             cv2.rectangle(image, (x1, y1), (x2, y2), (255, 0, 0), thickness)
             image = cv2.line(image, (x1, y1), (x2, y2), (255, 0, 0), thickness)
             image = cv2.line(image, (x1, y2), (x2, y1), (255, 0, 0), thickness)
+            label = '{} [{:.2f}]'.format(
+                self.className, float(self.confidence))
         # Created by hand
         elif (self.authorType == AnnoteAuthorType.byHand):
             cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), thickness)
         # Text
-        cv2.putText(image, '{} [{:.2f}]'.format(self.className, float(self.confidence)),
+        cv2.putText(image, label,
                     (x1-1, y2 - 6), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                     (0, 0, 0), 3)
-        cv2.putText(image, '{} [{:.2f}]'.format(self.className, float(self.confidence)),
+        cv2.putText(image, label,
                     (x1, y2 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                     (255, 255, 255), 1)
 
