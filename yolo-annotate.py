@@ -9,10 +9,7 @@ from engine.gui import *
 from engine.annoter import *
 from helpers.files import *
 from helpers.textAnnotations import *
-from ObjectDetectors.DetectorYOLOv4COCO import DetectorYOLOv4COCO
-from ObjectDetectors.DetectorYOLOv4custom import DetectorYOLOv4custom
-from ObjectDetectors.DetectorYOLOv4Gpr import DetectorYOLOv4Gpr
-from ObjectDetectors import IsCuda
+from ObjectDetectors import IsCuda, CreateDetector
 
 # Arguments and config
 parser = argparse.ArgumentParser()
@@ -30,10 +27,8 @@ parser.add_argument('-nd', '--noDetector', action='store_true',
                     required=False, help='Disable detector pre processing of files.')
 parser.add_argument('-oe', '--onlyFilesWithErrors', action='store_true',
                     required=False, help='Process only files with errors.')
-parser.add_argument('-yc', '--yoloCustom', action='store_true',
-                    required=False, help='Use custom YOLO.')
-parser.add_argument('-yg', '--yoloGpr', action='store_true',
-                    required=False, help='Use gpr YOLO.')
+parser.add_argument('-d', '--detector', type=int, nargs='?', const=0, default=0,
+                    required=False, help='Detector type - default 0')
 parser.add_argument('-v', '--verbose', action='store_true',
                     required=False, help='Show verbose finded and processed data')
 args = parser.parse_args()
@@ -73,12 +68,7 @@ logging.debug('Logging enabled!')
 # Create detector
 detector = None
 if (IsCuda()):
-    if (args.yoloCustom):
-        detector = DetectorYOLOv4custom()
-    elif (args.yoloGpr):
-        detector = DetectorYOLOv4Gpr()
-    else:
-        detector = DetectorYOLOv4COCO()
+    detector = CreateDetector(args.detector)
     annote.Init(detector.GetClassNames())
 # CUDA not installed
 else:

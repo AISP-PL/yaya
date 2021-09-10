@@ -7,7 +7,14 @@ Created on 10 wrz 2020
 from pathlib import Path
 import logging
 import os
+import fnmatch
 from helpers.hashing import GetRandomSha1
+
+
+def GetFiles(base, pattern):
+    '''Return list of files matching pattern in base folder.'''
+    return [n for n in fnmatch.filter(os.listdir(base), pattern) if
+            os.path.isfile(os.path.join(base, n))]
 
 
 def GetFilename(path):
