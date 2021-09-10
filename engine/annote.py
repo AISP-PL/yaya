@@ -126,10 +126,10 @@ class Annote():
             cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), thickness)
         # Text
         cv2.putText(image, '{} [{:.2f}]'.format(self.className, float(self.confidence)),
-                    (x1-1, y1 - 6), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                    (x1-1, y2 - 6), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                     (0, 0, 0), 3)
         cv2.putText(image, '{} [{:.2f}]'.format(self.className, float(self.confidence)),
-                    (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                    (x1, y2 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                     (255, 255, 255), 1)
 
     def IsInside(self, point):

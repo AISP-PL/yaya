@@ -15,10 +15,10 @@ def DrawDetections(image, detections, colors):
         left, top, right, bottom = bbox
         cv2.rectangle(image, (left, top), (right, bottom), colors[label], 1)
         cv2.putText(image, '{} [{:.2f}]'.format(label, float(confidence)),
-                    (left+2, top - 3), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                    (left+2, bottom - 3), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                     (0, 0, 0), 2)
         cv2.putText(image, '{} [{:.2f}]'.format(label, float(confidence)),
-                    (left, top - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                    (left, bottom - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                     (255, 255, 255), 1)
     return image
 
