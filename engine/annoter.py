@@ -28,6 +28,7 @@ class Annoter():
     def __init__(self, filepath, detector, noDetector=False,
                  sortMethod=NoSort,
                  isOnlyNewFiles=False,
+                 isOnlyOldFiles=False,
                  isOnlyErrorFiles=False,
                  isOnlySpecificClass=None):
         '''
@@ -67,6 +68,11 @@ class Annoter():
         if (isOnlyNewFiles == True):
             self.filenames = [f for f in self.filenames if (
                 IsExistsAnnotations(self.dirpath+f) == False)]
+
+        # if only new files - then filter all files without annotation.
+        elif (isOnlyOldFiles == True):
+            self.filenames = [f for f in self.filenames if (
+                IsExistsAnnotations(self.dirpath+f) == True)]
 
         # Use only files with errors
         if (isOnlyErrorFiles == True):
