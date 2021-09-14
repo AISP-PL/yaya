@@ -35,7 +35,7 @@ def GetResizedWidthToHeight(width, height, maxHeight=1080):
     return width, height, ratio
 
 
-def ResizeToWidth(image, maxWidth=1280):
+def ResizeToMaxWidth(image, maxWidth=1280):
     ''' Resize image with handling aspect ratio.'''
     height, width = image.shape[:2]
     width, height, ratio = GetResizedHeightToWidth(width, height, maxWidth)

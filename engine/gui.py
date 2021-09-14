@@ -5,7 +5,7 @@ Created on 16 lis 2020
 '''
 
 from engine.annote import GetClasses, GetClassName
-from helpers.images import ResizeToWidth, ResizeToHeight, PointRescale
+from helpers.images import ResizeToMaxWidth, ResizeToHeight, PointRescale
 import cv2
 import logging
 import helpers.boxes as boxes
