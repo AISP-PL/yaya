@@ -18,6 +18,7 @@ from engine.GuiClassKeycodes import GuiClassKeycodes
 # Enable tracign seg faults from opencv
 faulthandler.enable()
 
+
 class Gui(object):
 
     GuiModeNone = 0
@@ -118,8 +119,11 @@ class Gui(object):
             Keyboard callback.
             - Return True - exit from keyboard loop.
         '''
+        # Key not pressed
+        if (key is None) or (key == -1):
+            return False
         # Application exit
-        if (key == 27):
+        elif (key == 27):
             return True
         elif (key == ord('n')):
             self.annoter.Create()
