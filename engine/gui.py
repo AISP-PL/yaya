@@ -7,6 +7,7 @@ Created on 16 lis 2020
 from engine.annote import GetClasses, GetClassName
 from helpers.images import ResizeToMaxWidth, ResizeToHeight, PointRescale
 import cv2
+import faulthandler
 import logging
 import helpers.boxes as boxes
 import numpy as np
@@ -14,6 +15,8 @@ from Gui.drawing import DrawText
 from Gui.colors import GetRandomColor
 from engine.GuiClassKeycodes import GuiClassKeycodes
 
+# Enable tracign seg faults from opencv
+faulthandler.enable()
 
 class Gui(object):
 
