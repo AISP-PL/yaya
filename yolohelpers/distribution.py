@@ -22,7 +22,10 @@ class Distribution:
     classdocs
     '''
 
-    def __init__(self, dirpath, checks):
+    def __init__(self,
+                 dirpath,
+                 renameClass=None,
+                 checks=False):
         '''
         Constructor
         '''
@@ -32,6 +35,12 @@ class Distribution:
         self.labels = {}
         # Extra checks
         self.checks = checks
+        # Rename class x to y
+        self.rename = None
+        if (renameClass is not None):
+            parts = renameClass.split(':')
+            if (len(parts) == 2):
+                self.rename = {int(parts[0]): int(parts[1])}
 
         self.Process(dirpath)
 
@@ -45,7 +54,11 @@ class Distribution:
                 # Open annotations files
                 annotations = ReadAnnotations(dirpath+filepath)
                 # Correct all annotations
-                correctedAnnotations = [ self.__CorrectAnnotationRect(entry) for entry in annotations] 
+                correctedAnnotations = [self.__CorrectAnnotationRect(
+                    entry) for entry in annotations]
+                # Rename annotations if enabled
+                correctedAnnotations = [self.__RenameAnnotation(
+                    entry) for entry in annotations]
                 # If annotaions were wrong then correct file
                 if (annotations != correctedAnnotations):
                     annotations = correctedAnnotations
@@ -60,29 +73,39 @@ class Distribution:
                         path = GetImageFilepath(dirpath+filepath)
                         # Check file size
                         if (os.stat(path).st_size == 0):
-                            logging.error('Image %s size equal to zero!',path)
-                        
+                            logging.error('Image %s size equal to zero!', path)
+
                         # Check if image is readable
                         if (cv2.imread(path) is None):
-                            logging.error('Image %s not readable!',path)
-                        
+                            logging.error('Image %s not readable!', path)
+
                     else:
-                        logging.error('Not existing image for %s.',dirpath+filepath)
+                        logging.error(
+                            'Not existing image for %s.', dirpath+filepath)
 
         logging.info('(Distribution) Processed distribution. Found:')
         logging.info(self.labels)
-    
+
     def __CorrectAnnotationRect(self, entry):
-        ''' Corrects annotation rectangle if 
+        ''' Corrects annotation rectangle if
             is wrong.'''
         label, bbox = entry
-        bbox = [ *bbox ]
+        bbox = [*bbox]
         # All values should be inside range (0.0 .. 1.0)
-        for i,value in enumerate(bbox):
-            bbox[i] = max(0,min(value,1.0))
-            
-        return (label, (*bbox,) )
-            
+        for i, value in enumerate(bbox):
+            bbox[i] = max(0, min(value, 1.0))
+
+        return (label, (*bbox,))
+
+    def __RenameAnnotation(self, entry):
+        ''' Rename annotations label.'''
+        label, bbox = entry
+        # Check and rename
+        if (self.rename is not None):
+            if (label in self.rename.keys()):
+                label = self.rename[label]
+
+        return (label, bbox)
 
     def __AddEntryToDistribution(self, entry):
         '''Store entry.'''

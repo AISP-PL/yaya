@@ -14,6 +14,8 @@ from yolohelpers.distribution import Distribution
 parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--input', type=str,
                     required=True, help='Input path')
+parser.add_argument('-r', '--rename', type=str,
+                    required=False, help='Rename class number `class0` to `class1`. class0:class1')
 parser.add_argument('-cc', '--checks', action='store_true',
                     required=False, help='Extra checks of data')
 parser.add_argument('-sb', '--sortBy', type=int, nargs='?', const=0, default=0,
@@ -48,5 +50,7 @@ else:
     logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 logging.debug('Logging enabled!')
 
-d = Distribution(args.input, args.checks)
+d = Distribution(args.input,
+                 args.rename,
+                 args.checks)
 d.Save(args.input)
