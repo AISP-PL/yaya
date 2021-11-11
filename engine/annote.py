@@ -65,7 +65,7 @@ class Annote():
     classdocs
     '''
 
-    def __init__(self, box, classNumber=None, className=None, confidence=1.00, authorType=AnnoteAuthorType.byHuman):
+    def __init__(self, box, classNumber=None, className=None, confidence=100.0, authorType=AnnoteAuthorType.byHuman):
         '''
         Constructor
         '''

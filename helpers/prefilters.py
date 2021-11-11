@@ -9,29 +9,32 @@ from . import boxes
 from . import metrics
 
 
-def FilterIOUbyConfidence(annotations, maxIOU=0.75):
+def FilterIOUbyConfidence(annotations1,
+                          annotations2,
+                          maxIOU=0.75):
     '''
-        Filter annotation if has bigger IOU > maxIOU.
+        Filter annotation1 with annotations2
+        if has bigger IOU > maxIOU.
         Annotation with bigger confidence stays!
     '''
     # Create IOU results matrix
-    n = len(annotations)
-    results = np.zeros([n, n], dtype=np.float32)
-    for i, annote1 in enumerate(annotations):
-        for j, annote2 in enumerate(annotations):
+    results = np.zeros([len(annotations1), len(annotations2)],
+                       dtype=np.float32)
+    for i, annote1 in enumerate(annotations1):
+        for j, annote2 in enumerate(annotations2):
             if(annote1 != annote2):
                 results[i, j] = metrics.MetricIOU(
                     annote1.GetBox(), annote2.GetBox())
 
     # Parse each row of IOU matrix
     passed = []
-    for i, annote in enumerate(annotations):
+    for i, annote in enumerate(annotations1):
         isFiltered = False
-        for j in range(n):
+        for j in range(len(annotations2)):
             # If IOU >= maxIOU
             if (results[i, j] >= maxIOU):
                 # If confidence is smaller
-                if (annote.GetConfidence() <= annotations[j].GetConfidence()):
+                if (annote.GetConfidence() <= annotations2[j].GetConfidence()):
                     isFiltered = True
                     break
 

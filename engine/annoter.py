@@ -280,7 +280,7 @@ class Annoter():
     def __checkOfErrors(self):
         '''Check current image/annotations for errors.'''
         errors = set()
-        if (len(self.annotations) != len(prefilters.FilterIOUbyConfidence(self.annotations))):
+        if (len(self.annotations) != len(prefilters.FilterIOUbyConfidence(self.annotations, self.annotations))):
             logging.error('(Annoter) Annotations overrides each other!')
             errors.add('Override error!')
 
@@ -307,14 +307,21 @@ class Annoter():
 
             # if annotations file not exists or empty then detect.
             if (self.noDetector is False) and (processImage is True) and ((len(annotations) == 0) or (forceDetector is True)):
+                # Call detector
                 detAnnotes = self.detector.Detect(
                     im, confidence=0.3, boxRelative=True)
                 logging.debug(
                     '(Annoter) %u annotations to process.', len(detAnnotes))
+                # Create annotes
                 detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
-                detAnnotes = prefilters.FilterIOUbyConfidence(detAnnotes)
+                # Filter by IOU internal with same annotes
+                # and also with txt annotes.
+                detAnnotes = prefilters.FilterIOUbyConfidence(detAnnotes,
+                                                              detAnnotes + txtAnnotes)
                 logging.debug(
-                    '(Annoter) Detected annotations for %s!', self.dirpath+f)
+                    '(Annoter) Detected %u annotations for %s!',
+                    len(detAnnotes),
+                    self.dirpath+f)
                 annotations += detAnnotes
 
             self.annotations = annotations
