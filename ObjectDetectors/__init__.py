@@ -44,3 +44,18 @@ def CreateDetector(detectorID=0, gpuID=0):
         return DetectorYOLOv4(cfgPath, weightPath, metaPath)
 
     return None
+
+
+def GetDetectorLabels(detectorID=0):
+    ''' Creates detector.'''
+    detectors = ListDetectors()
+    # Create detector
+    if (detectorID < len(detectors)):
+        cfgPath, weightPath, metaPath = detectors[detectorID]
+        with open(GetFilename(metaPath)+'.names', 'r') as f:
+            data = f.readlines()
+            return [line.strip() for line in data]
+
+    return []
+
+    return None

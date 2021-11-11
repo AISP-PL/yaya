@@ -9,7 +9,7 @@ from engine.gui import *
 from engine.annoter import *
 from helpers.files import *
 from helpers.textAnnotations import *
-from ObjectDetectors import IsCuda, CreateDetector
+from ObjectDetectors import IsCuda, CreateDetector, GetDetectorLabels
 
 # Arguments and config
 parser = argparse.ArgumentParser()
@@ -74,12 +74,13 @@ logging.debug('Logging enabled!')
 
 # Create detector
 detector = None
-if (IsCuda()):
+if (IsCuda() and (noDetector is False)):
     detector = CreateDetector(args.detector)
     annote.Init(detector.GetClassNames())
 # CUDA not installed
 else:
     noDetector = True
+    annote.Init(GetDetectorLabels(args.detector))
 
 # Create annoter
 annoter = Annoter(args.input, detector, noDetector, args.sortBy,
