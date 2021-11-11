@@ -297,6 +297,8 @@ class Annoter():
                 self.image = im
 
             annotations = []
+            txtAnnotes = []
+            detAnnotes = []
             # If exists annotations file
             if (IsExistsAnnotations(self.dirpath+f)):
                 txtAnnotes = ReadAnnotations(self.dirpath+f)
