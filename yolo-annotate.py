@@ -88,6 +88,8 @@ annoter = Annoter(args.input, detector, noDetector, args.sortBy,
                   isOnlySpecificClass)
 
 # Start Gui
-g = Gui('YoloAnnotate')
-g.SetAnnoter(annoter)
-g.Start()
+gui = Gui('YoloAnnotate')
+gui.SetAnnoter(annoter)
+gui.Start()
+# Clean after all
+gui.Close()

@@ -47,6 +47,10 @@ class Gui(object):
         self.paintRadius = 36
         self.paintColor = GetRandomColor()
 
+    def Close(self):
+        ''' Destructor.'''
+        del self.annoter
+
     def SetAnnoter(self, annoter):
         ''' Set annoter .'''
         self.annoter = annoter

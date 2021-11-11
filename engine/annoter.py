@@ -34,7 +34,9 @@ class Annoter():
         '''
         Constructor
         '''
+        # Detector handle
         self.detector = detector
+        # Path
         self.dirpath = filepath
         # Use of detector
         self.noDetector = noDetector
@@ -43,6 +45,7 @@ class Annoter():
         self.annotations = None
         self.image = None
         self.offset = 0
+        # Set of all errors
         self.errors = set()
 
         # filter only images and not excludes
@@ -102,6 +105,31 @@ class Annoter():
         self.image = None
         self.offset = 0
         self.errors = set()
+
+    def __del__(self):
+        ''' Destructor.'''
+        # filter only images and not excludes
+        excludes = ['.', '..', './', '.directory']
+        filenames = os.listdir(self.dirpath)
+
+        # Filter images only
+        filenames = [f for f in filenames if (
+            f not in excludes) and (IsImageFile(f))]
+
+        # Get only images with annotations
+        filenamesAnnotated = [f for f in filenames if (
+            IsExistsAnnotations(self.dirpath+f) == True)]
+
+        # Save results
+        datasetPath = FixPath(self.dirpath)+'dataset.txt'
+        with open(datasetPath, 'w') as f:
+            for line in filenamesAnnotated:
+                f.write(line+'\n')
+
+            logging.info('(Annoter) Created list of %u/%u annotated images in `%s`.',
+                         len(filenamesAnnotated),
+                         len(filenames),
+                         datasetPath)
 
     def __getFilename(self):
         ''' Returns current filepath.'''
