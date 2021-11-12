@@ -83,7 +83,7 @@ else:
     annote.Init(GetDetectorLabels(args.detector))
 
 # Create annoter
-annoter = Annoter(args.input, detector, noDetector, args.sortBy,
+annoter = Annoter(FixPath(args.input), detector, noDetector, args.sortBy,
                   isOnlyNewFiles, isOnlyOldFiles, isOnlyErrorFiles,
                   isOnlySpecificClass)
 
