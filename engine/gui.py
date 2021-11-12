@@ -83,15 +83,19 @@ class Gui(object):
             key = 0
 
             # Resize image
-            self.image, self.imageScaleRatio = ResizeToHeight(
-                self.annoter.GetImage(), 900)
-            self.height, self.width = self.image.shape[0:2]
-            logging.debug('(Gui) Image %ux%u scaled to %ux%u.',
-                          self.annoter.GetImage(
-                          ).shape[1], self.annoter.GetImage().shape[0],
-                          self.image.shape[1], self.image.shape[0])
-            logging.debug('(Gui) Image scale ratio is %2.2f.',
-                          self.imageScaleRatio)
+            image = self.annoter.GetImage()
+            if (image is not None):
+                self.image, self.imageScaleRatio = ResizeToHeight(image, 900)
+                self.height, self.width = self.image.shape[0:2]
+                logging.debug('(Gui) Image %ux%u scaled to %ux%u.',
+                              self.annoter.GetImage(
+                              ).shape[1], self.annoter.GetImage().shape[0],
+                              self.image.shape[1], self.image.shape[0])
+                logging.debug('(Gui) Image scale ratio is %2.2f.',
+                              self.imageScaleRatio)
+            else:
+                logging.fatal('(Gui) Image is None for %s.',
+                              self.annoter.GetFilepath())
 
             # Update window
             self._update()

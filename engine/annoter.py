@@ -54,11 +54,11 @@ class Annoter():
 
         # Sorting : by datetime
         if (sortMethod == self.SortByDatetime):
-            filenames = sorted(filenames, key=lambda f: -
-                               os.stat(self.dirpath+'/'+f).st_mtime)
+            filenames = sorted(filenames,
+                               key=lambda f: -os.lstat(self.dirpath+f).st_mtime)
         elif (sortMethod == self.SortByInvDatetime):
-            filenames = sorted(filenames, key=lambda f: os.stat(
-                self.dirpath+'/'+f).st_mtime)
+            filenames = sorted(filenames,
+                               key=lambda f: os.lstat(self.dirpath+f).st_mtime)
         # Sorting : by alphabet
         elif (sortMethod == self.SortByDatetime):
             filenames = sorted(filenames)
@@ -131,9 +131,13 @@ class Annoter():
                          len(filenames),
                          datasetPath)
 
-    def __getFilename(self):
+    def GetFilename(self):
         ''' Returns current filepath.'''
         return self.filenames[self.offset]
+
+    def GetFilepath(self):
+        ''' Returns current filepath.'''
+        return self.dirpath+self.filenames[self.offset]
 
     def GetErrors(self):
         ''' Returns current errors list.'''
@@ -234,7 +238,7 @@ class Annoter():
 
     def Delete(self):
         ''' Deletes current image and annotations.'''
-        f = self.__getFilename()
+        f = self.GetFilename()
         if (f in self.filenames):
             DeleteAnnotations(self.dirpath+f)
             self.ClearAnnotations()
@@ -244,7 +248,7 @@ class Annoter():
 
     def Create(self):
         ''' Creates new filepath for new image file.'''
-        filename = self.__getFilename()
+        filename = self.GetFilename()
         filename, filepath = GetNotExistingSha1Filepath(
             filename, self.dirpath)
         cv2.imwrite('%s' % (filepath), self.image)
@@ -253,7 +257,7 @@ class Annoter():
 
     def Save(self):
         ''' Save current annotations.'''
-        filename = self.__getFilename()
+        filename = self.GetFilename()
 
         # If image was modified, then save it also
         if (self.__isClearImageSynchronized() == False):
@@ -289,7 +293,7 @@ class Annoter():
     def Process(self, processImage=True, forceDetector=False):
         ''' process file.'''
         if (self.offset >= 0) and (self.offset < len(self.filenames)):
-            f = self.__getFilename()
+            f = self.GetFilename()
 
             # Read image
             if (processImage is True):
