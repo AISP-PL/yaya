@@ -16,8 +16,10 @@ parser.add_argument('-i', '--input', type=str,
                     required=True, help='Input path')
 parser.add_argument('-r', '--rename', type=str,
                     required=False, help='Rename class number `class0` to `class1`. class0:class1')
-parser.add_argument('-cc', '--checks', action='store_true',
-                    required=False, help='Extra checks of data')
+parser.add_argument('-va', '--verifyAnnotations', action='store_true',
+                    required=False, help='Verify/Check of text annotations.')
+parser.add_argument('-vi', '--verifyImages', action='store_true',
+                    required=False, help='Verify/Check of images.')
 parser.add_argument('-sb', '--sortBy', type=int, nargs='?', const=0, default=0,
                     required=False, help='Sort by method number (0 None, 1 Datetime, 2 Alphabet)')
 parser.add_argument('-oc', '--onlyClass', type=int,
@@ -52,5 +54,7 @@ logging.debug('Logging enabled!')
 
 d = Distribution(args.input,
                  args.rename,
-                 args.checks)
+                 args.verifyAnnotations,
+                 args.verifyImages
+                 )
 d.Save(args.input)

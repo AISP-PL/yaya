@@ -10,11 +10,14 @@ import cv2
 from helpers.files import FixPath, GetExtension
 import matplotlib.pyplot as plt
 import matplotlib
+from PIL import Image
 from helpers.textAnnotations import ReadAnnotations, SaveAnnotations,\
     IsExistsImage, GetImageFilepath
 
 matplotlib.use('Agg')
 logging.getLogger('matplotlib.font_manager').disabled = True
+logging.getLogger('PIL.PngImagePlugin').disabled = True
+logging.getLogger('PIL.TiffImagePlugin').disabled = True
 
 
 class Distribution:
@@ -25,7 +28,9 @@ class Distribution:
     def __init__(self,
                  dirpath,
                  renameClass=None,
-                 checks=False):
+                 verifyAnnotations=False,
+                 verifyImages=False,
+                 ):
         '''
         Constructor
         '''
@@ -33,8 +38,10 @@ class Distribution:
         self.dirpath = dirpath
         # Labels and values
         self.labels = {}
-        # Extra checks
-        self.checks = checks
+        # Extra verify
+        self.verifyAnnotations = verifyAnnotations
+        # Extra verify
+        self.verifyImages = verifyImages
         # Rename class x to y
         self.rename = None
         if (renameClass is not None):
@@ -67,18 +74,28 @@ class Distribution:
                 for entry in annotations:
                     self.__AddEntryToDistribution(entry)
 
-                # Do extra checks
-                if (self.checks is True):
+                # TODO verify annotations
+
+                # Do extra verify of images
+                if (self.verifyImages is True):
+                    # If exists image
                     if (IsExistsImage(dirpath+filepath) is True):
                         path = GetImageFilepath(dirpath+filepath)
+
                         # Check file size
                         if (os.stat(path).st_size == 0):
                             logging.error('Image %s size equal to zero!', path)
-
-                        # Check if image is readable
-                        if (cv2.imread(path) is None):
-                            logging.error('Image %s not readable!', path)
-
+                        else:
+                            try:
+                                # Check if image is readable
+                                v_image = Image.open(path)
+                                try:
+                                    # Check internal content
+                                    v_image.verify()
+                                except:
+                                    logging.error('Image %s damaged!', path)
+                            except:
+                                logging.error('Image %s not openable!', path)
                     else:
                         logging.error(
                             'Not existing image for %s.', dirpath+filepath)
