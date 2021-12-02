@@ -25,11 +25,15 @@ class Annoter():
     SortByInvDatetime = 2
     SortByAlphabet = 3
 
-    def __init__(self, filepath, detector, noDetector=False,
+    def __init__(self,
+                 filepath,
+                 detector,
+                 noDetector=False,
                  sortMethod=NoSort,
                  isOnlyNewFiles=False,
                  isOnlyOldFiles=False,
                  isOnlyErrorFiles=False,
+                 isOnlyDetectedClass=None,
                  isOnlySpecificClass=None):
         '''
         Constructor
@@ -87,6 +91,22 @@ class Annoter():
                     filesWithErrors.append(filename)
 
             self.filenames = filesWithErrors
+
+        # Use only files with specific class detected
+        if (isOnlyDetectedClass is not None):
+            filesForClass = []
+            for offset, filename in enumerate(self.filenames):
+                self.offset = offset
+                self.Process(processImage=True, forceDetector=True)
+                # Check if detected class exists in annotations
+                if (len(self.annotations) != 0) and  \
+                        (len(self.GetAnnotationsForClass(isOnlyDetectedClass)) != 0):
+                    filesForClass.append(filename)
+                # Logging progress
+                logging.info('Progress : [%u/%u]\r',
+                             offset, len(self.filenames))
+
+            self.filenames = filesForClass
 
         # Use only files with specific class
         if (isOnlySpecificClass is not None):
@@ -290,7 +310,9 @@ class Annoter():
 
         return errors
 
-    def Process(self, processImage=True, forceDetector=False):
+    def Process(self,
+                processImage=True,
+                forceDetector=False):
         ''' process file.'''
         if (self.offset >= 0) and (self.offset < len(self.filenames)):
             f = self.GetFilename()

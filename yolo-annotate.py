@@ -21,6 +21,8 @@ parser.add_argument('-sb', '--sortBy', type=int, nargs='?', const=0, default=0,
                     required=False, help='Sort by method number (0 None, 1 Datetime, 2 Alphabet)')
 parser.add_argument('-oc', '--onlyClass', type=int,
                     required=False, help='Only specific class number')
+parser.add_argument('-odc', '--onlyDetectedClass', type=int,
+                    required=False, help='Only specific detected class number(Procces all detections)')
 parser.add_argument('-on', '--onlyNewFiles', action='store_true',
                     required=False, help='Process only files without detections file.')
 parser.add_argument('-oo', '--onlyOldFiles', action='store_true',
@@ -60,6 +62,11 @@ isOnlySpecificClass = None
 if (args.onlyClass is not None):
     isOnlySpecificClass = args.onlyClass
 
+# Check - files filter
+isOnlyDetectedClass = None
+if (args.onlyDetectedClass is not None):
+    isOnlyDetectedClass = args.onlyDetectedClass
+
 # Check - detector
 noDetector = False
 if (args.noDetector is not None):
@@ -83,8 +90,14 @@ else:
     annote.Init(GetDetectorLabels(args.detector))
 
 # Create annoter
-annoter = Annoter(FixPath(args.input), detector, noDetector, args.sortBy,
-                  isOnlyNewFiles, isOnlyOldFiles, isOnlyErrorFiles,
+annoter = Annoter(FixPath(args.input),
+                  detector,
+                  noDetector,
+                  args.sortBy,
+                  isOnlyNewFiles,
+                  isOnlyOldFiles,
+                  isOnlyErrorFiles,
+                  isOnlyDetectedClass,
                   isOnlySpecificClass)
 
 # Start Gui

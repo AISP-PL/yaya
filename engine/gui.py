@@ -158,7 +158,7 @@ class Gui(object):
             return True
         # x - delete image
         elif (key == ord('x')):
-            if (self.__popupYesNo(self.image, text='Delete?') == True):
+            if (self.image is None) or (self.__popupYesNo(self.image, text='Delete?') == True):
                 self.annoter.Delete()
                 self.annoter.Process()
                 return True
@@ -250,6 +250,10 @@ class Gui(object):
 
     def _update(self):
         ''' Update image view.'''
+        # Error, image is none
+        if (self.image is None):
+            return
+
         im = self.image.copy()
         h, w = im.shape[0:2]
 

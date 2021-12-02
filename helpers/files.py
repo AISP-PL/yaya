@@ -40,7 +40,7 @@ def IsImageFile(filepath):
 
 def DeleteFile(path):
     '''Delete annotations file.'''
-    if os.path.exists(path):
+    if os.path.exists(path) or os.path.islink(path) or os.path.isdir(path):
         os.remove(path)
         logging.info('Deleted %s.', path)
 
