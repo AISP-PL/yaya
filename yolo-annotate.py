@@ -17,6 +17,8 @@ parser.add_argument('-i', '--input', type=str,
                     required=True, help='Input path')
 parser.add_argument('-c', '--config', type=str,
                     required=False, help='Config path')
+parser.add_argument('-dc', '--drawConfidence', type=int, nargs='?', const=1, default=1,
+                    required=False, help='Draw annotations confidence (=1). No drawing (=0).')
 parser.add_argument('-sb', '--sortBy', type=int, nargs='?', const=0, default=0,
                     required=False, help='Sort by method number (0 None, 1 Datetime, 2 Alphabet)')
 parser.add_argument('-oc', '--onlyClass', type=int,
@@ -101,7 +103,7 @@ annoter = Annoter(FixPath(args.input),
                   isOnlySpecificClass)
 
 # Start Gui
-gui = Gui('YoloAnnotate')
+gui = Gui('YoloAnnotate', args)
 gui.SetAnnoter(annoter)
 gui.Start()
 # Clean after all

@@ -103,7 +103,7 @@ class Annote():
         ''' Returns confidence.'''
         return self.confidence
 
-    def Draw(self, image, highlight=False):
+    def Draw(self, image, highlight=False, isConfidence=True):
         ''' Draw self.'''
         h, w = image.shape[0:2]
         x1, y1, x2, y2 = boxes.ToAbsolute(self.box, w, h)
@@ -123,11 +123,15 @@ class Annote():
             cv2.rectangle(image, (x1, y1), (x2, y2), (255, 0, 0), thickness)
             image = cv2.line(image, (x1, y1), (x2, y2), (255, 0, 0), thickness)
             image = cv2.line(image, (x1, y2), (x2, y1), (255, 0, 0), thickness)
-            label = '{} [{:.2f}]'.format(
-                self.className, float(self.confidence))
+            label = '{}'.format(self.className)
+            # If confidence drawing enabled
+            if (isConfidence):
+                label += '[{:.2f}]'.format(float(self.confidence))
+
         # Created by hand
         elif (self.authorType == AnnoteAuthorType.byHand):
             cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), thickness)
+
         # Text
         cv2.putText(image, label,
                     (x1-1, y2 - 6), cv2.FONT_HERSHEY_SIMPLEX, 0.5,

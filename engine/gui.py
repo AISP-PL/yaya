@@ -25,7 +25,10 @@ class Gui(object):
     GuiModeRectangle = 1
     GuiModePaint = 2
 
-    def __init__(self, name):
+    def __init__(self, name, args):
+        ''' Constructor.'''
+        # Input arguments
+        self.args = args
         # Current image copy
         self.image = None
         # Image scale ration - each image is scaled
@@ -274,7 +277,7 @@ class Gui(object):
         annotations = self.annoter.GetAnnotations()
         if (annotations is not None) and (len(annotations)):
             for annotate in annotations:
-                annotate.Draw(im)
+                annotate.Draw(im, isConfidence=self.args.drawConfidence)
 
         # Get hovered annotation
         if (len(self.lastPos) == 2):
@@ -322,7 +325,10 @@ class Gui(object):
         ''' Draws status bar.'''
         h, w = im.shape[0:2]
         barHeight = max(30, int(h*0.10))
-        bar = np.full([barHeight, w, 3], 255, dtype=np.uint8)
+#         bar = np.full([barHeight, w, 3], 255, dtype=np.uint8)
+#         # Merge colors
+#         im[0:barHeight, 0:w] = cv2.addWeighted(
+#             im[0:barHeight, 0:w], 0.5, bar, 0.5, 0)
 
         # Text values
         textXmargin = 5
@@ -383,6 +389,4 @@ class Gui(object):
                     label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, textThickness)
                 textXmargin += label_width
 
-        im[0:barHeight, 0:w] = cv2.addWeighted(
-            im[0:barHeight, 0:w], 0.5, bar, 0.5, 0)
         return im
