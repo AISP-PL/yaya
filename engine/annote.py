@@ -48,6 +48,13 @@ def toTxtAnnote(annote):
     return (classNumber, box)
 
 
+def toYoloDetection(annote):
+    ''' Creates YOLOv4 detection from object Annote.'''
+    className = annote.GetClassName()
+    box = annote.GetBox()
+    return (className, 100, box)
+
+
 def fromTxtAnnote(txtAnnote):
     ''' Creates Annote from txt annote.'''
     classNumber, box = txtAnnote
