@@ -13,6 +13,7 @@ import matplotlib
 from PIL import Image
 from helpers.textAnnotations import ReadAnnotations, SaveAnnotations,\
     IsExistsImage, GetImageFilepath
+from Decorators.DecoratorDistributionShowcase import DecoratorDistributionShowcase
 
 matplotlib.use('Agg')
 logging.getLogger('matplotlib.font_manager').disabled = True
@@ -42,6 +43,11 @@ class Distribution:
         self.verifyAnnotations = verifyAnnotations
         # Extra verify
         self.verifyImages = verifyImages
+        # Statistics dataframe of all annotations
+        self.distribution = {
+            'Directory': [],
+            'File': [],
+        }
         # Rename class x to y
         self.rename = None
         if (renameClass is not None):
@@ -49,6 +55,7 @@ class Distribution:
             if (len(parts) == 2):
                 self.rename = {int(parts[0]): int(parts[1])}
 
+        # Call main processing function
         self.Process(dirpath)
 
     def Process(self, dirpath):
@@ -72,7 +79,7 @@ class Distribution:
                     SaveAnnotations(dirpath+filepath, annotations)
                 # Add annotations to distribution
                 for entry in annotations:
-                    self.__AddEntryToDistribution(entry)
+                    self.AddAnnotationToDistribution(dirpath, filepath, entry)
 
                 # TODO verify annotations
 
@@ -124,9 +131,29 @@ class Distribution:
 
         return (label, bbox)
 
-    def __AddEntryToDistribution(self, entry):
+    def AddAnnotationToDistribution(self, directory, filename, entry):
         '''Store entry.'''
+        # Extract label from annotation
         label = entry[0]
+
+        # Add label to distribution keys
+        if (label not in self.distribution.keys()):
+            self.distribution[label] = []
+            # Get current state distribution length
+            length = len(self.distribution['File'])
+            # Insert missing entries as None or zero
+            self.distribution[label] += length * [0]
+
+        # Store entry in distribution
+        self.distribution['Directory'].append(directory)
+        self.distribution['File'].append(filename)
+        self.distribution[label].append(1)
+        # Update rest of entries with zero value.
+        for key in self.distribution.keys():
+            if key not in ['File', 'Directory', label]:
+                self.distribution[key].append(0)
+
+        # Sum & count labels occurencies
         if (label in self.labels.keys()):
             self.labels[label] += 1
         else:
@@ -135,7 +162,17 @@ class Distribution:
     def Save(self, dirpath):
         ''' Save & plot distribution.'''
         dirpath = FixPath(dirpath)
-        # Save .csv
+
+        # Save distribution as .csv
+        path = dirpath+'filelist.csv'
+        df = pd.DataFrame.from_dict(self.distribution)
+        df.to_csv(path, sep=';', decimal=',', index=False)
+        logging.info('(Distribution) Created `%s`.', path)
+
+        # Decorate as distribution showcase
+        DecoratorDistributionShowcase().Decorate(df)
+
+        # Save distribution summary as .csv
         df = pd.DataFrame({'Labels': [key for key in self.labels.keys()],
                            'Counts': [key for key in self.labels.values()]})
         df = df.sort_values(by=['Labels'])
