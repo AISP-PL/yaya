@@ -16,33 +16,44 @@ class DecoratorDistributionShowcase:
     classdocs
     '''
 
-    def __init__(self, subdirectory=''):
+    def __init__(self,
+                 subdirectory=''):
         '''
         Constructor
         '''
-        # Number of selected items
-        self.categoryItems = 9
         # Subdirectory
         self.subdirectory = subdirectory
         # Base directory of dataframe files
         self.directory = ''
+
+        # Thresholds
+        # -------------------
+        # Number of selected items
+        self.categoryItems = 9
 
     def GetCategoriesAnnotations(self, df):
         ''' Select images for all categories.'''
         # Dictionary with selected images for categories
         results = {}
         # Iterate over all column category except file and directory
-        categories = set(df.columns) - {'Directory', 'File'}
+        categories = set(df.columns) - {'Directory', 'File', 'Width', 'Height'}
         for category in categories:
             # Select df part with this category values == 1
-            subdf = df.loc[df[category] == 1]
+            subdf = df.loc[(df[category] == 1) & (df['Width'] > df['Width'].median()) & (
+                df['Height'] > df['Height'].median())]
             # Select first nine items/annotations
             items = []
             for index, row in subdf.iterrows():
-                items.append(row['Directory']+row['File'])
-                # Finish when enough
-                if (len(items) == self.categoryItems):
-                    break
+                # Create annotation path
+                annotationPath = row['Directory'] + row['File']
+                # Get image path and read image
+                imgPath = GetImageFilepath(annotationPath)
+                if (os.path.exists(imgPath)):
+                    # Add item if validated.
+                    items.append(row['Directory']+row['File'])
+                    # Finish when enough
+                    if (len(items) == self.categoryItems):
+                        break
 
             # Store in results
             results[category] = items

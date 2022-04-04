@@ -14,6 +14,7 @@ from PIL import Image
 from helpers.textAnnotations import ReadAnnotations, SaveAnnotations,\
     IsExistsImage, GetImageFilepath
 from Decorators.DecoratorDistributionShowcase import DecoratorDistributionShowcase
+from helpers.boxes import GetWidth, GetHeight
 
 matplotlib.use('Agg')
 logging.getLogger('matplotlib.font_manager').disabled = True
@@ -47,6 +48,8 @@ class Distribution:
         self.distribution = {
             'Directory': [],
             'File': [],
+            'Width': [],
+            'Height': []
         }
         # Rename class x to y
         self.rename = None
@@ -134,7 +137,7 @@ class Distribution:
     def AddAnnotationToDistribution(self, directory, filename, entry):
         '''Store entry.'''
         # Extract label from annotation
-        label = entry[0]
+        label, bbox = entry
 
         # Add label to distribution keys
         if (label not in self.distribution.keys()):
@@ -147,10 +150,12 @@ class Distribution:
         # Store entry in distribution
         self.distribution['Directory'].append(directory)
         self.distribution['File'].append(filename)
+        self.distribution['Width'].append(GetWidth(bbox))
+        self.distribution['Height'].append(GetHeight(bbox))
         self.distribution[label].append(1)
         # Update rest of entries with zero value.
         for key in self.distribution.keys():
-            if key not in ['File', 'Directory', label]:
+            if key not in ['File', 'Directory', 'Width', 'Height', label]:
                 self.distribution[key].append(0)
 
         # Sum & count labels occurencies
