@@ -27,7 +27,7 @@ def GetClassName(number):
     if (number < len(classNames)):
         return classNames[number]
     else:
-        return 'Invalid'
+        return 'Invalid_C'+str(number)
 
 
 def GetClassNumber(name):
