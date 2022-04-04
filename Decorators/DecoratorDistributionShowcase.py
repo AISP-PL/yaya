@@ -7,6 +7,8 @@ import os
 import cv2
 from helpers.textAnnotations import ReadAnnotations, GetImageFilepath
 from helpers.boxes import ToAbsolute, ExtractBoxImagePart
+from helpers.MarkdownReport import MarkdownReport
+from helpers.files import CreateDirectory, FixPath
 
 
 class DecoratorDistributionShowcase:
@@ -14,12 +16,16 @@ class DecoratorDistributionShowcase:
     classdocs
     '''
 
-    def __init__(self):
+    def __init__(self, subdirectory=''):
         '''
         Constructor
         '''
         # Number of selected items
         self.categoryItems = 9
+        # Subdirectory
+        self.subdirectory = subdirectory
+        # Base directory of dataframe files
+        self.directory = ''
 
     def GetCategoriesAnnotations(self, df):
         ''' Select images for all categories.'''
@@ -79,12 +85,38 @@ class DecoratorDistributionShowcase:
 
         return results
 
+    def CreateShowcaseReport(self, categoriesImages):
+        ''' Convert to subimages of categories annotations'''
+        report = MarkdownReport(
+            filepath=self.directory+self.subdirectory+'Showcase.md')
+        report.Begin(title='Distribution showcase')
+
+        # For each category generate subimages of category items
+        for category in sorted(categoriesImages.keys()):
+            # Start section
+            report.AddSection(text='Category %s' % str(category))
+            # Add also each category image
+            for imagepath in categoriesImages[category]:
+                report.AddImage(imagepath)
+            # Finish section
+            report.AddLineSeparator()
+
+        report.End()
+
     def Decorate(self, df):
         ''' Decorate dataframe.'''
+        # Get base directory
+        self.directory = df['Directory'].iat[0]
+        # Create subdirectory if needed
+        if (len(self.subdirectory) != 0):
+            CreateDirectory(self.directory+self.subdirectory)
+            self.subdirectory = FixPath(self.subdirectory)
+
         # Select categories annotations
         categoriesAnnotations = self.GetCategoriesAnnotations(df)
         # Create subimages from annotations
         categoriesImages = self.GetCategoriesSubimages(categoriesAnnotations)
         # Create showcase .md
+        self.CreateShowcaseReport(categoriesImages)
 
         return None

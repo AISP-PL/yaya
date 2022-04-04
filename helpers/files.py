@@ -11,6 +11,11 @@ import fnmatch
 from helpers.hashing import GetRandomSha1
 
 
+def CreateDirectory(path):
+    ''' Creates directory.'''
+    return Path(path).mkdir(parents=True, exist_ok=True)
+
+
 def GetFiles(base, pattern):
     '''Return list of files matching pattern in base folder.'''
     return [n for n in fnmatch.filter(os.listdir(base), pattern) if
