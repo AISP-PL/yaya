@@ -261,3 +261,20 @@ def GetBoxesState(box1, box2):
             return BoxState.Occluding, BoxState.Occluded
         return BoxState.Occluded, BoxState.Occluding
     return BoxState.Isolated, BoxState.Isolated
+
+
+def ExtractBoxImagePart(im, box):
+    ''' Extract image part where it fits
+        box.'''
+    # Image height and width
+    height, width = im.shape[0:2]
+    # Unpack detection bbox
+    x1, y1, x2, y2 = box
+    # Image area assertions
+    x1 = min(width, max(0, x1))
+    x2 = min(width, max(0, x2))
+    y1 = min(height, max(0, y1))
+    y2 = min(height, max(0, y2))
+    # Extract area
+    area = im[y1:y2+1, x1:x2+1]
+    return area
