@@ -39,8 +39,8 @@ class DecoratorDistributionShowcase:
         categories = set(df.columns) - {'Directory', 'File', 'Width', 'Height'}
         for category in categories:
             # Select df part with this category values == 1
-            subdf = df.loc[(df[category] == 1) & (df['Width'] > df['Width'].median()) & (
-                df['Height'] > df['Height'].median())]
+            subdf = df.loc[(df[category] == 1) & (df['Width'] >= df['Width'].median()) & (
+                df['Height'] >= df['Height'].median())]
             # Select first nine items/annotations
             items = []
             for index, row in subdf.iterrows():
