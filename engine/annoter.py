@@ -10,7 +10,8 @@ import engine.annote as annote
 import helpers.prefilters as prefilters
 import helpers.transformations as transformations
 import helpers.boxes as boxes
-from helpers.files import IsImageFile, DeleteFile, GetNotExistingSha1Filepath, FixPath, GetFilename
+from helpers.files import IsImageFile, DeleteFile, GetNotExistingSha1Filepath, FixPath, GetFilename,\
+    GetExtension
 from helpers.textAnnotations import ReadAnnotations, SaveAnnotations, IsExistsAnnotations,\
     DeleteAnnotations
 
@@ -281,7 +282,16 @@ class Annoter():
 
         # If image was modified, then save it also
         if (self.__isClearImageSynchronized() == False):
-            cv2.imwrite('%s' % (FixPath(self.dirpath) + filename), self.image)
+            # Create temporary and original paths
+            imgpath = FixPath(self.dirpath) + filename
+            tmppath = FixPath(self.dirpath) + 'tmp' + GetExtension(filename)
+            # Save temporary image
+            result = cv2.imwrite(tmppath, self.image)
+            # If saved then atomic move image to original image
+            if (result is True):
+                os.system('mv -fv %s %s ' % (tmppath, imgpath))
+            else:
+                logging.error('(Annoter) Writing image %s failed!', imgpath)
 
         # Check other errors
         self.errors = self.__checkOfErrors()
