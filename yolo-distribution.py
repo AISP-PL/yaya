@@ -26,24 +26,12 @@ parser.add_argument('-oc', '--onlyClass', type=int,
                     required=False, help='Only specific class number')
 parser.add_argument('-on', '--onlyNewFiles', action='store_true',
                     required=False, help='Process only files without detections file.')
+parser.add_argument('-sh', '--showcase', action='store_true',
+                    required=False, help='Creates visual showcase report')
 parser.add_argument('-v', '--verbose', action='store_true',
                     required=False, help='Show verbose finded and processed data')
 args = parser.parse_args()
 
-# Check - input argument
-if (args.input is None):
-    print('Error! No arguments!')
-    sys.exit(-1)
-
-# Check - files filter
-isOnlyNewFiles = False
-if (args.onlyNewFiles):
-    isOnlyNewFiles = True
-
-# Check - files filter
-isOnlySpecificClass = None
-if (args.onlyClass is not None):
-    isOnlySpecificClass = args.onlyClass
 
 # Enabled logging
 if (__debug__ is True):
@@ -52,9 +40,5 @@ else:
     logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 logging.debug('Logging enabled!')
 
-d = Distribution(args.input,
-                 args.rename,
-                 args.verifyAnnotations,
-                 args.verifyImages
-                 )
+d = Distribution(args)
 d.Save(args.input)

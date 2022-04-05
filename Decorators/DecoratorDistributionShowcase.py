@@ -8,7 +8,7 @@ import cv2
 from helpers.textAnnotations import ReadAnnotations, GetImageFilepath
 from helpers.boxes import ToAbsolute, ExtractBoxImagePart
 from helpers.MarkdownReport import MarkdownReport
-from helpers.files import CreateDirectory, FixPath
+from helpers.files import CreateDirectory, FixPath, GetFilename
 
 
 class DecoratorDistributionShowcase:
@@ -69,7 +69,7 @@ class DecoratorDistributionShowcase:
             # List of created category images
             categoryImages = []
             # For each annotation path
-            for annotationPath in categoriesAnnotations[category]:
+            for i, annotationPath in enumerate(categoriesAnnotations[category]):
                 # Get image path and read image
                 imgPath = GetImageFilepath(annotationPath)
                 if (os.path.exists(imgPath)):
@@ -85,7 +85,8 @@ class DecoratorDistributionShowcase:
                             # Extract sub image
                             subimage = ExtractBoxImagePart(image, box)
                             # Save as extra image
-                            outpath = imgPath+'.part.png'
+                            outpath = self.directory+self.subdirectory + \
+                                str(category)+'_'+str(i)+'.png'
                             cv2.imwrite(outpath, subimage)
                             # Store
                             categoryImages.append(outpath)
@@ -120,8 +121,8 @@ class DecoratorDistributionShowcase:
         self.directory = df['Directory'].iat[0]
         # Create subdirectory if needed
         if (len(self.subdirectory) != 0):
-            CreateDirectory(self.directory+self.subdirectory)
             self.subdirectory = FixPath(self.subdirectory)
+            CreateDirectory(self.directory+self.subdirectory)
 
         # Select categories annotations
         categoriesAnnotations = self.GetCategoriesAnnotations(df)

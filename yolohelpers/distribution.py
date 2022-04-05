@@ -28,22 +28,21 @@ class Distribution:
     '''
 
     def __init__(self,
-                 dirpath,
-                 renameClass=None,
-                 verifyAnnotations=False,
-                 verifyImages=False,
+                 args
                  ):
         '''
         Constructor
         '''
         # Processing dirpath
-        self.dirpath = dirpath
+        self.dirpath = args.input
         # Labels and values
         self.labels = {}
         # Extra verify
-        self.verifyAnnotations = verifyAnnotations
+        self.verifyAnnotations = args.verifyAnnotations
         # Extra verify
-        self.verifyImages = verifyImages
+        self.verifyImages = args.verifyImages
+        # Is showcase enabled
+        self.isShowcase = args.showcase
         # Statistics dataframe of all annotations
         self.distribution = {
             'Directory': [],
@@ -53,13 +52,13 @@ class Distribution:
         }
         # Rename class x to y
         self.rename = None
-        if (renameClass is not None):
-            parts = renameClass.split(':')
+        if (args.rename is not None):
+            parts = args.rename.split(':')
             if (len(parts) == 2):
                 self.rename = {int(parts[0]): int(parts[1])}
 
         # Call main processing function
-        self.Process(dirpath)
+        self.Process(self.dirpath)
 
     def Process(self, dirpath):
         ''' Process files list.'''
@@ -175,7 +174,9 @@ class Distribution:
         logging.info('(Distribution) Created `%s`.', path)
 
         # Decorate as distribution showcase
-        DecoratorDistributionShowcase().Decorate(df)
+        if (self.isShowcase):
+            DecoratorDistributionShowcase(
+                subdirectory='Informations').Decorate(df)
 
         # Save distribution summary as .csv
         df = pd.DataFrame({'Labels': [key for key in self.labels.keys()],
