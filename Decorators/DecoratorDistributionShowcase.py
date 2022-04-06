@@ -98,6 +98,15 @@ class DecoratorDistributionShowcase:
 
         return results
 
+    def CreateCategoryHistogram(self, category, categoryDf):
+        ''' Creates histogram based on category df.'''
+        histPath = self.directory + self.subdirectory + 'Category%uHistogram.png' % category 
+        histogramDf = categoryDf[['Width', 'Height']]
+        hist = histogramDf.plot.hist(bins=16,stacked=False,figsize=(16,8))
+        fig = hist.get_figure()
+        fig.savefig(histPath)
+        return histPath
+
     def CreateShowcaseReport(self, categoriesImages, df):
         ''' Convert to subimages of categories annotations'''
         # Get global informations
@@ -124,6 +133,8 @@ class DecoratorDistributionShowcase:
             categoryImages = len(categoryDf['File'].unique())
             categoryMeanWidth = categoryDf['Width'].mean()
             categoryMeanHeight = categoryDf['Height'].mean()
+            # Create histogram of category data
+            histPath = self.CreateCategoryHistogram(category, categoryDf)
             # Append data to summary 
             categoriesSummary['Index'].append(category)
             categoriesSummary['Annotations'].append(100*categoryAnnotations/totalAnnotations)
@@ -136,6 +147,7 @@ class DecoratorDistributionShowcase:
             report.AddText('Category annotations %u/%u (%2.2f%%).\n' % (categoryAnnotations,totalAnnotations,categoryAnnotations*100/totalAnnotations))
             report.AddText('Category Bbox mean width %2.2f.\n' % (categoryMeanWidth))
             report.AddText('Category Bbox mean height %2.2f.\n' % (categoryMeanHeight))
+            report.AddImage(histPath)
             # Add also each category image
             for imagepath in categoriesImages[category]:
                 report.AddImage(imagepath)
