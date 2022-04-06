@@ -107,6 +107,16 @@ class DecoratorDistributionShowcase:
         fig.savefig(histPath)
         return histPath
 
+    def CreateSummaryHistogram(self, summaryDf):
+        ''' Creates histogram based on summary df.'''
+        histPath = self.directory + self.subdirectory + 'SummaryHistogram.png' 
+        histogramDf = summaryDf[['Annotations']]
+        hist = histogramDf.plot.bar(y='Annotations')
+        fig = hist.get_figure()
+        fig.savefig(histPath)
+        return histPath
+
+
     def CreateShowcaseReport(self, categoriesImages, df):
         ''' Convert to subimages of categories annotations'''
         # Get global informations
@@ -157,7 +167,9 @@ class DecoratorDistributionShowcase:
         # Add summary of categories
         categoriesSummaryDf = pd.DataFrame.from_dict(categoriesSummary)
         categoriesSummaryDf.set_index('Index', inplace=True)
+        summaryImgPath = self.CreateSummaryHistogram(categoriesSummaryDf)
         report.AddSection('Categories summary')
+        report.AddImage(summaryImgPath)
         report.AddDataframe(categoriesSummaryDf)
         report.End()
 
