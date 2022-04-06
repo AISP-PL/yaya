@@ -5,6 +5,7 @@ Created on 4 kwi 2022
 '''
 import os
 import cv2
+import pandas as pd
 from helpers.textAnnotations import ReadAnnotations, GetImageFilepath
 from helpers.boxes import ToAbsolute, ExtractBoxImagePart
 from helpers.MarkdownReport import MarkdownReport
@@ -97,22 +98,55 @@ class DecoratorDistributionShowcase:
 
         return results
 
-    def CreateShowcaseReport(self, categoriesImages):
+    def CreateShowcaseReport(self, categoriesImages, df):
         ''' Convert to subimages of categories annotations'''
+        # Get global informations
+        totalAnnotations = len(df)
+        totalImages = len(df['File'].unique())
+        categoriesSummary = {
+            'Index' : [],
+            'Annotations' : [],
+            'Images' : [],
+            'Bbox width' : [],
+            'Bbox height' : [],
+        }
+
+        # Start report
         report = MarkdownReport(
             filepath=self.directory+self.subdirectory+'Showcase.md')
         report.Begin(title='Distribution showcase')
 
         # For each category generate subimages of category items
         for category in sorted(categoriesImages.keys()):
+            # Calculate category parameters
+            categoryDf = df.loc[df[category] == 1]
+            categoryAnnotations = len(categoryDf)
+            categoryImages = len(categoryDf['File'].unique())
+            categoryMeanWidth = categoryDf['Width'].mean()
+            categoryMeanHeight = categoryDf['Height'].mean()
+            # Append data to summary 
+            categoriesSummary['Index'].append(category)
+            categoriesSummary['Annotations'].append(100*categoryAnnotations/totalAnnotations)
+            categoriesSummary['Images'].append(100*categoryImages/totalImages)
+            categoriesSummary['Bbox width'].append(categoryMeanWidth)
+            categoriesSummary['Bbox height'].append(categoryMeanHeight)
             # Start section
             report.AddSection(text='Category %s' % str(category))
+            report.AddText('Category images %u/%u (%2.2f%%).\n' % (categoryImages,totalImages,categoryImages*100/totalImages))
+            report.AddText('Category annotations %u/%u (%2.2f%%).\n' % (categoryAnnotations,totalAnnotations,categoryAnnotations*100/totalAnnotations))
+            report.AddText('Category Bbox mean width %2.2f.\n' % (categoryMeanWidth))
+            report.AddText('Category Bbox mean height %2.2f.\n' % (categoryMeanHeight))
             # Add also each category image
             for imagepath in categoriesImages[category]:
                 report.AddImage(imagepath)
             # Finish section
             report.AddLineSeparator()
 
+        # Add summary of categories
+        categoriesSummaryDf = pd.DataFrame.from_dict(categoriesSummary)
+        categoriesSummaryDf.set_index('Index', inplace=True)
+        report.AddSection('Categories summary')
+        report.AddDataframe(categoriesSummaryDf)
         report.End()
 
     def Decorate(self, df):
@@ -129,6 +163,6 @@ class DecoratorDistributionShowcase:
         # Create subimages from annotations
         categoriesImages = self.GetCategoriesSubimages(categoriesAnnotations)
         # Create showcase .md
-        self.CreateShowcaseReport(categoriesImages)
+        self.CreateShowcaseReport(categoriesImages, df)
 
         return None

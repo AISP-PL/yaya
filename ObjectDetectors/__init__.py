@@ -4,6 +4,12 @@ from helpers.files import GetFiles, GetFilename, FixPath
 from ObjectDetectors.DetectorYOLOv4 import DetectorYOLOv4
 from lib2to3.fixes.fix_paren import FixParen
 
+def IsDarknet():
+    ''' Checks if darknet exists cuda is installed and working.'''
+    if (os.system('ls /usr/local/lib/libdarknet.so') == 0):
+        return True
+
+    return False
 
 def IsCuda():
     ''' Checks if GPU cuda is installed and working.'''

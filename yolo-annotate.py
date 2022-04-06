@@ -9,7 +9,7 @@ from engine.gui import *
 from engine.annoter import *
 from helpers.files import *
 from helpers.textAnnotations import *
-from ObjectDetectors import IsCuda, CreateDetector, GetDetectorLabels
+from ObjectDetectors import IsCuda, IsDarknet, CreateDetector, GetDetectorLabels
 
 # Arguments and config
 parser = argparse.ArgumentParser()
@@ -83,7 +83,7 @@ logging.debug('Logging enabled!')
 
 # Create detector
 detector = None
-if (IsCuda() and (noDetector is False)):
+if (IsDarknet() and (noDetector is False)):
     detector = CreateDetector(args.detector)
     annote.Init(detector.GetClassNames())
 # CUDA not installed
