@@ -165,11 +165,16 @@ class Distribution:
 
     def Save(self, dirpath):
         ''' Save & plot distribution.'''
+        # Create distribution dataframe
+        df = pd.DataFrame.from_dict(self.distribution)
+        if (len(df) == 0):
+            logging.error('(Distributoin) Missing annotations!')
+            return
+        
         dirpath = FixPath(dirpath)
 
         # Save distribution as .csv
         path = dirpath+'filelist.csv'
-        df = pd.DataFrame.from_dict(self.distribution)
         df.to_csv(path, sep=';', decimal=',', index=False)
         logging.info('(Distribution) Created `%s`.', path)
 
