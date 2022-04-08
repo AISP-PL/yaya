@@ -16,6 +16,11 @@ def CreateDirectory(path):
     return Path(path).mkdir(parents=True, exist_ok=True)
 
 
+def GetFileLocation(path):
+    ''' Returns file location '''
+    return os.path.dirname(path)
+
+
 def GetFiles(base, pattern):
     '''Return list of files matching pattern in base folder.'''
     return [n for n in fnmatch.filter(os.listdir(base), pattern) if

@@ -92,7 +92,7 @@ else:
     annote.Init(GetDetectorLabels(args.detector))
 
 # Create annoter
-annoter = Annoter(FixPath(args.input),
+annoter = Annoter(FixPath(GetFileLocation(args.input)),
                   detector,
                   noDetector,
                   args.sortBy,

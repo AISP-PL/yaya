@@ -20,7 +20,7 @@ def GetGitBranchRev():
     branchName = subprocess.check_output(
         ['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode('utf-8')
     branchName = branchName.replace('/', '.').replace('\\', '.')
-    return subprocess.check_output(['git', 'describe', '--tags']).strip().decode('utf-8') + '-' + branchName
+    return subprocess.check_output(['git', 'describe', '--tags', '--always']).strip().decode('utf-8') + '-' + branchName
 
 
 def GetYearWeekRev():

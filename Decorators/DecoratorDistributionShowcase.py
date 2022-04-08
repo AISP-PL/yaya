@@ -100,22 +100,22 @@ class DecoratorDistributionShowcase:
 
     def CreateCategoryHistogram(self, category, categoryDf):
         ''' Creates histogram based on category df.'''
-        histPath = self.directory + self.subdirectory + 'Category%uHistogram.png' % category 
+        histPath = self.directory + self.subdirectory + \
+            'Category%uHistogram.png' % category
         histogramDf = categoryDf[['Width', 'Height']]
-        hist = histogramDf.plot.hist(bins=16,stacked=False,figsize=(16,8))
+        hist = histogramDf.plot.hist(bins=16, stacked=False, figsize=(16, 8))
         fig = hist.get_figure()
         fig.savefig(histPath)
         return histPath
 
     def CreateSummaryHistogram(self, summaryDf):
         ''' Creates histogram based on summary df.'''
-        histPath = self.directory + self.subdirectory + 'SummaryHistogram.png' 
+        histPath = self.directory + self.subdirectory + 'SummaryHistogram.png'
         histogramDf = summaryDf[['Annotations']]
         hist = histogramDf.plot.bar(y='Annotations')
         fig = hist.get_figure()
         fig.savefig(histPath)
         return histPath
-
 
     def CreateShowcaseReport(self, categoriesImages, df):
         ''' Convert to subimages of categories annotations'''
@@ -123,16 +123,18 @@ class DecoratorDistributionShowcase:
         totalAnnotations = len(df)
         totalImages = len(df['File'].unique())
         categoriesSummary = {
-            'Index' : [],
-            'Annotations' : [],
-            'Images' : [],
-            'Bbox width' : [],
-            'Bbox height' : [],
+            'Index': [],
+            'Annotations': [],
+            'Images': [],
+            'Bbox width': [],
+            'Bbox height': [],
         }
+        # Always remove previous Showcase
+        showcasePath = self.directory+self.subdirectory+'Showcase.md'
+        os.remove(showcasePath)
 
         # Start report
-        report = MarkdownReport(
-            filepath=self.directory+self.subdirectory+'Showcase.md')
+        report = MarkdownReport(filepath=showcasePath)
         report.Begin(title='Distribution showcase')
 
         # For each category generate subimages of category items
@@ -145,18 +147,23 @@ class DecoratorDistributionShowcase:
             categoryMeanHeight = categoryDf['Height'].mean()
             # Create histogram of category data
             histPath = self.CreateCategoryHistogram(category, categoryDf)
-            # Append data to summary 
+            # Append data to summary
             categoriesSummary['Index'].append(category)
-            categoriesSummary['Annotations'].append(100*categoryAnnotations/totalAnnotations)
+            categoriesSummary['Annotations'].append(
+                100*categoryAnnotations/totalAnnotations)
             categoriesSummary['Images'].append(100*categoryImages/totalImages)
             categoriesSummary['Bbox width'].append(categoryMeanWidth)
             categoriesSummary['Bbox height'].append(categoryMeanHeight)
             # Start section
             report.AddSection(text='Category %s' % str(category))
-            report.AddText('Category images %u/%u (%2.2f%%).\n' % (categoryImages,totalImages,categoryImages*100/totalImages))
-            report.AddText('Category annotations %u/%u (%2.2f%%).\n' % (categoryAnnotations,totalAnnotations,categoryAnnotations*100/totalAnnotations))
-            report.AddText('Category Bbox mean width %2.2f.\n' % (categoryMeanWidth))
-            report.AddText('Category Bbox mean height %2.2f.\n' % (categoryMeanHeight))
+            report.AddText('Category images %u/%u (%2.2f%%).\n' %
+                           (categoryImages, totalImages, categoryImages*100/totalImages))
+            report.AddText('Category annotations %u/%u (%2.2f%%).\n' % (
+                categoryAnnotations, totalAnnotations, categoryAnnotations*100/totalAnnotations))
+            report.AddText('Category Bbox mean width %2.2f.\n' %
+                           (categoryMeanWidth))
+            report.AddText('Category Bbox mean height %2.2f.\n' %
+                           (categoryMeanHeight))
             report.AddImage(histPath)
             # Add also each category image
             for imagepath in categoriesImages[category]:

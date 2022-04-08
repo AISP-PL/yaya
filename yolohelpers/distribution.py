@@ -7,7 +7,7 @@ import os
 import logging
 import pandas as pd
 import cv2
-from helpers.files import FixPath, GetExtension
+from helpers.files import FixPath, GetExtension, GetFileLocation
 import matplotlib.pyplot as plt
 import matplotlib
 from PIL import Image
@@ -34,7 +34,7 @@ class Distribution:
         Constructor
         '''
         # Processing dirpath
-        self.dirpath = args.input
+        self.dirpath = FixPath(GetFileLocation(args.input))
         # Labels and values
         self.labels = {}
         # Extra verify
@@ -170,7 +170,7 @@ class Distribution:
         if (len(df) == 0):
             logging.error('(Distributoin) Missing annotations!')
             return
-        
+
         dirpath = FixPath(dirpath)
 
         # Save distribution as .csv
