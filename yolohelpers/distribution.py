@@ -6,6 +6,7 @@ Created on 25 cze 2021
 import os
 import logging
 import pandas as pd
+from pathlib import Path
 import cv2
 from helpers.files import FixPath, GetExtension, GetFileLocation
 import matplotlib.pyplot as plt
@@ -34,7 +35,7 @@ class Distribution:
         Constructor
         '''
         # Processing dirpath
-        self.dirpath = FixPath(GetFileLocation(args.input))
+        self.dirpath = str(Path(args.input).absolute())
         # Labels and values
         self.labels = {}
         # Extra verify
