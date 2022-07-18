@@ -11,7 +11,7 @@ from helpers.QtDrawing import QDrawPolygon, QDrawPolyline, QDrawJoints,\
     QDrawCrosshair, QDrawText, QDrawArrow, CvBGRColorToQColor, QDrawRectangle,\
     QDrawDistances, CreateRectangle, QPointToTuple, QPointListToTupleList,\
     CvImage2QtImage, CvRGBColorToQColor
-from helpers.boxes import PointToRelative, PointToAbsolute
+from helpers.boxes import PointToRelative, PointToAbsolute, PointsToRect
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QPainter, QBrush, QFont, QPixmap
 from PyQt5.Qt import QPoint, QTimer
@@ -214,7 +214,7 @@ class ViewerEditorImage(QWidget):
 
         # Mode Add Annotation
         if (self.editorMode == self.ModeEditorAnnotation):
-            box = (*trajectory[0], *trajectory[1])
+            box = PointsToRect(trajectory[0], trajectory[1])
             self.annoter.AddAnnotation(box,
                                        self.classNumber)
         # Mode Remove Annotation

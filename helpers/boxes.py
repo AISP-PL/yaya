@@ -74,6 +74,13 @@ def Rect2Bbox(rect):
     return x, y, w, h
 
 
+def PointsToRect(p1, p2):
+    ''' Create proper rect from 2 points.'''
+    x1, y1 = p1
+    x2, y2 = p2
+    return min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2)
+
+
 def GetCenter(box):
     ''' Get center of tracker pos'''
     x, y, x2, y2 = box
