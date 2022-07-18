@@ -10,6 +10,7 @@ from engine.annoter import *
 from helpers.files import *
 from helpers.textAnnotations import *
 from ObjectDetectors import IsCuda, IsDarknet, CreateDetector, GetDetectorLabels
+from MainWindow import MainWindowGui
 
 # Arguments and config
 parser = argparse.ArgumentParser()
@@ -102,9 +103,15 @@ annoter = Annoter(FixPath(GetFileLocation(args.input)),
                   isOnlyDetectedClass,
                   isOnlySpecificClass)
 
-# Start Gui
-gui = Gui('YoloAnnotate', args)
-gui.SetAnnoter(annoter)
-gui.Start()
-# Clean after all
-gui.Close()
+# Start QtGui
+gui = MainWindowGui(args, detector, annoter)
+sys.exit(gui.Run())
+
+
+# Old OpenCV GUI
+# # Start Gui
+# gui = Gui('YoloAnnotate', args)
+# gui.SetAnnoter(annoter)
+# gui.Start()
+# # Clean after all
+# gui.Close()
