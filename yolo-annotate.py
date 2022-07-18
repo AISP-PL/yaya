@@ -104,7 +104,7 @@ annoter = Annoter(FixPath(GetFileLocation(args.input)),
                   isOnlySpecificClass)
 
 # Start QtGui
-gui = MainWindowGui(args)
+gui = MainWindowGui(args, detector, annoter)
 sys.exit(gui.Run())
 
 

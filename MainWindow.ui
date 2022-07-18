@@ -65,7 +65,7 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>320</width>
+            <width>800</width>
             <height>240</height>
            </size>
           </property>
@@ -101,14 +101,25 @@
          </widget>
         </item>
         <item>
-         <widget class="QSlider" name="fileNumberSlider">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="tickPosition">
-           <enum>QSlider::TicksAbove</enum>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="sliderLayout">
+          <item>
+           <widget class="QLabel" name="fileNumberSliderLabel">
+            <property name="text">
+             <string>Slider label</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="fileNumberSlider">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="tickPosition">
+             <enum>QSlider::TicksAbove</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="QTableWidget" name="fileSelectorTableWidget"/>
@@ -121,7 +132,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QListView" name="labelsListView"/>
+         <widget class="QListWidget" name="labelsListWidget"/>
         </item>
         <item>
          <spacer name="verticalSpacer">

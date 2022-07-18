@@ -10,8 +10,10 @@ import logging
 import subprocess
 import cv2
 from Ui_MainWindow import Ui_MainWindow
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTableWidgetItem
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTableWidgetItem,\
+    QListWidgetItem
 from PyQt5 import QtCore, QtGui
+from engine.annote import GetClasses
 
 
 class MainWindowGui(Ui_MainWindow):
@@ -19,7 +21,11 @@ class MainWindowGui(Ui_MainWindow):
     classdocs
     '''
 
-    def __init__(self, args):
+    def __init__(self,
+                 args,
+                 detector,
+                 annoter,
+                 ):
         '''
         Constructor
         '''
@@ -27,15 +33,10 @@ class MainWindowGui(Ui_MainWindow):
         self.info = {'Callbacks': True}
         # Store initial arguments
         self.args = args
-        # Input filepath
-        self.filepath = None
-        # File feeder with all readed location data
-        self.feeder = None
-        # current location path
-        self.location = None
-        # Default disabled detector classes
-        self.defaultDisabledClasses = [
-            'i.konne', 'p.pieszy', 'z.pociagi', 'r.rejestracja']
+        # Store detector handle
+        self.detector = detector
+        # Store annoter handle
+        self.annoter = annoter
 
         # Create
         # - QtApplication
@@ -49,15 +50,35 @@ class MainWindowGui(Ui_MainWindow):
 
         # Setup all
         self.SetupDefault()
+        self.Setup()
 
-#         # Do actions based on args
-#         if (args.input):
-#             self.__OpenLocation(args.input)
+        # Open File
+        self.OpenFile()
 
     def SetupDefault(self):
         ''' Sets default for UI.'''
+        for className in GetClasses():
+            self.ui.labelsListWidget.addItem(
+                QListWidgetItem(className, self.ui.labelsListWidget))
 
-    def OpenFile(self, fileEntry):
+    def Setup(self):
+        ''' Sets default for UI.'''
+        filename = self.annoter.GetFilename()
+        imageNumber = self.annoter.GetImageNumber()
+        imageCount = self.annoter.GetImagesCount()
+
+        # Setup horizontal file slider
+        self.ui.fileNumberSliderLabel.setText(
+            '%u/%u' % (imageNumber, imageCount))
+        self.ui.fileNumberSlider.setMaximum(imageCount)
+        self.ui.fileNumberSlider.setValue(imageNumber)
+        self.ui.fileNumberSlider.valueChanged.connect(
+            self.CallbackFileNumberSlider)
+
+        # Setup filename
+        self.ui.fileLabel.setText('%s' % (filename))
+
+    def OpenFile(self):
         ''' Sets default for UI.'''
 
     def SaveFile(self, fileEntry):
@@ -67,3 +88,8 @@ class MainWindowGui(Ui_MainWindow):
         '''  Run gui window thread and return exit code.'''
         self.window.show()
         return self.App.exec_()
+
+    def CallbackFileNumberSlider(self):
+        ''' Callback for file number slider.'''
+        self.ui.fileNumberSliderLabel.setText('%u/%u' % (self.ui.fileNumberSlider.value(),
+                                                         self.ui.fileNumberSlider.maximum()))

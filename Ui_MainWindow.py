@@ -62,7 +62,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.viewerEditor.sizePolicy().hasHeightForWidth())
         self.viewerEditor.setSizePolicy(sizePolicy)
-        self.viewerEditor.setMinimumSize(QtCore.QSize(320, 240))
+        self.viewerEditor.setMinimumSize(QtCore.QSize(800, 240))
         self.viewerEditor.setObjectName('viewerEditor')
         self.verticalLayoutLeft.addWidget(self.viewerEditor)
         self.layoutWidget = QtWidgets.QWidget(self.splitter_4)
@@ -84,11 +84,17 @@ class Ui_MainWindow(object):
         self.fileLabel.setMinimumSize(QtCore.QSize(300, 32))
         self.fileLabel.setObjectName('fileLabel')
         self.verticalLayoutRight.addWidget(self.fileLabel)
+        self.sliderLayout = QtWidgets.QHBoxLayout()
+        self.sliderLayout.setObjectName('sliderLayout')
+        self.fileNumberSliderLabel = QtWidgets.QLabel(self.layoutWidget)
+        self.fileNumberSliderLabel.setObjectName('fileNumberSliderLabel')
+        self.sliderLayout.addWidget(self.fileNumberSliderLabel)
         self.fileNumberSlider = QtWidgets.QSlider(self.layoutWidget)
         self.fileNumberSlider.setOrientation(QtCore.Qt.Horizontal)
         self.fileNumberSlider.setTickPosition(QtWidgets.QSlider.TicksAbove)
         self.fileNumberSlider.setObjectName('fileNumberSlider')
-        self.verticalLayoutRight.addWidget(self.fileNumberSlider)
+        self.sliderLayout.addWidget(self.fileNumberSlider)
+        self.verticalLayoutRight.addLayout(self.sliderLayout)
         self.fileSelectorTableWidget = QtWidgets.QTableWidget(
             self.layoutWidget)
         self.fileSelectorTableWidget.setObjectName('fileSelectorTableWidget')
@@ -98,9 +104,9 @@ class Ui_MainWindow(object):
         self.detectorClassesLabel = QtWidgets.QLabel(self.layoutWidget)
         self.detectorClassesLabel.setObjectName('detectorClassesLabel')
         self.verticalLayoutRight.addWidget(self.detectorClassesLabel)
-        self.labelsListView = QtWidgets.QListView(self.layoutWidget)
-        self.labelsListView.setObjectName('labelsListView')
-        self.verticalLayoutRight.addWidget(self.labelsListView)
+        self.labelsListWidget = QtWidgets.QListWidget(self.layoutWidget)
+        self.labelsListWidget.setObjectName('labelsListWidget')
+        self.verticalLayoutRight.addWidget(self.labelsListWidget)
         spacerItem = QtWidgets.QSpacerItem(
             20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayoutRight.addItem(spacerItem)
@@ -155,6 +161,8 @@ class Ui_MainWindow(object):
         self.isSavedCheckBox.setText(_translate('MainWindow', 'Saved'))
         self.fileLabel.setText(_translate(
             'MainWindow', 'Filename (number/all)'))
+        self.fileNumberSliderLabel.setText(
+            _translate('MainWindow', 'Slider label'))
         self.detectorClassesLabel.setText(_translate(
             'MainWindow', 'Selected detector classes :'))
         self.menuMenu.setTitle(_translate('MainWindow', 'Menu'))
