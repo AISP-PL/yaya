@@ -67,6 +67,7 @@ class MainWindowGui(Ui_MainWindow):
         for className in GetClasses():
             self.ui.labelsListWidget.addItem(
                 QListWidgetItem(className, self.ui.labelsListWidget))
+        self.ui.labelsListWidget.setCurrentRow(0)
 
         # File number slider - create
         self.ui.fileNumberSlider.setMaximum(imageCount)
@@ -81,6 +82,8 @@ class MainWindowGui(Ui_MainWindow):
             self.CallbackClearAnnotationsButton)
         self.ui.DeleteImageAnnotationsButton.clicked.connect(
             self.CallbackDeleteImageAnnotationsButton)
+        self.ui.hideAnnotationsButton.clicked.connect(
+            self.CallbackHideAnnotationsButton)
 
     def Setup(self):
         ''' Setup again UI.'''
@@ -128,6 +131,11 @@ class MainWindowGui(Ui_MainWindow):
         self.annoter.SetImageNumber(fileNumber)
         # Setup UI again
         self.Setup()
+
+    def CallbackHideAnnotationsButton(self):
+        '''Callback'''
+        self.ui.viewerEditor.SetOption('isAnnotationsHidden',
+                                       not self.ui.viewerEditor.GetOption('isAnnotationsHidden'))
 
     def CallbackSaveFileAnnotationsButton(self):
         '''Callback'''

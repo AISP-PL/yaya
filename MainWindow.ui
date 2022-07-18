@@ -188,12 +188,22 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_2">
+           <widget class="QPushButton" name="removeAnnotationsButton">
             <property name="text">
              <string>Remove annotation</string>
             </property>
             <property name="shortcut">
              <string>R</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="hideAnnotationsButton">
+            <property name="text">
+             <string>Hide Annotations</string>
+            </property>
+            <property name="shortcut">
+             <string>H</string>
             </property>
            </widget>
           </item>
@@ -220,7 +230,17 @@
          </widget>
         </item>
         <item>
-         <widget class="QListWidget" name="labelsListWidget"/>
+         <widget class="QListWidget" name="labelsListWidget">
+          <property name="defaultDropAction">
+           <enum>Qt::IgnoreAction</enum>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SingleSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectItems</enum>
+          </property>
+         </widget>
         </item>
         <item>
          <spacer name="verticalSpacer">

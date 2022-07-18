@@ -130,9 +130,12 @@ class Ui_MainWindow(object):
         self.pushButton = QtWidgets.QPushButton(self.layoutWidget)
         self.pushButton.setObjectName('pushButton')
         self.horizontalLayout_3.addWidget(self.pushButton)
-        self.pushButton_2 = QtWidgets.QPushButton(self.layoutWidget)
-        self.pushButton_2.setObjectName('pushButton_2')
-        self.horizontalLayout_3.addWidget(self.pushButton_2)
+        self.removeAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.removeAnnotationsButton.setObjectName('removeAnnotationsButton')
+        self.horizontalLayout_3.addWidget(self.removeAnnotationsButton)
+        self.hideAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.hideAnnotationsButton.setObjectName('hideAnnotationsButton')
+        self.horizontalLayout_3.addWidget(self.hideAnnotationsButton)
         spacerItem1 = QtWidgets.QSpacerItem(
             40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem1)
@@ -141,6 +144,11 @@ class Ui_MainWindow(object):
         self.detectorClassesLabel.setObjectName('detectorClassesLabel')
         self.verticalLayoutRight.addWidget(self.detectorClassesLabel)
         self.labelsListWidget = QtWidgets.QListWidget(self.layoutWidget)
+        self.labelsListWidget.setDefaultDropAction(QtCore.Qt.IgnoreAction)
+        self.labelsListWidget.setSelectionMode(
+            QtWidgets.QAbstractItemView.SingleSelection)
+        self.labelsListWidget.setSelectionBehavior(
+            QtWidgets.QAbstractItemView.SelectItems)
         self.labelsListWidget.setObjectName('labelsListWidget')
         self.verticalLayoutRight.addWidget(self.labelsListWidget)
         spacerItem2 = QtWidgets.QSpacerItem(
@@ -211,8 +219,12 @@ class Ui_MainWindow(object):
         self.DeleteImageAnnotationsButton.setShortcut(
             _translate('MainWindow', 'X'))
         self.pushButton.setText(_translate('MainWindow', 'Add annotation'))
-        self.pushButton_2.setText(_translate(
-            'MainWindow', 'Remove annotation'))
+        self.removeAnnotationsButton.setText(
+            _translate('MainWindow', 'Remove annotation'))
+        self.removeAnnotationsButton.setShortcut(_translate('MainWindow', 'R'))
+        self.hideAnnotationsButton.setText(
+            _translate('MainWindow', 'Hide Annotations'))
+        self.hideAnnotationsButton.setShortcut(_translate('MainWindow', 'H'))
         self.detectorClassesLabel.setText(_translate(
             'MainWindow', 'Selected detector classes :'))
         self.menuMenu.setTitle(_translate('MainWindow', 'Menu'))
