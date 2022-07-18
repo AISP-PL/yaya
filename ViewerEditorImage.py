@@ -27,6 +27,7 @@ class ViewerEditorImage(QWidget):
     ''' States of editor.'''
     ModeNone = 0
     ModeEditorAnnotation = 1
+    ModeEditorRemoveAnnotation = 2
 
     # Define signals
     signalEditorFinished = pyqtSignal(int, name='EditorFinished')
@@ -114,9 +115,9 @@ class ViewerEditorImage(QWidget):
 
     def SetEditorMode(self, mode, argument=None):
         ''' Sets editor mode.'''
+        self.__resetEditorMode()
         self.editorMode = mode
         self.editorModeArgument = argument
-
         return True
 
     def __resetEditorMode(self):
@@ -174,7 +175,7 @@ class ViewerEditorImage(QWidget):
 
     def mousePressEvent(self, event):
         ''' Handle mouse event.'''
-        # Mode Annotation
+        # Mode Add Annotation
         if (self.editorMode == self.ModeEditorAnnotation):
             # LPM adds point
             if (event.buttons() == Qt.LeftButton):
@@ -182,6 +183,23 @@ class ViewerEditorImage(QWidget):
                 # If stored 2 points the call finish.
                 if (len(self.mouseClicks) >= 2):
                     self.CallbackEditorFinished()
+
+        # Mode Remove Annotation
+        if (self.editorMode == self.ModeEditorRemoveAnnotation):
+            # LPM finds annotation
+            if (event.buttons() == Qt.LeftButton):
+                x, y = event.pos().x(), event.pos().y()
+                viewWidth, viewHeight = self.GetViewSize()
+                toDelete = self.GetHoveredAnnotation(boxes.PointToRelative((x, y),
+                                                                           viewWidth, viewHeight))
+                # If clicked on annotation the return
+                if (toDelete is not None):
+                    self.mouseClicks = [event.pos()]
+                    self.CallbackEditorFinished()
+
+            # RPM returns
+            elif (event.buttons() == Qt.RightButton):
+                self.CallbackEditorFinished()
 
     def mouseReleaseEvent(self, event):
         ''' Handle mouse event.'''
@@ -194,11 +212,17 @@ class ViewerEditorImage(QWidget):
         trajectory = self.AbsoluteQTrajectoryToTrajectory(
             self.mouseClicks, width, height)
 
-        # Mode Annotation
+        # Mode Add Annotation
         if (self.editorMode == self.ModeEditorAnnotation):
             box = (*trajectory[0], *trajectory[1])
             self.annoter.AddAnnotation(box,
                                        self.classNumber)
+        # Mode Remove Annotation
+        elif (self.editorMode == self.ModeEditorRemoveAnnotation):
+            toDelete = self.GetHoveredAnnotation(trajectory[0])
+            # If clicked on annotation the return
+            if (toDelete is not None):
+                self.annoter.RemoveAnnotation(toDelete)
 
         previousMode = self.editorMode
         self.__resetEditorMode()

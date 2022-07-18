@@ -94,6 +94,12 @@ class Ui_MainWindow(object):
         self.fileNumberSlider.setTickPosition(QtWidgets.QSlider.TicksAbove)
         self.fileNumberSlider.setObjectName('fileNumberSlider')
         self.sliderLayout.addWidget(self.fileNumberSlider)
+        self.prevFileButton = QtWidgets.QToolButton(self.layoutWidget)
+        self.prevFileButton.setObjectName('prevFileButton')
+        self.sliderLayout.addWidget(self.prevFileButton)
+        self.nextFileButton = QtWidgets.QToolButton(self.layoutWidget)
+        self.nextFileButton.setObjectName('nextFileButton')
+        self.sliderLayout.addWidget(self.nextFileButton)
         self.verticalLayoutRight.addLayout(self.sliderLayout)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName('horizontalLayout_2')
@@ -127,9 +133,12 @@ class Ui_MainWindow(object):
         self.verticalLayoutRight.addWidget(self.line)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName('horizontalLayout_3')
-        self.pushButton = QtWidgets.QPushButton(self.layoutWidget)
-        self.pushButton.setObjectName('pushButton')
-        self.horizontalLayout_3.addWidget(self.pushButton)
+        self.addAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.addAnnotationsButton.setObjectName('addAnnotationsButton')
+        self.horizontalLayout_3.addWidget(self.addAnnotationsButton)
+        self.detectAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.detectAnnotationsButton.setObjectName('detectAnnotationsButton')
+        self.horizontalLayout_3.addWidget(self.detectAnnotationsButton)
         self.removeAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
         self.removeAnnotationsButton.setObjectName('removeAnnotationsButton')
         self.horizontalLayout_3.addWidget(self.removeAnnotationsButton)
@@ -207,6 +216,10 @@ class Ui_MainWindow(object):
             'MainWindow', 'Filename (number/all)'))
         self.fileNumberSliderLabel.setText(
             _translate('MainWindow', 'Slider label'))
+        self.prevFileButton.setText(_translate('MainWindow', '...'))
+        self.prevFileButton.setShortcut(_translate('MainWindow', ',, Left'))
+        self.nextFileButton.setText(_translate('MainWindow', '...'))
+        self.nextFileButton.setShortcut(_translate('MainWindow', '., Right'))
         self.SaveFileAnnotationsButton.setText(
             _translate('MainWindow', 'Save image/annotations'))
         self.SaveFileAnnotationsButton.setShortcut(
@@ -218,7 +231,12 @@ class Ui_MainWindow(object):
             _translate('MainWindow', 'Delete image/annotations'))
         self.DeleteImageAnnotationsButton.setShortcut(
             _translate('MainWindow', 'X'))
-        self.pushButton.setText(_translate('MainWindow', 'Add annotation'))
+        self.addAnnotationsButton.setText(
+            _translate('MainWindow', 'Add annotation'))
+        self.addAnnotationsButton.setShortcut(_translate('MainWindow', 'A'))
+        self.detectAnnotationsButton.setText(
+            _translate('MainWindow', 'Detect annotations'))
+        self.detectAnnotationsButton.setShortcut(_translate('MainWindow', 'D'))
         self.removeAnnotationsButton.setText(
             _translate('MainWindow', 'Remove annotation'))
         self.removeAnnotationsButton.setShortcut(_translate('MainWindow', 'R'))

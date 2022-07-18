@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTableWidget
     QListWidgetItem
 from PyQt5 import QtCore, QtGui
 from engine.annote import GetClasses
+from ViewerEditorImage import ViewerEditorImage
 
 
 class MainWindowGui(Ui_MainWindow):
@@ -78,6 +79,8 @@ class MainWindowGui(Ui_MainWindow):
             self.CallbackFileNumberSlider)
 
         # Buttons
+        self.ui.nextFileButton.clicked.connect(self.CallbackNextFile)
+        self.ui.prevFileButton.clicked.connect(self.CallbackPrevFile)
         self.ui.SaveFileAnnotationsButton.clicked.connect(
             self.CallbackSaveFileAnnotationsButton)
         self.ui.ClearAnnotationsButton.clicked.connect(
@@ -86,6 +89,10 @@ class MainWindowGui(Ui_MainWindow):
             self.CallbackDeleteImageAnnotationsButton)
         self.ui.hideAnnotationsButton.clicked.connect(
             self.CallbackHideAnnotationsButton)
+        self.ui.removeAnnotationsButton.clicked.connect(
+            self.CallbackRemoveAnnotationsButton)
+        self.ui.detectAnnotationsButton.clicked.connect(
+            self.CallbackDetectAnnotations)
 
     def Setup(self):
         ''' Setup again UI.'''
@@ -138,6 +145,16 @@ class MainWindowGui(Ui_MainWindow):
         # Setup UI again
         self.Setup()
 
+    def CallbackDetectAnnotations(self):
+        ''' Detect annotations.'''
+        self.annoter.Process(forceDetector=True)
+        self.Setup()
+
+    def CallbackRemoveAnnotationsButton(self):
+        ''' Remove annotations.'''
+        self.ui.viewerEditor.SetEditorMode(
+            ViewerEditorImage.ModeEditorRemoveAnnotation)
+
     def CallbackHideAnnotationsButton(self):
         '''Callback'''
         self.ui.viewerEditor.SetOption('isAnnotationsHidden',
@@ -157,4 +174,14 @@ class MainWindowGui(Ui_MainWindow):
         '''Callback'''
         self.annoter.Delete()
         self.annoter.Process()
+        self.Setup()
+
+    def CallbackNextFile(self):
+        '''Callback'''
+        self.annoter.ProcessNext()
+        self.Setup()
+
+    def CallbackPrevFile(self):
+        '''Callback'''
+        self.annoter.ProcessPrev()
         self.Setup()
