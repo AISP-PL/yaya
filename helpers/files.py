@@ -37,6 +37,17 @@ def GetExtension(path):
     return os.path.splitext(path)[1]
 
 
+def ChangeExtension(path, extension):
+    ''' Changes extenstion to new '''
+    # If extnsion exists
+    if ('.' in path):
+        path, ext = os.path.splitext(path)
+        return path + extension
+
+    # otherwise add extension
+    return path + extension
+
+
 def CreateOutputDirectory(filepath):
     # Create output path
     path = '%s' % (filepath)
