@@ -57,12 +57,25 @@ class MainWindowGui(Ui_MainWindow):
 
     def SetupDefault(self):
         ''' Sets default for UI.'''
+        # Annoter - process first time.
+        self.annoter.Process()
+        # Read annoter results
+        imageNumber = self.annoter.GetImageNumber()
+        imageCount = self.annoter.GetImagesCount()
+
+        # List of detector labels - Create
         for className in GetClasses():
             self.ui.labelsListWidget.addItem(
                 QListWidgetItem(className, self.ui.labelsListWidget))
 
+        # File number slider - create
+        self.ui.fileNumberSlider.setMaximum(imageCount)
+        self.ui.fileNumberSlider.setValue(imageNumber)
+        self.ui.fileNumberSlider.valueChanged.connect(
+            self.CallbackFileNumberSlider)
+
     def Setup(self):
-        ''' Sets default for UI.'''
+        ''' Setup again UI.'''
         filename = self.annoter.GetFilename()
         imageNumber = self.annoter.GetImageNumber()
         imageCount = self.annoter.GetImagesCount()
@@ -70,13 +83,13 @@ class MainWindowGui(Ui_MainWindow):
         # Setup horizontal file slider
         self.ui.fileNumberSliderLabel.setText(
             '%u/%u' % (imageNumber, imageCount))
-        self.ui.fileNumberSlider.setMaximum(imageCount)
-        self.ui.fileNumberSlider.setValue(imageNumber)
-        self.ui.fileNumberSlider.valueChanged.connect(
-            self.CallbackFileNumberSlider)
 
         # Setup filename
         self.ui.fileLabel.setText('%s' % (filename))
+
+        # Setup viewer/editor
+        self.ui.viewerEditor.SetAnnotations(self.annoter.GetAnnotations())
+        self.ui.viewerEditor.SetImage(self.annoter.GetImage())
 
     def OpenFile(self):
         ''' Sets default for UI.'''
@@ -90,6 +103,10 @@ class MainWindowGui(Ui_MainWindow):
         return self.App.exec_()
 
     def CallbackFileNumberSlider(self):
-        ''' Callback for file number slider.'''
-        self.ui.fileNumberSliderLabel.setText('%u/%u' % (self.ui.fileNumberSlider.value(),
-                                                         self.ui.fileNumberSlider.maximum()))
+        ''' Callback for changed of file number slider.'''
+        # Read current file number
+        fileNumber = self.ui.fileNumberSlider.value()
+        # Update annoter
+        self.annoter.SetImageNumber(fileNumber)
+        # Setup UI again
+        self.Setup()

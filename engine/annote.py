@@ -7,6 +7,9 @@ Created on 17 lis 2020
 import helpers.boxes as boxes
 import cv2
 from enum import Enum
+from helpers.QtDrawing import QDrawRectangle, QDrawText
+from PyQt5.QtCore import QPoint
+from PyQt5.QtCore import Qt
 
 classNames = []
 
@@ -146,6 +149,50 @@ class Annote():
         cv2.putText(image, label,
                     (x1, y2 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                     (255, 255, 255), 1)
+
+    def QtDraw(self, painter, highlight=False, isConfidence=True):
+        ''' Draw self.'''
+        width, height = painter.window().getRect()[2:]
+        x1, y1, x2, y2 = boxes.ToAbsolute(self.box, width, height)
+
+        # Label text
+        label = self.className
+        # Thicknes of border
+        thickness = 1
+        if (highlight is True):
+            thickness = 2
+
+        # Human orignal from file detection
+        if (self.authorType == AnnoteAuthorType.byHuman):
+            brushColor = Qt.red
+        # Created by detector YOLO
+        elif (self.authorType == AnnoteAuthorType.byDetector):
+            brushColor = Qt.blue
+            label = '{}'.format(self.className)
+            # If confidence drawing enabled
+            if (isConfidence):
+                label += '[{:.2f}]'.format(float(self.confidence))
+
+        # Created by hand
+        elif (self.authorType == AnnoteAuthorType.byHand):
+            brushColor = Qt.green
+
+        # Draw rectangle box
+        QDrawRectangle(painter,
+                       [QPoint(x1, y1), QPoint(x2, y2)],
+                       pen=brushColor,
+                       penThickness=thickness,
+                       brushColor=brushColor,
+                       brushOpacity=0.1
+                       )
+
+        # Text
+        QDrawText(painter,
+                  QPoint(x1, y1),
+                  label,
+                  bgColor=brushColor,
+                  textAlign='topright'
+                  )
 
     def IsInside(self, point):
         ''' True if point is inside note box.'''

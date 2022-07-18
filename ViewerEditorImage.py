@@ -24,15 +24,7 @@ import logging
 class ViewerEditorImage(QWidget):
     ''' States of editor.'''
     ModeNone = 0
-    ModeEditorArea = 1
-    ModeEditorDeleteArea = 2
-    ModeEditorLane = 3
-    ModeEditorDeleteLane = 4
-    ModeEditorROI = 5
-    ModeEditorDistance = 6
-    ModeEditorDeleteDistance = 7
-    ModeEditorFraming = 8
-    ModeEditorObstacle = 9
+    ModeEditorAnnotation = 1
 
     # Define signals
     signalEditorFinished = pyqtSignal(int, name='EditorFinished')
@@ -43,17 +35,12 @@ class ViewerEditorImage(QWidget):
         super().__init__(parent=parent)
 
         # ----- Viewed data ------
-        # Location path
-        self.location = None
-        # Image Pixmap being processed
-        self.imagePath = None
         # Background image loaded
         self.imageBg = None
+        # Annotations for image
+        self.annotations = None
         # Used color cycler
         self.colorCycler = ColorCycler(scheme=colorSchemeMatplotlib)
-
-        # ----- Created data -----
-        self.areas = []
 
         # Default data
         # --------------------
@@ -74,10 +61,6 @@ class ViewerEditorImage(QWidget):
         self.mouseClicks = []
         # Is dragging
         self.mouseDragging = False
-        # Radius of snap to lane
-        self.snapToLaneRadius = 20
-        # Radius of snap to border
-        self.snapToBorderRadius = 40
 
         # UI init and show
         self.show()
@@ -113,19 +96,6 @@ class ViewerEditorImage(QWidget):
 
     def SetEditorMode(self, mode, argument=None):
         ''' Sets editor mode.'''
-        # Do extra argument checks for mode = Framing
-        if (mode == self.ModeEditorFraming):
-            # Check minimal image shape
-            width, height = argument
-            imheight, imwidth = self.imageBg.shape[0:2]
-            viewwidth, viewheight = self.GetViewSize()
-            self.framing.SetViewSize(viewwidth, viewheight)
-            self.framing.SetImageSize(imwidth, imheight)
-            if (self.framing.SetProportions(width, height) is False):
-                logging.error('Image smaller than framing!')
-                return False
-
-        # Check ok, mode could be set.
         self.editorMode = mode
         self.editorModeArgument = argument
         # Set mouse tracking for editing/painting modes
@@ -146,19 +116,17 @@ class ViewerEditorImage(QWidget):
     def Reset(self):
         ''' Resets all data.'''
 
-    def SetImage(self, path):
+    def SetAnnotations(self, annotations):
         ''' Set imagePath to show.'''
-        self.imagePath = path
-        self.update()
+        if (annotations is not None):
+            self.annotations = annotations
+            self.update()
 
-    def GetFraming(self):
-        ''' Returns framing.'''
-        return self.framing
-
-    def GetViewSize(self):
-        ''' Returns .'''
-        width, height = self.rect().getRect()[2:]
-        return width, height
+    def SetImage(self, image):
+        ''' Set imagePath to show.'''
+        if (image is not None):
+            self.imageBg = image
+            self.update()
 
     def GetImageSize(self):
         ''' Returns .'''
@@ -168,13 +136,10 @@ class ViewerEditorImage(QWidget):
 
         return 0, 0
 
-    def OpenLocation(self, location, presenter):
-        ''' Sets configuration.'''
-        # Set location handle
-        self.location = location
-
-        # Update UI
-        self.update()
+    def GetViewSize(self):
+        ''' Returns .'''
+        width, height = self.rect().getRect()[2:]
+        return width, height
 
     def mouseMoveEvent(self, event):
         ''' Handle mouse move event.'''
@@ -234,25 +199,9 @@ class ViewerEditorImage(QWidget):
 
     def mouseReleaseEvent(self, event):
         ''' Handle mouse event.'''
-        # Framing mode
-        if (self.editorMode == self.ModeEditorFraming):
-            point = self.mouseClicks[0]
-            releasepoint = event.pos()
-            dx = releasepoint.x() - point.x()
-            dy = releasepoint.y() - point.y()
 
-            # Moving mode
-            if (self._GetSnappedPoint(point.x(), point.y(),
-                                      [self.framing.GetBottomLeftToView()]) is not None):
-                self.framing.Move(dx, dy)
-
-            # Resize mode
-            if (self._GetSnappedPoint(point.x(), point.y(),
-                                      [self.framing.GetTopRightToView()]) is not None):
-                self.framing.Resize(dx, dy)
-
-            # Clear mouse clicks data
-            self.mouseClicks = []
+        # Clear mouse clicks data
+        self.mouseClicks = []
 
     def __calbackEditorFinished(self):
         ''' Finished editor mode.'''
@@ -261,57 +210,6 @@ class ViewerEditorImage(QWidget):
         # Mouse clicks to relative trajectory
         trajectory = self.AbsoluteQTrajectoryToTrajectory(
             self.mouseClicks, width, height)
-
-        # Area editor mode
-        if (self.editorMode == self.ModeEditorArea):
-            self.__addArea(areatype=self.editorModeArgument,
-                           trajectory=trajectory)
-
-        # Lanes editor mode
-        elif (self.editorMode == self.ModeEditorLane):
-            isExists = False
-            # Check if lane with name exists at the moment
-            for i in range(len(self.lanes)):
-                if (self.lanes[i]['name'] == self.editorModeArgument['name']):
-                    isExists = True
-                    break
-
-            # Add only if not exists
-            if (not isExists):
-                self.__addLane(self.editorModeArgument['name'],
-                               self.editorModeArgument['id'],
-                               trajectory)
-
-        # ROI editor mode
-        elif (self.editorMode == self.ModeEditorROI):
-            # TODO getting classes
-            self.__addRoi(None,
-                          classes=self.editorModeArgument,
-                          trajectory=trajectory)
-        # Distance editor mode
-        elif (self.editorMode == self.ModeEditorDistance):
-            isExists = False
-            # Too few mouse clicks
-            if (len(self.mouseClicks) != 4):
-                isExists = True
-
-            # Check if distance with name exists at the moment
-            for i in range(len(self.distances)):
-                if (self.distances[i]['id'] == self.editorModeArgument['id']):
-                    isExists = True
-                    break
-
-            # Add only if not exists
-            if (not isExists):
-                self.__addDistance(self.editorModeArgument['id'],
-                                   self.editorModeArgument['distance'],
-                                   trajectory)
-        # Framing editor mode
-        elif (self.editorMode == self.ModeEditorFraming):
-            ''' Do nothing '''
-        # Obstacle editor mode
-        elif (self.editorMode == self.ModeEditorObstacle):
-            self.__addObstacle(trajectory=trajectory)
 
         previousMode = self.editorMode
         self.__resetEditorMode()
@@ -323,19 +221,15 @@ class ViewerEditorImage(QWidget):
     def paintEvent(self, event):
         ''' Draw on every paint event.'''
         # Get Preview info width & height
-        width, height = self.rect().getRect()[2:]
+        viewWidth, viewHeight = self.GetViewSize()
+
         # Create painter
         widgetPainter = QPainter()
         widgetPainter.begin(self)
 
         # If image is loaded?
         if (self.imageBg is not None):
-            # If framing then frame image?
-            if (self.framing.IsFrame()):
-                image = self.framing.GetFramedImage(self.imageBg)
-            else:
-                image = self.imageBg
-
+            image = self.imageBg
             pixmap = CvImage2QtImage(image)
             widgetPainter.drawPixmap(self.rect(), pixmap)
         # If there is no image then fill Black and draw text
@@ -347,70 +241,10 @@ class ViewerEditorImage(QWidget):
             widgetPainter.setPen(Qt.white)
             widgetPainter.setFont(QFont('Decorative', 10))
             widgetPainter.drawText(area, Qt.AlignCenter,
-                                   'No imagePath loaded!')
+                                   'No image loaded!')
 
-        # Editor mode - realtime drawing road
-        if (self.editorMode == self.ModeEditorArea) and (len(self.mouseClicks) > 1):
-            QDrawPolygon(widgetPainter, self.mouseClicks,
-                         Qt.black, Qt.red, Qt.CrossPattern)
-
-        # Editor mode - realtime drawing lane
-        elif (self.editorMode == self.ModeEditorLane) and (len(self.mouseClicks) > 1):
-            QDrawPolyline(widgetPainter, self.mouseClicks,
-                          Qt.black, 1.0, 2)
-        # Editor mode - realtime drawing distance
-        elif (self.editorMode == self.ModeEditorDistance) and (len(self.mouseClicks) > 1):
-            # Draw joints
-            QDrawJoints(widgetPainter, self.mouseClicks, 5, Qt.black,
-                        Qt.red, Qt.SolidPattern, 0.5)
-            # Draw first line
-            if (len(self.mouseClicks) >= 2):
-                QDrawPolyline(
-                    widgetPainter, self.mouseClicks[0:2], Qt.green, 1.0, 2, penStyle=Qt.DashLine)
-            # Draw second line
-            if (len(self.mouseClicks) == 4):
-                QDrawPolyline(
-                    widgetPainter, self.mouseClicks[2:4], Qt.green, 1.0, 2, penStyle=Qt.DashLine)
-
-        # Editor mode - realtime drawing ROI
-        elif (self.editorMode == self.ModeEditorROI) and (len(self.mouseClicks) > 0):
-            QDrawJoints(widgetPainter, self.mouseClicks, 5, Qt.black,
-                        Qt.red, Qt.SolidPattern, 0.5)
-            if (len(self.mouseClicks) > 1):
-                QDrawPolyline(widgetPainter, self.mouseClicks,
-                              Qt.black, 1.0, 2)
-
-        # Editor mode - realtime drawing framing
-        elif (self.editorMode == self.ModeEditorFraming):
-            # Draw framing
-            if (self.framing.IsFrame()):
-                # Get center and top right and calculate all points
-                xc, yc = self.framing.GetCenterToView()
-                width = self.framing.GetWidthToView()
-                height = self.framing.GetHeightToView()
-                # Draw rectangle
-                rect = CreateRectangle(xc, yc, width, height)
-                QDrawPolygon(widgetPainter,
-                             rect,
-                             brushColor=Qt.white,
-                             brushStyle=Qt.SolidPattern,
-                             brushOpacity=0.5
-                             )
-                # Draw joints
-                points = self.framing.GetRectToView()
-                points = [QPoint(point[0], point[1]) for point in points]
-                QDrawJoints(widgetPainter,
-                            points,
-                            pen=Qt.green,
-                            brushColor=Qt.white,
-                            brushStyle=Qt.SolidPattern,
-                            brushOpacity=0.5
-                            )
-        # Editor mode realtime drawing obstacles
-        elif (self.editorMode == self.ModeEditorObstacle) and (len(self.mouseClicks) == 1):
-            rect = [self.mouseClicks[0], QPoint(
-                self.mouseCoords.x(), self.mouseCoords.y())]
-            QDrawRectangle(widgetPainter, rect, pen=Qt.gray,
-                           brushColor=Qt.green, brushStyle=Qt.SolidPattern, brushOpacity=0.25)
+        # Draw all annotations
+        for annotate in self.annotations:
+            annotate.QtDraw(widgetPainter, isConfidence=True)
 
         widgetPainter.end()
