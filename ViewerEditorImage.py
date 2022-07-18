@@ -16,9 +16,11 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QPainter, QBrush, QFont, QPixmap
 from PyQt5.Qt import QPoint, QTimer
 from PyQt5.QtCore import Qt, pyqtSignal
+import helpers.boxes as boxes
 from Gui.colors import GetNextTableColor, GetTableColor, ColorCycler,\
     colorSchemeMatplotlib, gray
 import logging
+from pygments import highlight
 
 
 class ViewerEditorImage(QWidget):
@@ -28,7 +30,6 @@ class ViewerEditorImage(QWidget):
 
     # Define signals
     signalEditorFinished = pyqtSignal(int, name='EditorFinished')
-    signalMediaNextSecond = pyqtSignal(datetime, name='MediaNextSecond')
 
     def __init__(self, parent):
         # QWidget constructor call
@@ -141,61 +142,41 @@ class ViewerEditorImage(QWidget):
         width, height = self.rect().getRect()[2:]
         return width, height
 
+    def GetHoveredAnnotation(self, point):
+        ''' Finds currently hovered annotation.'''
+        founded = None
+        for element in self.annotations:
+            if (element.IsInside(point) == True):
+                if (founded is not None):
+                    area1 = boxes.GetArea(element.GetBox())
+                    area2 = boxes.GetArea(founded.GetBox())
+                    if (area1 < area2):
+                        founded = element
+                else:
+                    founded = element
+
+        return founded
+
     def mouseMoveEvent(self, event):
         ''' Handle mouse move event.'''
-        if (self.editorMode != self.ModeNone):
-            self.mouseCoords = event.pos()
-            self.update()
+        self.mouseCoords = event.pos()
+        self.update()
 
     def mousePressEvent(self, event):
         ''' Handle mouse event.'''
-        if (self.editorMode != self.ModeNone):
-            # Left button appends new point
-            if (event.buttons() == Qt.LeftButton):
-                point = event.pos()
-                # Mode ROI
-                if (self.editorMode == self.ModeEditorROI):
-                    point = self._SnapToBorders(point)
-                # Mode
-                # Add to clicks
-                self.mouseClicks.append(point)
-            # Right button finishes drawing
-            elif event.buttons() == Qt.RightButton:
-                self.__calbackEditorFinished()
-
-        # Editor mode - deleting of area
-        if (self.editorMode == self.ModeEditorDeleteArea) and (len(self.mouseClicks) != 0):
-            point = self.mouseClicks[-1]
-            area = self._GetSnappedArea(point.x(), point.y())
-            if (area is not None):
-                self.areas.remove(area)
-                self.__calbackEditorFinished()
-
-        # Editor mode - deleting of lane
-        if (self.editorMode == self.ModeEditorDeleteLane) and (len(self.mouseClicks) != 0):
-            point = self.mouseClicks[-1]
-            lane = self._GetSnappedLane(point.x(), point.y())
-            if (lane is not None):
-                self.lanes.remove(lane)
-                self.__calbackEditorFinished()
-
-        # Editor mode - deleting of distance
-        if (self.editorMode == self.ModeEditorDeleteDistance) and (len(self.mouseClicks) != 0):
-            point = self.mouseClicks[-1]
-            distance = self._GetSnappedDistance(point.x(), point.y())
-            if (distance is not None):
-                self.distances.remove(distance)
-                self.__calbackEditorFinished()
-
-        # Editor mode - Distance
-        if (self.editorMode == self.ModeEditorDistance):
-            if (len(self.mouseClicks) == 4):
-                self.__calbackEditorFinished()
-
-        # Editor mode - Obstacle
-        if (self.editorMode == self.ModeEditorObstacle):
-            if (len(self.mouseClicks) == 2):
-                self.__calbackEditorFinished()
+#         if (self.editorMode != self.ModeNone):
+#             # Left button appends new point
+#             if (event.buttons() == Qt.LeftButton):
+#                 point = event.pos()
+#                 # Mode ROI
+#                 if (self.editorMode == self.ModeEditorROI):
+#                     point = self._SnapToBorders(point)
+#                 # Mode
+#                 # Add to clicks
+#                 self.mouseClicks.append(point)
+#             # Right button finishes drawing
+#             elif event.buttons() == Qt.RightButton:
+#                 self.__calbackEditorFinished()
 
     def mouseReleaseEvent(self, event):
         ''' Handle mouse event.'''
@@ -245,6 +226,21 @@ class ViewerEditorImage(QWidget):
 
         # Draw all annotations
         for annotate in self.annotations:
-            annotate.QtDraw(widgetPainter, isConfidence=True)
+            annotate.QtDraw(widgetPainter,
+                            isConfidence=True)
+
+        # Draw crosshair
+        if (self.mouseCoords is not None):
+            QDrawCrosshair(widgetPainter, self.mouseCoords.x(), self.mouseCoords.y(),
+                           viewWidth, viewHeight, Qt.red)
+
+            # Get hovered annotation
+            annote = self.GetHoveredAnnotation(
+                boxes.PointToRelative((self.mouseCoords.x(), self.mouseCoords.y()),
+                                      viewWidth, viewHeight))
+            if (annote is not None):
+                annote.QtDraw(widgetPainter,
+                              highlight=True,
+                              isConfidence=True)
 
         widgetPainter.end()
