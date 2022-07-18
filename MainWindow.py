@@ -68,6 +68,8 @@ class MainWindowGui(Ui_MainWindow):
             self.ui.labelsListWidget.addItem(
                 QListWidgetItem(className, self.ui.labelsListWidget))
         self.ui.labelsListWidget.setCurrentRow(0)
+        self.ui.labelsListWidget.currentRowChanged.connect(
+            self.CallbackLabelsRowChanged)
 
         # File number slider - create
         self.ui.fileNumberSlider.setMaximum(imageCount)
@@ -109,7 +111,7 @@ class MainWindowGui(Ui_MainWindow):
             self.ui.isSavedCheckBox.setChecked(False)
 
         # Setup viewer/editor
-        self.ui.viewerEditor.SetAnnotations(self.annoter.GetAnnotations())
+        self.ui.viewerEditor.SetAnnoter(self.annoter)
         self.ui.viewerEditor.SetImage(self.annoter.GetImage())
 
     def OpenFile(self):
@@ -122,6 +124,10 @@ class MainWindowGui(Ui_MainWindow):
         '''  Run gui window thread and return exit code.'''
         self.window.show()
         return self.App.exec_()
+
+    def CallbackLabelsRowChanged(self, index):
+        ''' Current labels row changed. '''
+        self.ui.viewerEditor.SetClassNumber(index)
 
     def CallbackFileNumberSlider(self):
         ''' Callback for changed of file number slider.'''

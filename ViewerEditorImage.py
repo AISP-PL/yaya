@@ -43,18 +43,10 @@ class ViewerEditorImage(QWidget):
         }
         # Background image loaded
         self.imageBg = None
-        # Annotations for image
-        self.annotations = None
-        # Used color cycler
-        self.colorCycler = ColorCycler(scheme=colorSchemeMatplotlib)
-
-        # Default data
-        # --------------------
-        self.colorCycler.Reset()
-        self.defaultLanes = [{'name': 'L', 'id': 'L', 'trajectory': [], 'color':CvBGRColorToQColor(self.colorCycler.GetNextColor())},
-                             {'name': 'P', 'id': 'P', 'trajectory': [], 'color':CvBGRColorToQColor(
-                                 self.colorCycler.GetNextColor())}
-                             ]
+        # Annoter for image
+        self.annoter = None
+        # Current class number
+        self.classNumber = 0
 
         # ----- Editor data ------
         # Editor mode
@@ -116,6 +108,10 @@ class ViewerEditorImage(QWidget):
         else:
             logging.error('(ViewerEditorImage) Unknown configuration option!')
 
+    def SetClassNumber(self, index):
+        ''' Set class number. '''
+        self.classNumber = index
+
     def SetEditorMode(self, mode, argument=None):
         ''' Sets editor mode.'''
         self.editorMode = mode
@@ -131,10 +127,10 @@ class ViewerEditorImage(QWidget):
         self.editorMode = self.ModeEditorAnnotation
         self.editorModeArgument = None
 
-    def SetAnnotations(self, annotations):
-        ''' Set imagePath to show.'''
-        if (annotations is not None):
-            self.annotations = annotations
+    def SetAnnoter(self, annoter):
+        ''' Set annoter handle.'''
+        if (annoter is not None):
+            self.annoter = annoter
             self.update()
 
     def SetImage(self, image):
@@ -159,7 +155,7 @@ class ViewerEditorImage(QWidget):
     def GetHoveredAnnotation(self, point):
         ''' Finds currently hovered annotation.'''
         founded = None
-        for element in self.annotations:
+        for element in self.annoter.GetAnnotations():
             if (element.IsInside(point) == True):
                 if (founded is not None):
                     area1 = boxes.GetArea(element.GetBox())
@@ -185,12 +181,12 @@ class ViewerEditorImage(QWidget):
                 self.mouseClicks.append(event.pos())
                 # If stored 2 points the call finish.
                 if (len(self.mouseClicks) >= 2):
-                    self.__calbackEditorFinished()
+                    self.CallbackEditorFinished()
 
     def mouseReleaseEvent(self, event):
         ''' Handle mouse event.'''
 
-    def __calbackEditorFinished(self):
+    def CallbackEditorFinished(self):
         ''' Finished editor mode.'''
         # Get Preview info width & height
         width, height = self.GetViewSize()
@@ -200,7 +196,9 @@ class ViewerEditorImage(QWidget):
 
         # Mode Annotation
         if (self.editorMode == self.ModeEditorAnnotation):
-            ''' do nothing '''
+            box = (*trajectory[0], *trajectory[1])
+            self.annoter.AddAnnotation(box,
+                                       self.classNumber)
 
         previousMode = self.editorMode
         self.__resetEditorMode()
@@ -236,7 +234,7 @@ class ViewerEditorImage(QWidget):
 
         # Draw all annotations
         if (not self.config['isAnnotationsHidden']):
-            for annotate in self.annotations:
+            for annotate in self.annoter.GetAnnotations():
                 annotate.QtDraw(widgetPainter,
                                 isConfidence=True)
 
