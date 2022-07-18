@@ -192,6 +192,9 @@
             <property name="text">
              <string>Remove annotation</string>
             </property>
+            <property name="shortcut">
+             <string>R</string>
+            </property>
            </widget>
           </item>
           <item>

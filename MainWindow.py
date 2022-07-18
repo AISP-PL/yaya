@@ -74,6 +74,14 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.fileNumberSlider.valueChanged.connect(
             self.CallbackFileNumberSlider)
 
+        # Buttons
+        self.ui.SaveFileAnnotationsButton.clicked.connect(
+            self.CallbackSaveFileAnnotationsButton)
+        self.ui.ClearAnnotationsButton.clicked.connect(
+            self.CallbackClearAnnotationsButton)
+        self.ui.DeleteImageAnnotationsButton.clicked.connect(
+            self.CallbackDeleteImageAnnotationsButton)
+
     def Setup(self):
         ''' Setup again UI.'''
         filename = self.annoter.GetFilename()
@@ -90,6 +98,12 @@ class MainWindowGui(Ui_MainWindow):
                                                               imageHeight,
                                                               imageBytes,
                                                               filename))
+
+        # Setup isSaved tick
+        if (self.annoter.IsSynchronized()):
+            self.ui.isSavedCheckBox.setChecked(True)
+        else:
+            self.ui.isSavedCheckBox.setChecked(False)
 
         # Setup viewer/editor
         self.ui.viewerEditor.SetAnnotations(self.annoter.GetAnnotations())
@@ -113,4 +127,20 @@ class MainWindowGui(Ui_MainWindow):
         # Update annoter
         self.annoter.SetImageNumber(fileNumber)
         # Setup UI again
+        self.Setup()
+
+    def CallbackSaveFileAnnotationsButton(self):
+        '''Callback'''
+        self.annoter.Save()
+        self.Setup()
+
+    def CallbackClearAnnotationsButton(self):
+        '''Callback'''
+        self.annoter.ClearAnnotations()
+        self.Setup()
+
+    def CallbackDeleteImageAnnotationsButton(self):
+        '''Callback'''
+        self.annoter.Delete()
+        self.annoter.Process()
         self.Setup()
