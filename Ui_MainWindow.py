@@ -217,9 +217,9 @@ class Ui_MainWindow(object):
         self.fileNumberSliderLabel.setText(
             _translate('MainWindow', 'Slider label'))
         self.prevFileButton.setText(_translate('MainWindow', '...'))
-        self.prevFileButton.setShortcut(_translate('MainWindow', ',, Left'))
+        self.prevFileButton.setShortcut(_translate('MainWindow', ','))
         self.nextFileButton.setText(_translate('MainWindow', '...'))
-        self.nextFileButton.setShortcut(_translate('MainWindow', '., Right'))
+        self.nextFileButton.setShortcut(_translate('MainWindow', '.'))
         self.SaveFileAnnotationsButton.setText(
             _translate('MainWindow', 'Save image/annotations'))
         self.SaveFileAnnotationsButton.setShortcut(

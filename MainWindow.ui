@@ -125,7 +125,7 @@
              <string>...</string>
             </property>
             <property name="shortcut">
-             <string>,, Left</string>
+             <string>,</string>
             </property>
            </widget>
           </item>
@@ -135,7 +135,7 @@
              <string>...</string>
             </property>
             <property name="shortcut">
-             <string>., Right</string>
+             <string>.</string>
             </property>
            </widget>
           </item>
