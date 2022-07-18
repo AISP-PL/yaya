@@ -95,21 +95,57 @@ class Ui_MainWindow(object):
         self.fileNumberSlider.setObjectName('fileNumberSlider')
         self.sliderLayout.addWidget(self.fileNumberSlider)
         self.verticalLayoutRight.addLayout(self.sliderLayout)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName('horizontalLayout_2')
+        self.SaveFileAnnotationsButton = QtWidgets.QPushButton(
+            self.layoutWidget)
+        self.SaveFileAnnotationsButton.setObjectName(
+            'SaveFileAnnotationsButton')
+        self.horizontalLayout_2.addWidget(self.SaveFileAnnotationsButton)
+        self.ClearAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.ClearAnnotationsButton.setObjectName('ClearAnnotationsButton')
+        self.horizontalLayout_2.addWidget(self.ClearAnnotationsButton)
+        self.DeleteImageAnnotationsButton = QtWidgets.QPushButton(
+            self.layoutWidget)
+        self.DeleteImageAnnotationsButton.setObjectName(
+            'DeleteImageAnnotationsButton')
+        self.horizontalLayout_2.addWidget(self.DeleteImageAnnotationsButton)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem)
+        self.verticalLayoutRight.addLayout(self.horizontalLayout_2)
         self.fileSelectorTableWidget = QtWidgets.QTableWidget(
             self.layoutWidget)
         self.fileSelectorTableWidget.setObjectName('fileSelectorTableWidget')
         self.fileSelectorTableWidget.setColumnCount(0)
         self.fileSelectorTableWidget.setRowCount(0)
         self.verticalLayoutRight.addWidget(self.fileSelectorTableWidget)
+        self.line = QtWidgets.QFrame(self.layoutWidget)
+        self.line.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line.setObjectName('line')
+        self.verticalLayoutRight.addWidget(self.line)
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName('horizontalLayout_3')
+        self.pushButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.pushButton.setObjectName('pushButton')
+        self.horizontalLayout_3.addWidget(self.pushButton)
+        self.pushButton_2 = QtWidgets.QPushButton(self.layoutWidget)
+        self.pushButton_2.setObjectName('pushButton_2')
+        self.horizontalLayout_3.addWidget(self.pushButton_2)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem1)
+        self.verticalLayoutRight.addLayout(self.horizontalLayout_3)
         self.detectorClassesLabel = QtWidgets.QLabel(self.layoutWidget)
         self.detectorClassesLabel.setObjectName('detectorClassesLabel')
         self.verticalLayoutRight.addWidget(self.detectorClassesLabel)
         self.labelsListWidget = QtWidgets.QListWidget(self.layoutWidget)
         self.labelsListWidget.setObjectName('labelsListWidget')
         self.verticalLayoutRight.addWidget(self.labelsListWidget)
-        spacerItem = QtWidgets.QSpacerItem(
+        spacerItem2 = QtWidgets.QSpacerItem(
             20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayoutRight.addItem(spacerItem)
+        self.verticalLayoutRight.addItem(spacerItem2)
         self.gridLayout.addWidget(self.splitter_4, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -163,6 +199,20 @@ class Ui_MainWindow(object):
             'MainWindow', 'Filename (number/all)'))
         self.fileNumberSliderLabel.setText(
             _translate('MainWindow', 'Slider label'))
+        self.SaveFileAnnotationsButton.setText(
+            _translate('MainWindow', 'Save image/annotations'))
+        self.SaveFileAnnotationsButton.setShortcut(
+            _translate('MainWindow', 'S'))
+        self.ClearAnnotationsButton.setText(
+            _translate('MainWindow', 'Clear annotations'))
+        self.ClearAnnotationsButton.setShortcut(_translate('MainWindow', 'C'))
+        self.DeleteImageAnnotationsButton.setText(
+            _translate('MainWindow', 'Delete image/annotations'))
+        self.DeleteImageAnnotationsButton.setShortcut(
+            _translate('MainWindow', 'X'))
+        self.pushButton.setText(_translate('MainWindow', 'Add annotation'))
+        self.pushButton_2.setText(_translate(
+            'MainWindow', 'Remove annotation'))
         self.detectorClassesLabel.setText(_translate(
             'MainWindow', 'Selected detector classes :'))
         self.menuMenu.setTitle(_translate('MainWindow', 'Menu'))

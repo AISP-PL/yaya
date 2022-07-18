@@ -168,6 +168,14 @@ class Annoter():
         ''' Returns current image.'''
         return self.image
 
+    def GetImageSize(self):
+        ''' Returns current image.'''
+        if (self.image is not None):
+            h, w, bytes = self.image.shape
+            return w, h, bytes
+
+        return 0, 0
+
     def GetImageNumber(self):
         ''' Returns current image number.'''
         return self.offset

@@ -77,6 +77,7 @@ class MainWindowGui(Ui_MainWindow):
     def Setup(self):
         ''' Setup again UI.'''
         filename = self.annoter.GetFilename()
+        imageWidth, imageHeight, imageBytes = self.annoter.GetImageSize()
         imageNumber = self.annoter.GetImageNumber()
         imageCount = self.annoter.GetImagesCount()
 
@@ -84,8 +85,11 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.fileNumberSliderLabel.setText(
             '%u/%u' % (imageNumber, imageCount))
 
-        # Setup filename
-        self.ui.fileLabel.setText('%s' % (filename))
+        # Setup file info
+        self.ui.fileLabel.setText('[%upx x %upx x %uB] %s' % (imageWidth,
+                                                              imageHeight,
+                                                              imageBytes,
+                                                              filename))
 
         # Setup viewer/editor
         self.ui.viewerEditor.SetAnnotations(self.annoter.GetAnnotations())
