@@ -142,6 +142,13 @@ class Ui_MainWindow(object):
         self.verticalLayoutRight.addLayout(self.horizontalLayout_2)
         self.fileSelectorTableWidget = QtWidgets.QTableWidget(
             self.layoutWidget)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.fileSelectorTableWidget.sizePolicy().hasHeightForWidth())
+        self.fileSelectorTableWidget.setSizePolicy(sizePolicy)
         self.fileSelectorTableWidget.setObjectName('fileSelectorTableWidget')
         self.fileSelectorTableWidget.setColumnCount(0)
         self.fileSelectorTableWidget.setRowCount(0)
@@ -217,21 +224,71 @@ class Ui_MainWindow(object):
             40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem2)
         self.verticalLayoutRight.addLayout(self.horizontalLayout_4)
-        self.detectorClassesLabel = QtWidgets.QLabel(self.layoutWidget)
+        self.toolSettingsStackedWidget = QtWidgets.QStackedWidget(
+            self.layoutWidget)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.toolSettingsStackedWidget.sizePolicy().hasHeightForWidth())
+        self.toolSettingsStackedWidget.setSizePolicy(sizePolicy)
+        self.toolSettingsStackedWidget.setFrameShape(
+            QtWidgets.QFrame.StyledPanel)
+        self.toolSettingsStackedWidget.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.toolSettingsStackedWidget.setLineWidth(1)
+        self.toolSettingsStackedWidget.setObjectName(
+            'toolSettingsStackedWidget')
+        self.pageAnnotations = QtWidgets.QWidget()
+        self.pageAnnotations.setObjectName('pageAnnotations')
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.pageAnnotations)
+        self.verticalLayout_2.setObjectName('verticalLayout_2')
+        self.detectorClassesLabel = QtWidgets.QLabel(self.pageAnnotations)
         self.detectorClassesLabel.setObjectName('detectorClassesLabel')
-        self.verticalLayoutRight.addWidget(self.detectorClassesLabel)
-        self.labelsListWidget = QtWidgets.QListWidget(self.layoutWidget)
+        self.verticalLayout_2.addWidget(self.detectorClassesLabel)
+        self.labelsListWidget = QtWidgets.QListWidget(self.pageAnnotations)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.labelsListWidget.sizePolicy().hasHeightForWidth())
+        self.labelsListWidget.setSizePolicy(sizePolicy)
         self.labelsListWidget.setDefaultDropAction(QtCore.Qt.IgnoreAction)
         self.labelsListWidget.setSelectionMode(
             QtWidgets.QAbstractItemView.SingleSelection)
         self.labelsListWidget.setSelectionBehavior(
             QtWidgets.QAbstractItemView.SelectItems)
         self.labelsListWidget.setObjectName('labelsListWidget')
-        self.verticalLayoutRight.addWidget(self.labelsListWidget)
+        self.verticalLayout_2.addWidget(self.labelsListWidget)
         spacerItem3 = QtWidgets.QSpacerItem(
             20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayoutRight.addItem(spacerItem3)
-        self.gridLayout.addWidget(self.splitter_4, 0, 0, 1, 1)
+        self.verticalLayout_2.addItem(spacerItem3)
+        self.toolSettingsStackedWidget.addWidget(self.pageAnnotations)
+        self.pageCircle = QtWidgets.QWidget()
+        self.pageCircle.setObjectName('pageCircle')
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.pageCircle)
+        self.verticalLayout.setObjectName('verticalLayout')
+        self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_5.setObjectName('horizontalLayout_5')
+        self.paintLabel = QtWidgets.QLabel(self.pageCircle)
+        self.paintLabel.setObjectName('paintLabel')
+        self.horizontalLayout_5.addWidget(self.paintLabel)
+        self.paintSizeSlider = QtWidgets.QSlider(self.pageCircle)
+        self.paintSizeSlider.setMinimum(5)
+        self.paintSizeSlider.setMaximum(55)
+        self.paintSizeSlider.setSingleStep(10)
+        self.paintSizeSlider.setOrientation(QtCore.Qt.Horizontal)
+        self.paintSizeSlider.setTickPosition(QtWidgets.QSlider.TicksBelow)
+        self.paintSizeSlider.setObjectName('paintSizeSlider')
+        self.horizontalLayout_5.addWidget(self.paintSizeSlider)
+        self.verticalLayout.addLayout(self.horizontalLayout_5)
+        spacerItem4 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem4)
+        self.toolSettingsStackedWidget.addWidget(self.pageCircle)
+        self.verticalLayoutRight.addWidget(self.toolSettingsStackedWidget)
+        self.gridLayout.addWidget(self.splitter_4, 1, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1591, 22))
@@ -273,6 +330,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuPomoc.menuAction())
 
         self.retranslateUi(MainWindow)
+        self.toolSettingsStackedWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -315,6 +373,7 @@ class Ui_MainWindow(object):
         self.paintCircleButton.setText(_translate('MainWindow', 'Add Circle'))
         self.detectorClassesLabel.setText(_translate(
             'MainWindow', 'Selected detector classes :'))
+        self.paintLabel.setText(_translate('MainWindow', 'Painting Size'))
         self.menuMenu.setTitle(_translate('MainWindow', 'Menu'))
         self.menuPomoc.setTitle(_translate('MainWindow', 'Help'))
         self.actionOtw_rz.setText(_translate('MainWindow', 'Otwórz'))

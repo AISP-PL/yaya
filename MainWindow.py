@@ -15,6 +15,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTableWidget
 from PyQt5 import QtCore, QtGui
 from engine.annote import GetClasses
 from ViewerEditorImage import ViewerEditorImage
+from click.decorators import argument
 
 
 class MainWindowGui(Ui_MainWindow):
@@ -78,6 +79,10 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.fileNumberSlider.valueChanged.connect(
             self.CallbackFileNumberSlider)
 
+        # Paint size slider
+        self.ui.paintSizeSlider.valueChanged.connect(
+            self.CallbackPaintSizeSlider)
+
         # Buttons group - for mode buttons
         self.modeButtonGroup = QButtonGroup(self.window)
         self.modeButtonGroup.addButton(self.ui.addAnnotationsButton)
@@ -103,6 +108,9 @@ class MainWindowGui(Ui_MainWindow):
             self.CallbackHideAnnotationsButton)
         self.ui.ClearAnnotationsButton.clicked.connect(
             self.CallbackClearAnnotationsButton)
+        # Buttons - Painting
+        self.ui.paintCircleButton.clicked.connect(
+            self.CallbackPaintCircleButton)
 
     def Setup(self):
         ''' Setup again UI.'''
@@ -120,6 +128,10 @@ class MainWindowGui(Ui_MainWindow):
                                                               imageHeight,
                                                               imageBytes,
                                                               filename))
+
+        # Paint size slider
+        self.ui.paintLabel.setText('Paint size %u' %
+                                   self.ui.paintSizeSlider.value())
 
         # Setup isSaved tick
         if (self.annoter.IsSynchronized()):
@@ -155,6 +167,18 @@ class MainWindowGui(Ui_MainWindow):
         # Setup UI again
         self.Setup()
 
+    def CallbackPaintSizeSlider(self):
+        ''' Paint size slider changed.'''
+        self.ui.viewerEditor.SetEditorModeArgument(
+            self.ui.paintSizeSlider.value())
+        self.Setup()
+
+    def CallbackPaintCircleButton(self):
+        ''' Paint circle button.'''
+        self.ui.toolSettingsStackedWidget.setCurrentWidget(self.ui.pageCircle)
+        self.ui.viewerEditor.SetEditorMode(ViewerEditorImage.ModePaintCircle,
+                                           argument=self.ui.paintSizeSlider.value())
+
     def CallbackDetectAnnotations(self):
         ''' Detect annotations.'''
         self.annoter.Process(forceDetector=True)
@@ -162,16 +186,22 @@ class MainWindowGui(Ui_MainWindow):
 
     def CallbackAddAnnotationsButton(self):
         ''' Remove annotations.'''
+        self.ui.toolSettingsStackedWidget.setCurrentWidget(
+            self.ui.pageAnnotations)
         self.ui.viewerEditor.SetEditorMode(
             ViewerEditorImage.ModeAddAnnotation)
 
     def CallbackRemoveAnnotationsButton(self):
         ''' Remove annotations.'''
+        self.ui.toolSettingsStackedWidget.setCurrentWidget(
+            self.ui.pageAnnotations)
         self.ui.viewerEditor.SetEditorMode(
             ViewerEditorImage.ModeRemoveAnnotation)
 
     def CallbackHideAnnotationsButton(self):
         '''Callback'''
+        self.ui.toolSettingsStackedWidget.setCurrentWidget(
+            self.ui.pageAnnotations)
         self.ui.viewerEditor.SetOption('isAnnotationsHidden',
                                        not self.ui.viewerEditor.GetOption('isAnnotationsHidden'))
 

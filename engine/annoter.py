@@ -215,8 +215,12 @@ class Annoter():
 
     def PaintCircles(self, points, radius, color):
         ''' Paint list of circles Circle on image.'''
-        for point in points:
-            self.image = cv2.circle(self.image, point, radius, color, -1)
+        for x, y in points:
+            self.image = cv2.circle(self.image,
+                                    (round(x), round(y)),
+                                    radius,
+                                    color,
+                                    -1)
         self.errors.add('ImageModified!')
 
     def GetAnnotations(self):

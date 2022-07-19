@@ -117,6 +117,10 @@ class ViewerEditorImage(QWidget):
         self.editorModeArgument = argument
         return True
 
+    def SetEditorModeArgument(self, argument):
+        ''' Set/update editor mode argument.'''
+        self.editorModeArgument = argument
+
     def __resetEditorMode(self, defaultMode=ModeNone):
         ''' Resets editor mode.'''
         self.mousePosition = None
@@ -182,7 +186,7 @@ class ViewerEditorImage(QWidget):
                     self.CallbackEditorFinished()
 
         # Mode Remove Annotation
-        if (self.editorMode == self.ModeRemoveAnnotation):
+        elif (self.editorMode == self.ModeRemoveAnnotation):
             # LPM finds annotation
             if (event.buttons() == Qt.LeftButton):
                 x, y = event.pos().x(), event.pos().y()
@@ -197,6 +201,21 @@ class ViewerEditorImage(QWidget):
             # RPM returns
             elif (event.buttons() == Qt.RightButton):
                 self.CallbackEditorFinished()
+
+        # Mode Paint circle
+        elif (self.editorMode == self.ModePaintCircle):
+            # LPM finds annotation
+            if (event.buttons() == Qt.LeftButton):
+                viewWidth, viewHeight = self.GetViewSize()
+                imWidth, imHeight = self.GetImageSize()
+                viewPoint = event.pos().x(), event.pos().y()
+                relPoint = PointToRelative(viewPoint, viewWidth, viewHeight)
+                imPoint = PointToAbsolute(relPoint, imWidth, imHeight)
+
+                # Add drawing to original image
+                self.annoter.PaintCircles([imPoint],
+                                          self.editorModeArgument,
+                                          (0, 0, 0))
 
     def mouseReleaseEvent(self, event):
         ''' Handle mouse event.'''
