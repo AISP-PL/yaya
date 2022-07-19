@@ -200,8 +200,6 @@ class MainWindowGui(Ui_MainWindow):
 
     def CallbackHideAnnotationsButton(self):
         '''Callback'''
-        self.ui.toolSettingsStackedWidget.setCurrentWidget(
-            self.ui.pageAnnotations)
         self.ui.viewerEditor.SetOption('isAnnotationsHidden',
                                        not self.ui.viewerEditor.GetOption('isAnnotationsHidden'))
 

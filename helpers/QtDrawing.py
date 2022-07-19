@@ -315,6 +315,17 @@ def QDrawDistances(painter, distance, penColor=Qt.black, penColorAlpha=1.0, penT
               fontSize=20, fontBold=True)
 
 
+def QDrawElipse(painter, point, radius=10,
+                pen=Qt.black, brushColor=Qt.white,
+                brushStyle=Qt.CrossPattern, brushOpacity=1):
+    ''' Helper function for polyline drawing.'''
+    painter.setPen(pen)
+    color = QColor(brushColor)
+    color.setAlphaF(brushOpacity)
+    painter.setBrush(QBrush(color, brushStyle))
+    painter.drawEllipse(point, radius, radius)
+
+
 def QDrawJoints(painter, pointsList, radius=10,
                 pen=Qt.black, brushColor=Qt.white,
                 brushStyle=Qt.CrossPattern, brushOpacity=1):

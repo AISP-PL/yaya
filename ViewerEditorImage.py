@@ -9,7 +9,7 @@ import cv2
 from datetime import datetime
 from helpers.QtDrawing import QDrawPolygon, QDrawPolyline, QDrawJoints,\
     QDrawCrosshair, QDrawText, QDrawArrow, CvBGRColorToQColor, QDrawRectangle,\
-    CvImage2QtImage, CvRGBColorToQColor
+    CvImage2QtImage, CvRGBColorToQColor, QDrawElipse
 from helpers.boxes import PointToRelative, PointToAbsolute, PointsToRect
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QPainter, QBrush, QFont
@@ -299,6 +299,15 @@ class ViewerEditorImage(QWidget):
                                brushColor=Qt.green,
                                brushOpacity=0.1
                                )
+
+        # -------- Mode Paint Draw -------
+        if (self.editorMode == self.ModePaintCircle):
+            if (self.mousePosition is not None):
+                imWidth, imHeight = self.GetImageSize()
+                radius = round((self.editorModeArgument/imWidth)*viewWidth)
+                QDrawElipse(widgetPainter,
+                            self.mousePosition,
+                            radius)
 
         # Draw crosshair
         if (self.mousePosition is not None):
