@@ -9,25 +9,22 @@ import cv2
 from datetime import datetime
 from helpers.QtDrawing import QDrawPolygon, QDrawPolyline, QDrawJoints,\
     QDrawCrosshair, QDrawText, QDrawArrow, CvBGRColorToQColor, QDrawRectangle,\
-    QDrawDistances, CreateRectangle, QPointToTuple, QPointListToTupleList,\
     CvImage2QtImage, CvRGBColorToQColor
 from helpers.boxes import PointToRelative, PointToAbsolute, PointsToRect
 from PyQt5.QtWidgets import QWidget
-from PyQt5.QtGui import QPainter, QBrush, QFont, QPixmap
+from PyQt5.QtGui import QPainter, QBrush, QFont
 from PyQt5.Qt import QPoint, QTimer
 from PyQt5.QtCore import Qt, pyqtSignal
 import helpers.boxes as boxes
-from Gui.colors import GetNextTableColor, GetTableColor, ColorCycler,\
-    colorSchemeMatplotlib, gray
 import logging
-from pygments import highlight
 
 
 class ViewerEditorImage(QWidget):
     ''' States of editor.'''
     ModeNone = 0
-    ModeEditorAnnotation = 1
-    ModeEditorRemoveAnnotation = 2
+    ModeAddAnnotation = 1
+    ModeRemoveAnnotation = 2
+    ModePaintCircle = 3
 
     # Define signals
     signalEditorFinished = pyqtSignal(int, name='EditorFinished')
@@ -51,7 +48,7 @@ class ViewerEditorImage(QWidget):
 
         # ----- Editor data ------
         # Editor mode
-        self.editorMode = self.ModeEditorAnnotation
+        self.editorMode = self.ModeNone
         # Editor extra argument for mode
         self.editorModeArgument = None
         # Current mouse coords
@@ -120,12 +117,12 @@ class ViewerEditorImage(QWidget):
         self.editorModeArgument = argument
         return True
 
-    def __resetEditorMode(self):
+    def __resetEditorMode(self, defaultMode=ModeNone):
         ''' Resets editor mode.'''
         self.mousePosition = None
         self.mouseClicks = []
         self.mouseDragging = False
-        self.editorMode = self.ModeEditorAnnotation
+        self.editorMode = defaultMode
         self.editorModeArgument = None
 
     def SetAnnoter(self, annoter):
@@ -176,7 +173,7 @@ class ViewerEditorImage(QWidget):
     def mousePressEvent(self, event):
         ''' Handle mouse event.'''
         # Mode Add Annotation
-        if (self.editorMode == self.ModeEditorAnnotation):
+        if (self.editorMode == self.ModeAddAnnotation):
             # LPM adds point
             if (event.buttons() == Qt.LeftButton):
                 self.mouseClicks.append(event.pos())
@@ -185,7 +182,7 @@ class ViewerEditorImage(QWidget):
                     self.CallbackEditorFinished()
 
         # Mode Remove Annotation
-        if (self.editorMode == self.ModeEditorRemoveAnnotation):
+        if (self.editorMode == self.ModeRemoveAnnotation):
             # LPM finds annotation
             if (event.buttons() == Qt.LeftButton):
                 x, y = event.pos().x(), event.pos().y()
@@ -213,19 +210,19 @@ class ViewerEditorImage(QWidget):
             self.mouseClicks, width, height)
 
         # Mode Add Annotation
-        if (self.editorMode == self.ModeEditorAnnotation):
+        if (self.editorMode == self.ModeAddAnnotation):
             box = PointsToRect(trajectory[0], trajectory[1])
             self.annoter.AddAnnotation(box,
                                        self.classNumber)
         # Mode Remove Annotation
-        elif (self.editorMode == self.ModeEditorRemoveAnnotation):
+        elif (self.editorMode == self.ModeRemoveAnnotation):
             toDelete = self.GetHoveredAnnotation(trajectory[0])
             # If clicked on annotation the return
             if (toDelete is not None):
                 self.annoter.RemoveAnnotation(toDelete)
 
         previousMode = self.editorMode
-        self.__resetEditorMode()
+        self.__resetEditorMode(previousMode)
         self.update()
 
         # Emit signal
@@ -247,13 +244,13 @@ class ViewerEditorImage(QWidget):
             widgetPainter.drawPixmap(self.rect(), pixmap)
         # If there is no image then fill Black and draw text
         else:
-            # Get geometry of widget
-            area = self.geometry()
             # Fill black background
-            widgetPainter.fillRect(area, QBrush(Qt.black))
+            widgetPainter.fillRect(self.geometry(),
+                                   QBrush(Qt.black))
             widgetPainter.setPen(Qt.white)
             widgetPainter.setFont(QFont('Decorative', 10))
-            widgetPainter.drawText(area, Qt.AlignCenter,
+            widgetPainter.drawText(self.geometry(),
+                                   Qt.AlignCenter,
                                    'No image loaded!')
 
         # Draw all annotations
@@ -274,7 +271,7 @@ class ViewerEditorImage(QWidget):
                                   isConfidence=True)
 
         # -------- Mode Annotation Draw -------
-        if (self.editorMode == self.ModeEditorAnnotation):
+        if (self.editorMode == self.ModeAddAnnotation):
             if (len(self.mouseClicks) != 0) and (self.mousePosition is not None):
                 # Draw rectangle box
                 QDrawRectangle(widgetPainter,

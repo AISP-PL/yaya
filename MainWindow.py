@@ -11,7 +11,7 @@ import subprocess
 import cv2
 from Ui_MainWindow import Ui_MainWindow
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTableWidgetItem,\
-    QListWidgetItem
+    QListWidgetItem, QButtonGroup
 from PyQt5 import QtCore, QtGui
 from engine.annote import GetClasses
 from ViewerEditorImage import ViewerEditorImage
@@ -78,21 +78,31 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.fileNumberSlider.valueChanged.connect(
             self.CallbackFileNumberSlider)
 
-        # Buttons
+        # Buttons group - for mode buttons
+        self.modeButtonGroup = QButtonGroup(self.window)
+        self.modeButtonGroup.addButton(self.ui.addAnnotationsButton)
+        self.modeButtonGroup.addButton(self.ui.removeAnnotationsButton)
+        self.modeButtonGroup.addButton(self.ui.paintCircleButton)
+
+        # Buttons player
         self.ui.nextFileButton.clicked.connect(self.CallbackNextFile)
         self.ui.prevFileButton.clicked.connect(self.CallbackPrevFile)
+        # Buttons Image
         self.ui.SaveFileAnnotationsButton.clicked.connect(
             self.CallbackSaveFileAnnotationsButton)
-        self.ui.ClearAnnotationsButton.clicked.connect(
-            self.CallbackClearAnnotationsButton)
         self.ui.DeleteImageAnnotationsButton.clicked.connect(
             self.CallbackDeleteImageAnnotationsButton)
-        self.ui.hideAnnotationsButton.clicked.connect(
-            self.CallbackHideAnnotationsButton)
+        # Buttons - Annotations
+        self.ui.addAnnotationsButton.clicked.connect(
+            self.CallbackAddAnnotationsButton)
         self.ui.removeAnnotationsButton.clicked.connect(
             self.CallbackRemoveAnnotationsButton)
         self.ui.detectAnnotationsButton.clicked.connect(
             self.CallbackDetectAnnotations)
+        self.ui.hideAnnotationsButton.clicked.connect(
+            self.CallbackHideAnnotationsButton)
+        self.ui.ClearAnnotationsButton.clicked.connect(
+            self.CallbackClearAnnotationsButton)
 
     def Setup(self):
         ''' Setup again UI.'''
@@ -150,10 +160,15 @@ class MainWindowGui(Ui_MainWindow):
         self.annoter.Process(forceDetector=True)
         self.Setup()
 
+    def CallbackAddAnnotationsButton(self):
+        ''' Remove annotations.'''
+        self.ui.viewerEditor.SetEditorMode(
+            ViewerEditorImage.ModeAddAnnotation)
+
     def CallbackRemoveAnnotationsButton(self):
         ''' Remove annotations.'''
         self.ui.viewerEditor.SetEditorMode(
-            ViewerEditorImage.ModeEditorRemoveAnnotation)
+            ViewerEditorImage.ModeRemoveAnnotation)
 
     def CallbackHideAnnotationsButton(self):
         '''Callback'''
