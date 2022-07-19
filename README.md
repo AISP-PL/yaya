@@ -1,8 +1,8 @@
 
-# YAYA - Yet another yolo annoter
+# YAYA - Yet Another YOLO Annoter
 ![title](doc/titleQt.png)
 
-`YAYA - Yet another yolo annoter` with `QT5 widgets` gui, and ...
+`YAYA - Yet Another YOLO Annoter` with `QT5 widgets` gui, and ...
 
 - Rewritten in python,
 - Checks for errors of overriding boxes,
