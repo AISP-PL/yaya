@@ -51,6 +51,10 @@ class Ui_MainWindow(object):
         self.isSavedCheckBox.setCheckable(False)
         self.isSavedCheckBox.setObjectName('isSavedCheckBox')
         self.horizontalLayout.addWidget(self.isSavedCheckBox)
+        self.isErrorsCheckBox = QtWidgets.QCheckBox(self.verticalLayoutWidget)
+        self.isErrorsCheckBox.setCheckable(False)
+        self.isErrorsCheckBox.setObjectName('isErrorsCheckBox')
+        self.horizontalLayout.addWidget(self.isErrorsCheckBox)
         self.progressBar = QtWidgets.QProgressBar(self.verticalLayoutWidget)
         self.progressBar.setProperty('value', 0)
         self.progressBar.setTextVisible(True)
@@ -330,7 +334,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuPomoc.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.toolSettingsStackedWidget.setCurrentIndex(0)
+        self.toolSettingsStackedWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -338,6 +342,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate(
             'MainWindow', 'AITracker - config'))
         self.isSavedCheckBox.setText(_translate('MainWindow', 'Saved'))
+        self.isErrorsCheckBox.setText(_translate('MainWindow', 'isErrors?'))
         self.progressBar.setFormat(_translate('MainWindow', 'Annotated %p%'))
         self.fileLabel.setText(_translate(
             'MainWindow', 'Filename (number/all)'))
@@ -349,28 +354,30 @@ class Ui_MainWindow(object):
         self.nextFileButton.setShortcut(_translate('MainWindow', '.'))
         self.label_2.setText(_translate('MainWindow', 'Image'))
         self.SaveFileAnnotationsButton.setText(
-            _translate('MainWindow', 'Save'))
+            _translate('MainWindow', '(S)ave'))
         self.SaveFileAnnotationsButton.setShortcut(
             _translate('MainWindow', 'S'))
         self.DeleteImageAnnotationsButton.setText(
-            _translate('MainWindow', 'Delete'))
+            _translate('MainWindow', '(X)Delete'))
         self.DeleteImageAnnotationsButton.setShortcut(
             _translate('MainWindow', 'X'))
         self.label.setText(_translate('MainWindow', 'Annotations'))
-        self.addAnnotationsButton.setText(_translate('MainWindow', 'Add '))
+        self.addAnnotationsButton.setText(_translate('MainWindow', '(A)dd '))
         self.addAnnotationsButton.setShortcut(_translate('MainWindow', 'A'))
         self.removeAnnotationsButton.setText(
-            _translate('MainWindow', 'Remove'))
+            _translate('MainWindow', '(R)emove'))
         self.removeAnnotationsButton.setShortcut(_translate('MainWindow', 'R'))
-        self.ClearAnnotationsButton.setText(_translate('MainWindow', 'Clear'))
+        self.ClearAnnotationsButton.setText(
+            _translate('MainWindow', '(C)lear'))
         self.ClearAnnotationsButton.setShortcut(_translate('MainWindow', 'C'))
-        self.hideAnnotationsButton.setText(_translate('MainWindow', 'Hide'))
+        self.hideAnnotationsButton.setText(_translate('MainWindow', '(H)ide'))
         self.hideAnnotationsButton.setShortcut(_translate('MainWindow', 'H'))
         self.detectAnnotationsButton.setText(
-            _translate('MainWindow', 'Detect '))
+            _translate('MainWindow', '(D)etect '))
         self.detectAnnotationsButton.setShortcut(_translate('MainWindow', 'D'))
         self.label_3.setText(_translate('MainWindow', 'Painting'))
-        self.paintCircleButton.setText(_translate('MainWindow', 'Add Circle'))
+        self.paintCircleButton.setText(_translate('MainWindow', 'Circl(e)'))
+        self.paintCircleButton.setShortcut(_translate('MainWindow', 'E'))
         self.detectorClassesLabel.setText(_translate(
             'MainWindow', 'Selected detector classes :'))
         self.paintLabel.setText(_translate('MainWindow', 'Painting Size'))

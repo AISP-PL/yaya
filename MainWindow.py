@@ -139,6 +139,13 @@ class MainWindowGui(Ui_MainWindow):
         else:
             self.ui.isSavedCheckBox.setChecked(False)
 
+        # Setup errors tick
+        errors = self.annoter.GetErrors()
+        if (len(errors) != 0):
+            self.ui.isErrorsCheckBox.setChecked(True)
+        else:
+            self.ui.isErrorsCheckBox.setChecked(False)
+
         # Setup viewer/editor
         self.ui.viewerEditor.SetAnnoter(self.annoter)
         self.ui.viewerEditor.SetImage(self.annoter.GetImage())

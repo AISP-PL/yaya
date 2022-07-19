@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.11.0, 2022-07-18T14:08:18. -->
+<!-- Written by QtCreator 4.11.0, 2022-07-19T22:10:35. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -297,7 +297,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/spasz/python/pyAITracker/tools/yolo-annotate/MainWindowGui.py</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/spasz/python/pyAITracker/tools/yolo-annotate/MainWindowGui.py</value>
     <value type="QString" key="PythonEditor.RunConfiguation.Interpreter"></value>
-    <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/spasz/python/pyAITracker/tools/yolo-annotate/MainWindowGui.py</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Script"></value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
     <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>

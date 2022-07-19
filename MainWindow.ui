@@ -50,6 +50,16 @@
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="isErrorsCheckBox">
+            <property name="text">
+             <string>isErrors?</string>
+            </property>
+            <property name="checkable">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QProgressBar" name="progressBar">
             <property name="value">
              <number>0</number>
@@ -173,7 +183,7 @@
           <item>
            <widget class="QPushButton" name="SaveFileAnnotationsButton">
             <property name="text">
-             <string>Save</string>
+             <string>(S)ave</string>
             </property>
             <property name="icon">
              <iconset resource="icons/tango.qrc">
@@ -187,7 +197,7 @@
           <item>
            <widget class="QPushButton" name="DeleteImageAnnotationsButton">
             <property name="text">
-             <string>Delete</string>
+             <string>(X)Delete</string>
             </property>
             <property name="icon">
              <iconset resource="icons/tango.qrc">
@@ -248,7 +258,7 @@
           <item>
            <widget class="QPushButton" name="addAnnotationsButton">
             <property name="text">
-             <string>Add </string>
+             <string>(A)dd </string>
             </property>
             <property name="icon">
              <iconset resource="icons/tango.qrc">
@@ -268,7 +278,7 @@
           <item>
            <widget class="QPushButton" name="removeAnnotationsButton">
             <property name="text">
-             <string>Remove</string>
+             <string>(R)emove</string>
             </property>
             <property name="icon">
              <iconset resource="icons/tango.qrc">
@@ -285,7 +295,7 @@
           <item>
            <widget class="QPushButton" name="ClearAnnotationsButton">
             <property name="text">
-             <string>Clear</string>
+             <string>(C)lear</string>
             </property>
             <property name="icon">
              <iconset resource="icons/tango.qrc">
@@ -299,7 +309,7 @@
           <item>
            <widget class="QPushButton" name="hideAnnotationsButton">
             <property name="text">
-             <string>Hide</string>
+             <string>(H)ide</string>
             </property>
             <property name="icon">
              <iconset resource="icons/tango.qrc">
@@ -313,7 +323,7 @@
           <item>
            <widget class="QPushButton" name="detectAnnotationsButton">
             <property name="text">
-             <string>Detect </string>
+             <string>(D)etect </string>
             </property>
             <property name="icon">
              <iconset resource="icons/tango.qrc">
@@ -357,11 +367,14 @@
           <item>
            <widget class="QPushButton" name="paintCircleButton">
             <property name="text">
-             <string>Add Circle</string>
+             <string>Circl(e)</string>
             </property>
             <property name="icon">
              <iconset resource="icons/tango.qrc">
               <normaloff>:/icons/32x32/list-add.png</normaloff>:/icons/32x32/list-add.png</iconset>
+            </property>
+            <property name="shortcut">
+             <string>E</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
