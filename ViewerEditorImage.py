@@ -53,6 +53,8 @@ class ViewerEditorImage(QWidget):
         self.editorModeArgument = None
         # Current mouse coords
         self.mousePosition = None
+        # Mouse trajectory
+        self.mouseTrajectory = None
         # List of all clicks
         self.mouseClicks = []
         # Is dragging
@@ -124,10 +126,10 @@ class ViewerEditorImage(QWidget):
     def __resetEditorMode(self, defaultMode=ModeNone):
         ''' Resets editor mode.'''
         self.mousePosition = None
+        self.mouseTrajectory = None
         self.mouseClicks = []
         self.mouseDragging = False
         self.editorMode = defaultMode
-        self.editorModeArgument = None
 
     def SetAnnoter(self, annoter):
         ''' Set annoter handle.'''
@@ -172,6 +174,9 @@ class ViewerEditorImage(QWidget):
     def mouseMoveEvent(self, event):
         ''' Handle mouse move event.'''
         self.mousePosition = event.pos()
+        if (self.mouseTrajectory is not None):
+            self.mouseTrajectory.append(event.pos())
+
         self.update()
 
     def mousePressEvent(self, event):
@@ -206,39 +211,48 @@ class ViewerEditorImage(QWidget):
         elif (self.editorMode == self.ModePaintCircle):
             # LPM finds annotation
             if (event.buttons() == Qt.LeftButton):
-                viewWidth, viewHeight = self.GetViewSize()
-                imWidth, imHeight = self.GetImageSize()
-                viewPoint = event.pos().x(), event.pos().y()
-                relPoint = PointToRelative(viewPoint, viewWidth, viewHeight)
-                imPoint = PointToAbsolute(relPoint, imWidth, imHeight)
-
-                # Add drawing to original image
-                self.annoter.PaintCircles([imPoint],
-                                          self.editorModeArgument,
-                                          (0, 0, 0))
+                # Enabled mouse trajectory storing
+                self.mouseTrajectory = [event.pos()]
 
     def mouseReleaseEvent(self, event):
         ''' Handle mouse event.'''
+        # Mode Paint circle
+        if (self.editorMode == self.ModePaintCircle):
+            self.CallbackEditorFinished()
 
     def CallbackEditorFinished(self):
         ''' Finished editor mode.'''
         # Get Preview info width & height
         width, height = self.GetViewSize()
-        # Mouse clicks to relative trajectory
-        trajectory = self.AbsoluteQTrajectoryToTrajectory(
+        # Mouse clicks to relative
+        clicksRel = self.AbsoluteQTrajectoryToTrajectory(
             self.mouseClicks, width, height)
+        # Mouse trajectory relative
+        if (self.mouseTrajectory is not None):
+            trajectoryRel = self.AbsoluteQTrajectoryToTrajectory(
+                self.mouseTrajectory, width, height)
 
         # Mode Add Annotation
         if (self.editorMode == self.ModeAddAnnotation):
-            box = PointsToRect(trajectory[0], trajectory[1])
+            box = PointsToRect(clicksRel[0], clicksRel[1])
             self.annoter.AddAnnotation(box,
                                        self.classNumber)
         # Mode Remove Annotation
         elif (self.editorMode == self.ModeRemoveAnnotation):
-            toDelete = self.GetHoveredAnnotation(trajectory[0])
+            toDelete = self.GetHoveredAnnotation(clicksRel[0])
             # If clicked on annotation the return
             if (toDelete is not None):
                 self.annoter.RemoveAnnotation(toDelete)
+
+        # Mode Paint circle
+        elif (self.editorMode == self.ModePaintCircle):
+            imWidth, imHeight = self.GetImageSize()
+            for relPoint in trajectoryRel:
+                imPoint = PointToAbsolute(relPoint, imWidth, imHeight)
+                # Add drawing to original image
+                self.annoter.PaintCircles([imPoint],
+                                          self.editorModeArgument,
+                                          (0, 0, 0))
 
         previousMode = self.editorMode
         self.__resetEditorMode(previousMode)
