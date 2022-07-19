@@ -1,8 +1,8 @@
-![title](doc/title.png)
 
-# yolo-annotate
+# YAYA - Yet another yolo annoter
+![title](doc/titleQt.png)
 
-**Yet Another yolo annotation program**. Yolo_mark clone with openCV gui, but ...
+`YAYA - Yet another yolo annoter` with `QT5 widgets` gui, and ...
 
 - Rewritten in python,
 - Checks for errors of overriding boxes,
@@ -10,10 +10,9 @@
 - Manual Yolo detection by presing 'd' - to check YOLO with original data,
 - You can use standard YOLOv4 (MSCOCO) or your custom YOLOv4
 
+
 ### How to start?
-
 `./yolo-annotate.py -i input/`
-
 
 ### Key codes
 
@@ -26,8 +25,6 @@ s - save all (if errors not exists)
 arrow -> or . - next image
 arrow <- or , - previous image
 ```
-
-
 ### Command line
 
 ```shell
@@ -44,12 +41,19 @@ optional arguments:
   -v, --verbose     Show verbose finded and processed data
 ```
 
-## Quick start
+------------
 
-### 1. Darknet
+# [!DEPRECATED!] yolo-annotate 
+![title](doc/title.png)
 
-Compile darknet and install libdarknet.so
+**[!DEPRECATED! - Use `release/v0.6-OpenCV` for old OpenCV version]** **Yet Another yolo annotation program**. Yolo_mark clone with openCV gui, but ...
 
-### 2. Yolov4
+- Rewritten in python,
+- Checks for errors of overriding boxes,
+- Auto-annotation feature added  - use yolo to detect and describe annotations of your image,
+- Manual Yolo detection by presing 'd' - to check YOLO with original data,
+- You can use standard YOLOv4 (MSCOCO) or your custom YOLOv4
 
-Download YOLOv3 weights and copy to yolov4 directory.
+
+
+
