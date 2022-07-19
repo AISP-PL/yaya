@@ -43,7 +43,7 @@ optional arguments:
 
 ------------
 
-# [!DEPRECATED!] yolo-annotate 
+# [!DEPRECATED!] yolo-annotate - old OpenCV version.
 ![title](doc/title.png)
 
 **[!DEPRECATED! - Use `release/v0.6-OpenCV` for old OpenCV version]** **Yet Another yolo annotation program**. Yolo_mark clone with openCV gui, but ...
