@@ -102,6 +102,11 @@ class MainWindowGui(Ui_MainWindow):
             colIndex += 1
         self.ui.fileSelectorTableWidget.itemClicked.connect(
             self.CallbackFileSelectorItemClicked)
+        
+        # Menu handling
+        self.ui.actionZamknijProgram.triggered.connect(self.CallbackClose)
+        self.ui.actionZapisz.triggered.connect(self.CallbackSaveFileAnnotationsButton)
+        self.ui.actionOtworzLokacje.triggered.connect(self.CallbackOpenLocation)
 
         # Buttons group - for mode buttons
         self.modeButtonGroup = QButtonGroup(self.window)
@@ -259,3 +264,14 @@ class MainWindowGui(Ui_MainWindow):
         '''Callback'''
         self.annoter.ProcessPrev()
         self.Setup()
+
+    def CallbackOpenLocation(self):
+        ''' Open location callback.'''
+        filepath = str(QFileDialog.getExistingDirectory(
+            None, 'Select Directory'))
+        # TODO call annoter again
+
+    def CallbackClose(self):
+        ''' Close GUI callback.'''
+        logging.debug('Closing application!')
+        self.window.close()
