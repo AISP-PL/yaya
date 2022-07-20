@@ -269,7 +269,9 @@ class MainWindowGui(Ui_MainWindow):
         ''' Open location callback.'''
         filepath = str(QFileDialog.getExistingDirectory(
             None, 'Select Directory'))
-        # TODO call annoter again
+        self.annoter.OpenLocation(filepath)
+        self.SetupDefault()
+        self.Setup()
 
     def CallbackClose(self):
         ''' Close GUI callback.'''

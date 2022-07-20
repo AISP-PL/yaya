@@ -39,6 +39,15 @@ class Annoter():
         '''
         Constructor
         '''
+        # Set configuration
+        self.config = {
+             'sortMethod':sortMethod,
+             'isOnlyNewFiles':isOnlyNewFiles,
+             'isOnlyOldFiles':isOnlyOldFiles,
+             'isOnlyErrorFiles':isOnlyErrorFiles,
+             'isOnlyDetectedClass':isOnlyDetectedClass,
+             'isOnlySpecificClass':isOnlySpecificClass,
+        }
         # Detector handle
         self.detector = detector
         # Path
@@ -52,80 +61,8 @@ class Annoter():
         self.offset = 0
         # Set of all errors
         self.errors = set()
-
-        # filter only images and not excludes
-        excludes = ['.', '..', './', '.directory']
-        filenames = os.listdir(self.dirpath)
-
-        # Sorting : by datetime
-        if (sortMethod == self.SortByDatetime):
-            filenames = sorted(filenames,
-                               key=lambda f: -os.lstat(self.dirpath+f).st_mtime)
-        elif (sortMethod == self.SortByInvDatetime):
-            filenames = sorted(filenames,
-                               key=lambda f: os.lstat(self.dirpath+f).st_mtime)
-        # Sorting : by alphabet
-        elif (sortMethod == self.SortByDatetime):
-            filenames = sorted(filenames)
-
-        # Filter images only
-        self.filenames = [f for f in filenames if (
-            f not in excludes) and (IsImageFile(f))]
-
-        # if only new files - then filter all files with annotation.
-        if (isOnlyNewFiles == True):
-            self.filenames = [f for f in self.filenames if (
-                IsExistsAnnotations(self.dirpath+f) == False)]
-
-        # if only new files - then filter all files without annotation.
-        elif (isOnlyOldFiles == True):
-            self.filenames = [f for f in self.filenames if (
-                IsExistsAnnotations(self.dirpath+f) == True)]
-
-        # Use only files with errors
-        if (isOnlyErrorFiles == True):
-            filesWithErrors = []
-            for offset, filename in enumerate(self.filenames):
-                self.offset = offset
-                self.Process()
-                if (len(self.errors) != 0):
-                    filesWithErrors.append(filename)
-
-            self.filenames = filesWithErrors
-
-        # Use only files with specific class detected
-        if (isOnlyDetectedClass is not None):
-            filesForClass = []
-            for offset, filename in enumerate(self.filenames):
-                self.offset = offset
-                self.Process(processImage=True, forceDetector=True)
-                # Check if detected class exists in annotations
-                if (len(self.annotations) != 0) and  \
-                        (len(self.GetAnnotationsForClass(isOnlyDetectedClass)) != 0):
-                    filesForClass.append(filename)
-                # Logging progress
-                logging.info('Progress : [%u/%u]\r',
-                             offset, len(self.filenames))
-
-            self.filenames = filesForClass
-
-        # Use only files with specific class
-        if (isOnlySpecificClass is not None):
-            filesForClass = []
-            for offset, filename in enumerate(self.filenames):
-                self.offset = offset
-                self.Process(processImage=False)
-                if (len(self.annotations) != 0) and  \
-                        (len(self.GetAnnotationsForClass(isOnlySpecificClass)) != 0):
-                    filesForClass.append(filename)
-
-            self.filenames = filesForClass
-
-        # Reset values at the end
-        self.annotations = None
-        self.image = None
-        self.offset = 0
-        self.errors = set()
+        
+        self.OpenLocation(self.dirpath)
 
     def __del__(self):
         ''' Destructor.'''
@@ -151,6 +88,84 @@ class Annoter():
                          len(filenamesAnnotated),
                          len(filenames),
                          datasetPath)
+    
+    def OpenLocation(self, path):
+        ''' Open images/annotations location.'''
+        # Update dirpath
+        self.dirpath = path
+        # filter only images and not excludes
+        excludes = ['.', '..', './', '.directory']
+        filenames = os.listdir(path)
+
+        # Sorting : by datetime
+        if (self.config['sortMethod'] == self.SortByDatetime):
+            filenames = sorted(filenames,
+                               key=lambda f: -os.lstat(path+f).st_mtime)
+        elif (self.config['sortMethod'] == self.SortByInvDatetime):
+            filenames = sorted(filenames,
+                               key=lambda f: os.lstat(path+f).st_mtime)
+        # Sorting : by alphabet
+        elif (self.config['sortMethod'] == self.SortByDatetime):
+            filenames = sorted(filenames)
+
+        # Filter images only
+        self.filenames = [f for f in filenames if (
+            f not in excludes) and (IsImageFile(f))]
+
+        # if only new files - then filter all files with annotation.
+        if (self.config['isOnlyNewFiles'] == True):
+            self.filenames = [f for f in self.filenames if (
+                IsExistsAnnotations(path+f) == False)]
+
+        # if only new files - then filter all files without annotation.
+        elif (self.config['isOnlyOldFiles'] == True):
+            self.filenames = [f for f in self.filenames if (
+                IsExistsAnnotations(path+f) == True)]
+
+        # Use only files with errors
+        if (self.config['isOnlyErrorFiles'] == True):
+            filesWithErrors = []
+            for offset, filename in enumerate(self.filenames):
+                self.offset = offset
+                self.Process()
+                if (len(self.errors) != 0):
+                    filesWithErrors.append(filename)
+
+            self.filenames = filesWithErrors
+
+        # Use only files with specific class detected
+        if (self.config['isOnlyDetectedClass'] is not None):
+            filesForClass = []
+            for offset, filename in enumerate(self.filenames):
+                self.offset = offset
+                self.Process(processImage=True, forceDetector=True)
+                # Check if detected class exists in annotations
+                if (len(self.annotations) != 0) and  \
+                        (len(self.GetAnnotationsForClass(self.config['isOnlyDetectedClass'])) != 0):
+                    filesForClass.append(filename)
+                # Logging progress
+                logging.info('Progress : [%u/%u]\r',
+                             offset, len(self.filenames))
+
+            self.filenames = filesForClass
+
+        # Use only files with specific class
+        if (self.config['isOnlySpecificClass'] is not None):
+            filesForClass = []
+            for offset, filename in enumerate(self.filenames):
+                self.offset = offset
+                self.Process(processImage=False)
+                if (len(self.annotations) != 0) and  \
+                        (len(self.GetAnnotationsForClass(self.config['isOnlySpecificClass'])) != 0):
+                    filesForClass.append(filename)
+
+            self.filenames = filesForClass
+
+        # Reset values at the end
+        self.annotations = None
+        self.image = None
+        self.offset = 0
+        self.errors = set()
 
     def GetFilename(self):
         ''' Returns current filepath.'''
@@ -174,7 +189,7 @@ class Annoter():
             h, w, bytes = self.image.shape
             return w, h, bytes
 
-        return 0, 0
+        return 0, 0, 0
 
     def GetImageNumber(self):
         ''' Returns current image number.'''
