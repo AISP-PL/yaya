@@ -39,15 +39,15 @@ class MainWindowGui(Ui_MainWindow):
         self.detector = detector
         # Store annoter handle
         self.annoter = annoter
+        # Keys offset
+        self.keysOffset = 0
+        # Keys length
+        self.keysSize = 12
 
-        # Create
-        # - QtApplication
-        # - Qt UI
-        # - QtMainWindow
+        # UI - creation
         self.App = QApplication(sys.argv)
         self.ui = Ui_MainWindow()
         self.window = QMainWindow()
-        # The main window object calls the setupUi method to set the QMainWindow object
         self.ui.setupUi(self.window)
 
         # Setup all
@@ -149,6 +149,7 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.button10.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button10)) 
         self.ui.button11.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button11)) 
         self.ui.button12.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button12)) 
+        self.ui.buttonOffset.clicked.connect(self.CallbackKeycodeOffsetButtonClicked)
 
     def Setup(self):
         ''' Setup again UI.'''
@@ -193,9 +194,20 @@ class MainWindowGui(Ui_MainWindow):
         self.window.show()
         return self.App.exec_()
     
+    def CallbackKeycodeOffsetButtonClicked(self):
+        ''' Callback when keycode offset button clicked.'''
+        self.keysOffset += self.keysSize
+        if (self.keysOffset >= self.ui.labelsListWidget.count()):
+            self.keysOffset = 0
+        # Call like button 1 clicked
+        self.CallbackKeycodeButtonClicked(self.ui.button1) 
+    
     def CallbackKeycodeButtonClicked(self, button):
         ''' Callback when keycode button clicked.'''
-        indexChr = int(button.text())-1
+        indexChr = self.keysOffset + int(button.text())-1
+        if (indexChr >= self.ui.labelsListWidget.count()):
+            indexChr = self.ui.labelsListWidget.count()-1
+            
         self.ui.labelsListWidget.setCurrentRow(indexChr)
 
     def CallbackLabelsRowChanged(self, index):
