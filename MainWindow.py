@@ -15,7 +15,6 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTableWidget
 from PyQt5 import QtCore, QtGui
 from engine.annote import GetClasses
 from ViewerEditorImage import ViewerEditorImage
-from click.decorators import argument
 from helpers.files import FixPath
 
 
@@ -137,6 +136,19 @@ class MainWindowGui(Ui_MainWindow):
         # Buttons - Painting
         self.ui.paintCircleButton.clicked.connect(
             self.CallbackPaintCircleButton)
+        # Buttons - list of gui key codes
+        self.ui.button1.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button1)) 
+        self.ui.button2.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button2)) 
+        self.ui.button3.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button3)) 
+        self.ui.button4.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button4)) 
+        self.ui.button5.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button5)) 
+        self.ui.button6.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button6)) 
+        self.ui.button7.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button7)) 
+        self.ui.button8.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button8)) 
+        self.ui.button9.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button9)) 
+        self.ui.button10.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button10)) 
+        self.ui.button11.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button11)) 
+        self.ui.button12.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button12)) 
 
     def Setup(self):
         ''' Setup again UI.'''
@@ -180,6 +192,11 @@ class MainWindowGui(Ui_MainWindow):
         '''  Run gui window thread and return exit code.'''
         self.window.show()
         return self.App.exec_()
+    
+    def CallbackKeycodeButtonClicked(self, button):
+        ''' Callback when keycode button clicked.'''
+        indexChr = int(button.text())-1
+        self.ui.labelsListWidget.setCurrentRow(indexChr)
 
     def CallbackLabelsRowChanged(self, index):
         ''' Current labels row changed. '''
