@@ -54,9 +54,6 @@ class MainWindowGui(Ui_MainWindow):
         self.SetupDefault()
         self.Setup()
 
-        # Open File
-        self.OpenFile()
-
     def SetupDefault(self):
         ''' Sets default for UI.'''
         # Annoter - process first time.
@@ -82,6 +79,29 @@ class MainWindowGui(Ui_MainWindow):
         # Paint size slider
         self.ui.paintSizeSlider.valueChanged.connect(
             self.CallbackPaintSizeSlider)
+        
+        # Setup files selector table widget
+        labels = ['Filepath', 'Annotations']
+        self.ui.fileSelectorTableWidget.setColumnCount(len(labels))
+        self.ui.fileSelectorTableWidget.setHorizontalHeaderLabels(labels)
+        self.ui.fileSelectorTableWidget.setRowCount(self.annoter.GetImagesCount())
+        for rowIndex, fileEntry in enumerate(self.annoter.GetImagesList()):
+            # Start from column zero
+            colIndex = 0
+            
+            # Filepath column
+            item = QTableWidgetItem(str(fileEntry))
+            item.setToolTip(str(rowIndex))
+            self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
+            colIndex += 1
+            
+            # Annotations column
+            item = QTableWidgetItem(str(0))
+            item.setToolTip(str(rowIndex))
+            self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
+            colIndex += 1
+        self.ui.fileSelectorTableWidget.itemClicked.connect(
+            self.CallbackFileSelectorItemClicked)
 
         # Buttons group - for mode buttons
         self.modeButtonGroup = QButtonGroup(self.window)
@@ -150,12 +170,6 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.viewerEditor.SetAnnoter(self.annoter)
         self.ui.viewerEditor.SetImage(self.annoter.GetImage())
 
-    def OpenFile(self):
-        ''' Sets default for UI.'''
-
-    def SaveFile(self, fileEntry):
-        ''' Sets default for UI.'''
-
     def Run(self):
         '''  Run gui window thread and return exit code.'''
         self.window.show()
@@ -164,6 +178,16 @@ class MainWindowGui(Ui_MainWindow):
     def CallbackLabelsRowChanged(self, index):
         ''' Current labels row changed. '''
         self.ui.viewerEditor.SetClassNumber(index)
+    
+    def CallbackFileSelectorItemClicked(self, item):
+        ''' When file selector item was clicked.'''
+        # Read current file number
+        fileNumber = int(item.toolTip())
+        self.ui.fileNumberSlider.setValue(fileNumber)
+        # # Update annoter
+        # self.annoter.SetImageNumber(fileNumber)
+        # # Setup UI again
+        # self.Setup()
 
     def CallbackFileNumberSlider(self):
         ''' Callback for changed of file number slider.'''
