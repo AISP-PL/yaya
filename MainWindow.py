@@ -79,34 +79,44 @@ class MainWindowGui(Ui_MainWindow):
         # Paint size slider
         self.ui.paintSizeSlider.valueChanged.connect(
             self.CallbackPaintSizeSlider)
-        
+
         # Setup files selector table widget
-        labels = ['Filepath', 'Annotations']
+        labels = ['Name', 'IsAnnotated', 'Annotations']
         self.ui.fileSelectorTableWidget.setColumnCount(len(labels))
         self.ui.fileSelectorTableWidget.setHorizontalHeaderLabels(labels)
-        self.ui.fileSelectorTableWidget.setRowCount(self.annoter.GetImagesCount())
+        self.ui.fileSelectorTableWidget.setRowCount(
+            self.annoter.GetImagesCount())
         for rowIndex, fileEntry in enumerate(self.annoter.GetImagesList()):
             # Start from column zero
             colIndex = 0
-            
-            # Filepath column
-            item = QTableWidgetItem(str(fileEntry))
+
+            # Filename column
+            item = QTableWidgetItem(str(fileEntry['Name']))
             item.setToolTip(str(rowIndex))
             self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
             colIndex += 1
-            
+
+            # IsAnnotation column
+            item = QTableWidgetItem(str(fileEntry['IsAnnotation']))
+            item.setToolTip(str(rowIndex))
+            self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
+            colIndex += 1
+
             # Annotations column
-            item = QTableWidgetItem(str(0))
+            item = QTableWidgetItem(str(fileEntry['Annotations']))
             item.setToolTip(str(rowIndex))
             self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
             colIndex += 1
+
         self.ui.fileSelectorTableWidget.itemClicked.connect(
             self.CallbackFileSelectorItemClicked)
-        
+
         # Menu handling
         self.ui.actionZamknijProgram.triggered.connect(self.CallbackClose)
-        self.ui.actionZapisz.triggered.connect(self.CallbackSaveFileAnnotationsButton)
-        self.ui.actionOtworzLokacje.triggered.connect(self.CallbackOpenLocation)
+        self.ui.actionZapisz.triggered.connect(
+            self.CallbackSaveFileAnnotationsButton)
+        self.ui.actionOtworzLokacje.triggered.connect(
+            self.CallbackOpenLocation)
 
         # Buttons group - for mode buttons
         self.modeButtonGroup = QButtonGroup(self.window)
@@ -137,19 +147,32 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.paintCircleButton.clicked.connect(
             self.CallbackPaintCircleButton)
         # Buttons - list of gui key codes
-        self.ui.button1.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button1)) 
-        self.ui.button2.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button2)) 
-        self.ui.button3.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button3)) 
-        self.ui.button4.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button4)) 
-        self.ui.button5.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button5)) 
-        self.ui.button6.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button6)) 
-        self.ui.button7.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button7)) 
-        self.ui.button8.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button8)) 
-        self.ui.button9.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button9)) 
-        self.ui.button10.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button10)) 
-        self.ui.button11.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button11)) 
-        self.ui.button12.clicked.connect(lambda: self.CallbackKeycodeButtonClicked(self.ui.button12)) 
-        self.ui.buttonOffset.clicked.connect(self.CallbackKeycodeOffsetButtonClicked)
+        self.ui.button1.clicked.connect(
+            lambda: self.CallbackKeycodeButtonClicked(self.ui.button1))
+        self.ui.button2.clicked.connect(
+            lambda: self.CallbackKeycodeButtonClicked(self.ui.button2))
+        self.ui.button3.clicked.connect(
+            lambda: self.CallbackKeycodeButtonClicked(self.ui.button3))
+        self.ui.button4.clicked.connect(
+            lambda: self.CallbackKeycodeButtonClicked(self.ui.button4))
+        self.ui.button5.clicked.connect(
+            lambda: self.CallbackKeycodeButtonClicked(self.ui.button5))
+        self.ui.button6.clicked.connect(
+            lambda: self.CallbackKeycodeButtonClicked(self.ui.button6))
+        self.ui.button7.clicked.connect(
+            lambda: self.CallbackKeycodeButtonClicked(self.ui.button7))
+        self.ui.button8.clicked.connect(
+            lambda: self.CallbackKeycodeButtonClicked(self.ui.button8))
+        self.ui.button9.clicked.connect(
+            lambda: self.CallbackKeycodeButtonClicked(self.ui.button9))
+        self.ui.button10.clicked.connect(
+            lambda: self.CallbackKeycodeButtonClicked(self.ui.button10))
+        self.ui.button11.clicked.connect(
+            lambda: self.CallbackKeycodeButtonClicked(self.ui.button11))
+        self.ui.button12.clicked.connect(
+            lambda: self.CallbackKeycodeButtonClicked(self.ui.button12))
+        self.ui.buttonOffset.clicked.connect(
+            self.CallbackKeycodeOffsetButtonClicked)
 
     def Setup(self):
         ''' Setup again UI.'''
@@ -157,6 +180,12 @@ class MainWindowGui(Ui_MainWindow):
         imageWidth, imageHeight, imageBytes = self.annoter.GetImageSize()
         imageNumber = self.annoter.GetImageNumber()
         imageCount = self.annoter.GetImagesCount()
+        imageAnnotatedCount = self.annoter.GetImagesAnnotatedCount()
+
+        # Setup progress bar
+        self.ui.progressBar.setMinimum(0)
+        self.ui.progressBar.setMaximum(imageCount)
+        self.ui.progressBar.setValue(imageAnnotatedCount)
 
         # Setup horizontal file slider
         self.ui.fileNumberSliderLabel.setText(
@@ -167,6 +196,24 @@ class MainWindowGui(Ui_MainWindow):
                                                               imageHeight,
                                                               imageBytes,
                                                               filename))
+
+        # Setup files selector table widget
+        fileEntry = self.annoter.GetFile()
+        # Filename column
+        self.ui.fileSelectorTableWidget.item(imageNumber, 0)
+        # IsAnnotation column
+        self.ui.fileSelectorTableWidget.item(
+            imageNumber, 1).setText(str(fileEntry['IsAnnotation']))
+        # Annotations column
+        self.ui.fileSelectorTableWidget.item(
+            imageNumber, 2).setText(str(fileEntry['Annotations']))
+
+        # Setup files selector table widget
+        self.ui.fileSelectorTableWidget.clearSelection()
+        for i in range(self.ui.fileSelectorTableWidget.columnCount()):
+            self.ui.fileSelectorTableWidget.item(
+                imageNumber, i).setSelected(True)
+        self.ui.fileSelectorTableWidget.verticalScrollBar().setValue(imageNumber)
 
         # Paint size slider
         self.ui.paintLabel.setText('Paint size %u' %
@@ -193,27 +240,27 @@ class MainWindowGui(Ui_MainWindow):
         '''  Run gui window thread and return exit code.'''
         self.window.show()
         return self.App.exec_()
-    
+
     def CallbackKeycodeOffsetButtonClicked(self):
         ''' Callback when keycode offset button clicked.'''
         self.keysOffset += self.keysSize
         if (self.keysOffset >= self.ui.labelsListWidget.count()):
             self.keysOffset = 0
         # Call like button 1 clicked
-        self.CallbackKeycodeButtonClicked(self.ui.button1) 
-    
+        self.CallbackKeycodeButtonClicked(self.ui.button1)
+
     def CallbackKeycodeButtonClicked(self, button):
         ''' Callback when keycode button clicked.'''
         indexChr = self.keysOffset + int(button.text())-1
         if (indexChr >= self.ui.labelsListWidget.count()):
             indexChr = self.ui.labelsListWidget.count()-1
-            
+
         self.ui.labelsListWidget.setCurrentRow(indexChr)
 
     def CallbackLabelsRowChanged(self, index):
         ''' Current labels row changed. '''
         self.ui.viewerEditor.SetClassNumber(index)
-    
+
     def CallbackFileSelectorItemClicked(self, item):
         ''' When file selector item was clicked.'''
         # Read current file number
