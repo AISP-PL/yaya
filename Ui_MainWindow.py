@@ -475,7 +475,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "AITracker - config"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "YAYA - YOLO annoter"))
         self.isSavedCheckBox.setText(_translate("MainWindow", "Saved"))
         self.isErrorsCheckBox.setText(_translate("MainWindow", "isErrors?"))
         self.progressBar.setFormat(_translate("MainWindow", "Annotated %p%"))
