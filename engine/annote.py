@@ -164,10 +164,10 @@ class Annote():
 
         # Human orignal from file detection
         if (self.authorType == AnnoteAuthorType.byHuman):
-            brushColor = Qt.red
+            brushColor = Qt.darkRed
         # Created by detector YOLO
         elif (self.authorType == AnnoteAuthorType.byDetector):
-            brushColor = Qt.blue
+            brushColor = Qt.darkBlue
             label = '{}'.format(self.className)
             # If confidence drawing enabled
             if (isConfidence):
@@ -175,7 +175,7 @@ class Annote():
 
         # Created by hand
         elif (self.authorType == AnnoteAuthorType.byHand):
-            brushColor = Qt.green
+            brushColor = Qt.darkGreen
 
         # Draw rectangle box
         QDrawRectangle(painter,
