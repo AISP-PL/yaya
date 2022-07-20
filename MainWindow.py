@@ -16,6 +16,7 @@ from PyQt5 import QtCore, QtGui
 from engine.annote import GetClasses
 from ViewerEditorImage import ViewerEditorImage
 from click.decorators import argument
+from helpers.files import FixPath
 
 
 class MainWindowGui(Ui_MainWindow):
@@ -269,7 +270,7 @@ class MainWindowGui(Ui_MainWindow):
         ''' Open location callback.'''
         filepath = str(QFileDialog.getExistingDirectory(
             None, 'Select Directory'))
-        self.annoter.OpenLocation(filepath)
+        self.annoter.OpenLocation(FixPath(filepath))
         self.SetupDefault()
         self.Setup()
 
