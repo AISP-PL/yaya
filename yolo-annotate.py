@@ -86,6 +86,7 @@ logging.debug('Logging enabled!')
 detector = None
 if (IsDarknet() and (noDetector is False)):
     detector = CreateDetector(args.detector)
+    detector.Init()
     annote.Init(detector.GetClassNames())
 # CUDA not installed
 else:

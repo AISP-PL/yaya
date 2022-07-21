@@ -27,6 +27,11 @@ def GetFiles(base, pattern):
             os.path.isfile(os.path.join(base, n))]
 
 
+def GetFilepath(path, dropExtension=True):
+    ''' Returns filenpath without extension'''
+    return os.path.splitext(path)[0]
+
+
 def GetFilename(path):
     ''' Returns filename without extension'''
     return os.path.splitext(path)[0]

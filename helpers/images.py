@@ -47,3 +47,23 @@ def ResizeToHeight(image, maxHeight=1080):
     height, width = image.shape[:2]
     width, height, ratio = GetResizedWidthToHeight(width, height, maxHeight)
     return cv2.resize(image, (width, height), interpolation=cv2.INTER_AREA), ratio
+
+
+def GetFixedFitToBox(width, height, boxWidth, boxHeight):
+    ''' Returns values best fitted width/height
+    to box, with fixed image ratio holding.'''
+    ratio = min(boxWidth / width, boxHeight / height)
+    width = round(ratio * width)
+    height = round(ratio * height)
+
+#     # If image is wider
+#     if (width != boxWidth):
+#         width, height = GetResizedHeightToWidth(
+#             width, height, boxWidth)
+#
+#     # if newImage is higer
+#     if (height != boxHeight):
+#         width, height = GetResizedWidthToHeight(
+#             width, height, boxHeight)
+
+    return width, height

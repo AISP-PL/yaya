@@ -3,62 +3,221 @@ Created on 22 sie 2020
 
 @author: spasz
 '''
+import os
+import logging
+import cv2
+import numpy as np
 from ObjectDetectors.yolov4 import darknet
+from ObjectDetectors.common.Detector import Detector
+from helpers.files import GetFilepath
+from math import ceil
+from helpers.images import GetFixedFitToBox
 from helpers.boxes import ToRelative
 
 
-class DetectorYOLOv4():
+class DetectorYOLOv4(Detector):
     '''
     classdocs
     '''
+    # Image fitting strategies
+    StrategyRescale = 0
+    StrategyLetterBox = 1
 
-    def __init__(self, cfgPath, weightPath, metaPath):
+    def __init__(self,
+                 cfgPath,
+                 weightPath,
+                 namesPath,
+                 name='YOLOv4',
+                 imageStrategy=None,
+                 ):
         '''
         Constructor
         '''
-        self.net, self.classes, self.colors = darknet.load_network(
-            cfgPath, metaPath, weightPath)
+        Detector.__init__(self, id=0, gpuid=0, name=name)
+        # Store yolo configuartion paths
+        self.config = {'Config': cfgPath,
+                       'Weights': weightPath,
+                       'Names': namesPath,
+                       }
+        # Network pointer
+        self.net = None
+        # Network width
+        self.netWidth = 0
+        # Network height
+        self.netHeight = 0
+        # Reused darknet image
         self.image = None
+        # Reused darknet image properties
+        self.imwidth = 0
+        self.imheight = 0
+        # Image strategy
+        self.imageStrategy = imageStrategy
+        if (self.imageStrategy is None):
+            self.imageStrategy = int(os.environ.get(
+                'DETECTORYOLOV4_STRATEGY', '0'))
+        # List of colors matched with labels
+        self.colors = []
+        # Pre-Read and strip all labels
+        self.classes = open(GetFilepath(
+            namesPath, dropExtension=True)+'.names').read().splitlines()
+        self.classes = list(map(str.strip, self.classes))  # strip names
 
-    def Detect(self, image, confidence=0.5, nms_thresh=0.45, boxRelative=False):
-        ''' Detect objects in given image'''
-        # Handle wrong input
-        if (image is None):
+        # Validate labels
+        self.__validateLabels()
+
+    def __del__(self):
+        ''' Destructor.'''
+        # Free network image
+        if (self.image is not None):
+            darknet.free_image(self.image)
+
+        # Unload network from memory
+        if (self.net is not None):
+            darknet.free_network_ptr(self.net)
+
+    def __validateLabels(self):
+        ''' Validated loaded labels.'''
+        # Check if last label is empty (could be because of \n)
+        if (self.classes[-1] == '') or (len(self.classes[-1]) == 0):
+            del self.classes[-1]
+            logging.warning('(DetectorYOLOv4) Removed last empty label!')
+        # Check labels integrity
+        for c in self.classes:
+            # Check for missing labels
+            if (len(c) == 0):
+                logging.fatal(
+                    '(DetectorYOLOv4) Missing label \'%s\' for class!', c)
+                raise ValueError()
+
+    def IsInitialized(self):
+        ''' Return True if detector is initialized.'''
+        return (self.net is not None)
+
+    def Init(self):
+        ''' Init call with other arguments.'''
+        # Choose GPU to use for YOLO
+        darknet.set_gpu(self.gpuid)
+        # YOLO net, labels, cfg
+        self.net, self.classes, self.colors = darknet.load_network(
+            self.config['Config'],
+            self.config['Names'],
+            self.config['Weights'])
+
+        # Get network  input (width and height)
+        self.netWidth = darknet.network_width(self.net)
+        self.netHeight = darknet.network_height(self.net)
+
+        # Validate detector
+        self.__validateLabels()
+
+        logging.info('(DetectorYOLOv4) Created %ux%u network with %u classes.',
+                     self.netWidth,
+                     self.netHeight,
+                     len(self.classes),
+                     )
+
+    def GetWidth(self):
+        ''' Returns network image width.'''
+        return self.netWidth
+
+    def GetHeight(self):
+        ''' Returns network image height.'''
+        return self.netHeight
+
+    def Detect(self, frame, confidence=0.5, nms_thresh=0.45, boxRelative=False):
+        ''' Detect objects in given frame'''
+        # Pre check
+        if (frame is None):
+            logging.error('(Detector) Image invalid!')
             return []
 
-        # Create image object we will use each time
+        # Get input frame details
+        self.imheight, self.imwidth, channels = frame.shape
+
+        # Create frame object we will use each time, w
+        # with dimensions of network width,height.
         if (self.image is None):
-            imheight, imwidth, channels = image.shape
-            # Create an image we reuse for each detect
-            self.image = darknet.make_image(imwidth, imheight, channels)
+            self.image = darknet.make_image(self.netWidth,
+                                            self.netHeight,
+                                            channels)
 
-        # Detect objects
-        darknet.copy_image_from_bytes(self.image, image.tobytes())
-        detections = darknet.detect_image(
-            self.net, self.classes, self.image, thresh=confidence, nms=nms_thresh)
-        darknet.free_image(self.image)
-        self.image = None
-
-        # Change box coordinates to rectangle
-        h, w = image.shape[0:2]
-        for i, d in enumerate(detections):
-            className, confidence, box = d
-            if (boxRelative is True):
-                box = ToRelative(darknet.bbox2points(box), w, h)
+        # Detections list
+        detections = []
+        # ------------ Strategies choose
+        # 1. Strategy rescale.
+        # Rescale input image to network image dimensions.
+        if (self.imageStrategy == self.StrategyRescale):
+            # If image input is diffrent.
+            if (self.imwidth != self.netWidth) or (self.imheight != self.netHeight):
+                resized = cv2.resize(frame,
+                                     (self.netWidth, self.netHeight),
+                                     interpolation=cv2.INTER_LINEAR)
+            # If image match network dimensions then use it directly
             else:
-                box = darknet.bbox2points(box)
-            detections[i] = (className, confidence, box)
+                resized = frame
+
+            # Detect objects
+            darknet.copy_image_from_bytes(self.image, resized.tobytes())
+            detections = darknet.detect_image(self.net,
+                                              self.classes,
+                                              self.image,
+                                              self.imwidth,
+                                              self.imheight,
+                                              thresh=confidence,
+                                              nms=nms_thresh)
+
+            # Change box coordinates to rectangle
+            if (boxRelative is True):
+                h, w = self.imheight, self.imwidth
+                for i, d in enumerate(detections):
+                    className, confidence, box = d
+                    detections[i] = (className, confidence,
+                                     ToRelative(box, w, h))
+
+        # 2. Strategy letter box.
+        # Rescale input image to network image dimensions.
+        elif (self.imageStrategy == self.StrategyLetterBox):
+            # If frame image has diffrent size than network image.
+            if (frame.shape[1] != self.netWidth) or (frame.shape[0] != self.netHeight):
+                # Recalculate new width/height of frame with fixed aspect ratio
+                newWidth, newHeight = GetFixedFitToBox(frame.shape[1], frame.shape[0],
+                                                       self.netWidth, self.netHeight)
+                # Resize image as newImage with padded zeroes
+                newImage = np.zeros(
+                    [self.netHeight, self.netWidth, 3], dtype=np.uint8)
+                newImage[0:newHeight, 0:newWidth] = cv2.resize(frame, (newWidth, newHeight),
+                                                               interpolation=cv2.INTER_NEAREST)
+
+                # Recalculate frame image dimensions to letter box image
+                boundaryWidth = round(
+                    (self.netWidth * frame.shape[1])/newWidth)
+                boundaryHeight = round(
+                    (self.netHeight * frame.shape[0])/newHeight)
+
+            # If (image dimensions == network dimensions) then use it directly.
+            else:
+                newImage = frame
+                newHeight = frame.shape[0]
+                newWidth = frame.shape[1]
+                boundaryHeight = frame.shape[0]
+                boundaryWidth = frame.shape[1]
+
+            # Detect objects
+            darknet.copy_image_from_bytes(self.image, newImage.tobytes())
+            detections = darknet.detect_image(self.net,
+                                              self.classes,
+                                              self.image,
+                                              boundaryWidth,
+                                              boundaryHeight,
+                                              thresh=confidence,
+                                              nms=nms_thresh)
+
+            # Change box coordinates to rectangle
+            if (boxRelative is True):
+                h, w = boundaryWidth, boundaryWidth
+                for i, d in enumerate(detections):
+                    className, confidence, box = d
+                    detections[i] = (className, confidence,
+                                     ToRelative(box, w, h))
 
         return detections
-
-    def Draw(self, image, bboxes, labels, confidences):
-        ''' Draw all boxes on image'''
-        return darknet.draw_boxes(image, bboxes, labels, confidences, self.colors)
-
-    def GetClassNames(self):
-        ''' Returns all class names.'''
-        return self.classes
-
-    def GetAllowedClassNames(self):
-        ''' Returns all interesing us class names.'''
-        return self.classes
