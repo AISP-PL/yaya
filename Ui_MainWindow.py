@@ -266,6 +266,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.labelsListWidget.sizePolicy().hasHeightForWidth())
         self.labelsListWidget.setSizePolicy(sizePolicy)
+        self.labelsListWidget.setMinimumSize(QtCore.QSize(0, 250))
         self.labelsListWidget.setDefaultDropAction(QtCore.Qt.IgnoreAction)
         self.labelsListWidget.setSelectionMode(
             QtWidgets.QAbstractItemView.SingleSelection)
@@ -489,6 +490,7 @@ class Ui_MainWindow(object):
         self.paintSizeSlider.setMinimum(5)
         self.paintSizeSlider.setMaximum(55)
         self.paintSizeSlider.setSingleStep(10)
+        self.paintSizeSlider.setProperty('value', 25)
         self.paintSizeSlider.setOrientation(QtCore.Qt.Horizontal)
         self.paintSizeSlider.setTickPosition(QtWidgets.QSlider.TicksBelow)
         self.paintSizeSlider.setObjectName('paintSizeSlider')
@@ -546,7 +548,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuPomoc.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.toolSettingsStackedWidget.setCurrentIndex(0)
+        self.toolSettingsStackedWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

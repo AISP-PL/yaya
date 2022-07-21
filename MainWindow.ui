@@ -137,7 +137,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="../../aitracker/subtools/toolConfig/icons/tango.qrc">
+             <iconset resource="icons/tango.qrc">
               <normaloff>:/icons/16x16/media-skip-backward.png</normaloff>:/icons/16x16/media-skip-backward.png</iconset>
             </property>
             <property name="shortcut">
@@ -161,7 +161,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="../../aitracker/subtools/toolConfig/icons/tango.qrc">
+             <iconset resource="icons/tango.qrc">
               <normaloff>:/icons/16x16/media-skip-forward.png</normaloff>:/icons/16x16/media-skip-forward.png</iconset>
             </property>
             <property name="shortcut">
@@ -186,7 +186,7 @@
              <string>(S)ave</string>
             </property>
             <property name="icon">
-             <iconset resource="../../aitracker/subtools/toolConfig/icons/tango.qrc">
+             <iconset resource="icons/tango.qrc">
               <normaloff>:/icons/16x16/document-save-as.png</normaloff>:/icons/16x16/document-save-as.png</iconset>
             </property>
             <property name="shortcut">
@@ -200,7 +200,7 @@
              <string>(X)Delete</string>
             </property>
             <property name="icon">
-             <iconset resource="../../aitracker/subtools/toolConfig/icons/tango.qrc">
+             <iconset resource="icons/tango.qrc">
               <normaloff>:/icons/16x16/process-stop.png</normaloff>:/icons/16x16/process-stop.png</iconset>
             </property>
             <property name="shortcut">
@@ -273,7 +273,7 @@
              <string>(A)dd </string>
             </property>
             <property name="icon">
-             <iconset resource="../../aitracker/subtools/toolConfig/icons/tango.qrc">
+             <iconset resource="icons/tango.qrc">
               <normaloff>:/icons/16x16/list-add.png</normaloff>:/icons/16x16/list-add.png</iconset>
             </property>
             <property name="shortcut">
@@ -293,7 +293,7 @@
              <string>(R)emove</string>
             </property>
             <property name="icon">
-             <iconset resource="../../aitracker/subtools/toolConfig/icons/tango.qrc">
+             <iconset resource="icons/tango.qrc">
               <normaloff>:/icons/16x16/list-remove.png</normaloff>:/icons/16x16/list-remove.png</iconset>
             </property>
             <property name="shortcut">
@@ -310,7 +310,7 @@
              <string>(C)lear</string>
             </property>
             <property name="icon">
-             <iconset resource="../../aitracker/subtools/toolConfig/icons/tango.qrc">
+             <iconset resource="icons/tango.qrc">
               <normaloff>:/icons/16x16/edit-clear.png</normaloff>:/icons/16x16/edit-clear.png</iconset>
             </property>
             <property name="shortcut">
@@ -324,7 +324,7 @@
              <string>(H)ide</string>
             </property>
             <property name="icon">
-             <iconset resource="../../aitracker/subtools/toolConfig/icons/tango.qrc">
+             <iconset resource="icons/tango.qrc">
               <normaloff>:/icons/16x16/go-jump.png</normaloff>:/icons/16x16/go-jump.png</iconset>
             </property>
             <property name="shortcut">
@@ -338,7 +338,7 @@
              <string>(D)etect </string>
             </property>
             <property name="icon">
-             <iconset resource="../../aitracker/subtools/toolConfig/icons/tango.qrc">
+             <iconset resource="icons/tango.qrc">
               <normaloff>:/icons/16x16/camera-photo.png</normaloff>:/icons/16x16/camera-photo.png</iconset>
             </property>
             <property name="shortcut">
@@ -382,7 +382,7 @@
              <string>Circl(e)</string>
             </property>
             <property name="icon">
-             <iconset resource="../../aitracker/subtools/toolConfig/icons/tango.qrc">
+             <iconset resource="icons/tango.qrc">
               <normaloff>:/icons/32x32/list-add.png</normaloff>:/icons/32x32/list-add.png</iconset>
             </property>
             <property name="shortcut">
@@ -426,7 +426,7 @@
            <number>1</number>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="pageAnnotations">
            <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -444,6 +444,12 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>250</height>
+               </size>
               </property>
               <property name="defaultDropAction">
                <enum>Qt::IgnoreAction</enum>
@@ -896,6 +902,9 @@
                 <property name="singleStep">
                  <number>10</number>
                 </property>
+                <property name="value">
+                 <number>25</number>
+                </property>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -1043,6 +1052,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="icons/tango.qrc"/>
+ </resources>
  <connections/>
 </ui>
