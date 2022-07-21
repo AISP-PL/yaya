@@ -20,8 +20,8 @@ parser.add_argument('-c', '--config', type=str,
                     required=False, help='Config path')
 parser.add_argument('-dc', '--drawConfidence', type=int, nargs='?', const=1, default=1,
                     required=False, help='Draw annotations confidence (=1). No drawing (=0).')
-parser.add_argument('-sb', '--sortBy', type=int, nargs='?', const=0, default=0,
-                    required=False, help='Sort by method number (0 None, 1 Datetime, 2 Alphabet)')
+parser.add_argument('-sb', '--sortBy', type=int, nargs='?', const=2, default=2,
+                    required=False, help='Sort by method number (0 None, 1 Datetime, 2 Inv. Datetime, 3 Alphabet)')
 parser.add_argument('-oc', '--onlyClass', type=int,
                     required=False, help='Only specific class number')
 parser.add_argument('-odc', '--onlyDetectedClass', type=int,

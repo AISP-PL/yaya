@@ -30,7 +30,7 @@ class Annoter():
                  filepath,
                  detector,
                  noDetector=False,
-                 sortMethod=NoSort,
+                 sortMethod=SortByInvDatetime,
                  isOnlyNewFiles=False,
                  isOnlyOldFiles=False,
                  isOnlyErrorFiles=False,
@@ -137,8 +137,8 @@ class Annoter():
             self.files = sorted(self.files,
                                 key=lambda i: i['Datetime'])
         elif (self.config['sortMethod'] == self.SortByInvDatetime):
-            self.files = reversed(sorted(self.files,
-                                         key=lambda i: i['Datetime']))
+            self.files = sorted(self.files,
+                                key=lambda i: -i['Datetime'])
         # Sorting : by alphabet
         elif (self.config['sortMethod'] == self.SortByAlphabet):
             self.files = sorted(self.files,
