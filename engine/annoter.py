@@ -187,7 +187,7 @@ class Annoter():
 #             self.filenames = filesForClass
 
         # Reset values at the end
-        self.annotations = None
+        self.annotations = []
         self.image = None
         self.offset = 0
         self.errors = set()
