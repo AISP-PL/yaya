@@ -58,7 +58,7 @@ class Annoter():
         # File entries list
         self.files = None
         # Annotations list
-        self.annotations = None
+        self.annotations = []
         # Readed image cv2 object
         self.image = None
         # Current file number offset
@@ -194,11 +194,17 @@ class Annoter():
 
     def GetFile(self):
         ''' Returns current filepath.'''
-        return self.files[self.offset]
+        if (len(self.files)):
+            return self.files[self.offset]
+
+        return None
 
     def GetFilename(self):
         ''' Returns current filepath.'''
-        return self.files[self.offset]['Name']
+        if (len(self.files)):
+            return self.files[self.offset]['Name']
+
+        return 'Not exists!'
 
     def GetFilepath(self):
         ''' Returns current filepath.'''
@@ -220,23 +226,23 @@ class Annoter():
 
         return 0, 0, 0
 
-    def GetImageNumber(self):
-        ''' Returns current image number.'''
-        return self.offset
-
-    def GetImagesList(self):
-        ''' Returns images list'''
-        return self.files
-
     def GetAnnotationsList(self):
         ''' Returns annotations list'''
         return [GetFilename(f['Name'])+'.txt' for f in self.files]
 
-    def GetImagesCount(self):
+    def GetFiles(self):
+        ''' Returns images list'''
+        return self.files
+
+    def GetFileIndex(self):
+        ''' Returns current image number.'''
+        return self.offset
+
+    def GetFilesCount(self):
         ''' Returns count of processed images number.'''
         return len(self.files)
 
-    def GetImagesAnnotatedCount(self):
+    def GetFilesAnnotatedCount(self):
         ''' Returns count of processed images number.'''
         annotated = sum([int(fileEntry['IsAnnotation'])
                          for fileEntry in self.files])
@@ -319,14 +325,23 @@ class Annoter():
             self.errors.remove('ImageModified!')
         return result
 
-    def Delete(self):
-        ''' Deletes current image and annotations.'''
-        if (self.offset < self.GetImagesCount()):
-            fileEntry = self.files[self.offset]
-            DeleteAnnotations(fileEntry['Path'])
+    def Delete(self, fileEntry=None):
+        ''' Deletes image and annotations.'''
+        # If not specified fileEntry then use
+        # current fileEntry.
+        if (fileEntry is None):
+            # Use current file
+            if (self.offset < self.GetFilesCount()):
+                fileEntry = self.files[self.offset]
+
+        # If entry exists then delete it
+        if (fileEntry is not None):
             self.ClearAnnotations()
+            DeleteAnnotations(fileEntry['Path'])
             DeleteFile(fileEntry['Path'])
-            self.filenames.remove(fileEntry)
+            self.files.remove(fileEntry)
+
+            # Step back offset
             self.offset = max(0, self.offset-1)
 
     def Create(self):
@@ -375,7 +390,7 @@ class Annoter():
 
     def IsEnd(self):
         '''True if files ended.'''
-        return (self.offset == self.GetImagesCount())
+        return (self.offset == self.GetFilesCount())
 
     def __checkOfErrors(self):
         '''Check current image/annotations for errors.'''
@@ -390,7 +405,7 @@ class Annoter():
                 processImage=True,
                 forceDetector=False):
         ''' process file.'''
-        if (self.offset >= 0) and (self.offset < self.GetImagesCount()):
+        if (self.offset >= 0) and (self.offset < self.GetFilesCount()):
             fileEntry = self.GetFile()
 
             # Read image
@@ -439,7 +454,7 @@ class Annoter():
 
     def ProcessNext(self):
         ''' Process next image.'''
-        if (self.offset < (self.GetImagesCount()-1)):
+        if (self.offset < (self.GetFilesCount()-1)):
             self.offset += 1
             self.Process()
             return True

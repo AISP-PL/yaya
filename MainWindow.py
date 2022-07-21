@@ -11,11 +11,12 @@ import subprocess
 import cv2
 from Ui_MainWindow import Ui_MainWindow
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTableWidgetItem,\
-    QListWidgetItem, QButtonGroup
+    QListWidgetItem, QButtonGroup, QMessageBox
 from PyQt5 import QtCore, QtGui
 from engine.annote import GetClasses
 from ViewerEditorImage import ViewerEditorImage
 from helpers.files import FixPath
+from copy import copy
 
 
 class MainWindowGui(Ui_MainWindow):
@@ -59,8 +60,8 @@ class MainWindowGui(Ui_MainWindow):
         # Annoter - process first time.
         self.annoter.Process()
         # Read annoter results
-        imageNumber = self.annoter.GetImageNumber()
-        imageCount = self.annoter.GetImagesCount()
+        imageNumber = self.annoter.GetFileIndex()
+        imageCount = self.annoter.GetFilesCount()
 
         # List of detector labels - Create
         for className in GetClasses():
@@ -85,8 +86,8 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.fileSelectorTableWidget.setColumnCount(len(labels))
         self.ui.fileSelectorTableWidget.setHorizontalHeaderLabels(labels)
         self.ui.fileSelectorTableWidget.setRowCount(
-            self.annoter.GetImagesCount())
-        for rowIndex, fileEntry in enumerate(self.annoter.GetImagesList()):
+            self.annoter.GetFilesCount())
+        for rowIndex, fileEntry in enumerate(self.annoter.GetFiles()):
             # Start from column zero
             colIndex = 0
 
@@ -132,6 +133,8 @@ class MainWindowGui(Ui_MainWindow):
             self.CallbackSaveFileAnnotationsButton)
         self.ui.DeleteImageAnnotationsButton.clicked.connect(
             self.CallbackDeleteImageAnnotationsButton)
+        self.ui.DeleteNotAnnotatedFilesButton.clicked.connect(
+            self.CallbackDeleteNotAnnotatedFilesButton)
         # Buttons - Annotations
         self.ui.addAnnotationsButton.clicked.connect(
             self.CallbackAddAnnotationsButton)
@@ -178,9 +181,9 @@ class MainWindowGui(Ui_MainWindow):
         ''' Setup again UI.'''
         filename = self.annoter.GetFilename()
         imageWidth, imageHeight, imageBytes = self.annoter.GetImageSize()
-        imageNumber = self.annoter.GetImageNumber()
-        imageCount = self.annoter.GetImagesCount()
-        imageAnnotatedCount = self.annoter.GetImagesAnnotatedCount()
+        imageNumber = self.annoter.GetFileIndex()
+        imageCount = self.annoter.GetFilesCount()
+        imageAnnotatedCount = self.annoter.GetFilesAnnotatedCount()
 
         # Setup progress bar
         self.ui.progressBar.setMinimum(0)
@@ -199,21 +202,23 @@ class MainWindowGui(Ui_MainWindow):
 
         # Setup files selector table widget
         fileEntry = self.annoter.GetFile()
-        # Filename column
-        self.ui.fileSelectorTableWidget.item(imageNumber, 0)
-        # IsAnnotation column
-        self.ui.fileSelectorTableWidget.item(
-            imageNumber, 1).setText(str(fileEntry['IsAnnotation']))
-        # Annotations column
-        self.ui.fileSelectorTableWidget.item(
-            imageNumber, 2).setText(str(fileEntry['Annotations']))
+        if (fileEntry is not None):
+            # Filename column
+            self.ui.fileSelectorTableWidget.item(imageNumber, 0)
+            # IsAnnotation column
+            self.ui.fileSelectorTableWidget.item(
+                imageNumber, 1).setText(str(fileEntry['IsAnnotation']))
+            # Annotations column
+            self.ui.fileSelectorTableWidget.item(
+                imageNumber, 2).setText(str(fileEntry['Annotations']))
 
         # Setup files selector table widget
         self.ui.fileSelectorTableWidget.clearSelection()
-        for i in range(self.ui.fileSelectorTableWidget.columnCount()):
-            self.ui.fileSelectorTableWidget.item(
-                imageNumber, i).setSelected(True)
-        self.ui.fileSelectorTableWidget.verticalScrollBar().setValue(imageNumber)
+        if (imageCount != 0):
+            for i in range(self.ui.fileSelectorTableWidget.columnCount()):
+                self.ui.fileSelectorTableWidget.item(
+                    imageNumber, i).setSelected(True)
+            self.ui.fileSelectorTableWidget.verticalScrollBar().setValue(imageNumber)
 
         # Paint size slider
         self.ui.paintLabel.setText('Paint size %u' %
@@ -331,6 +336,17 @@ class MainWindowGui(Ui_MainWindow):
         self.annoter.Delete()
         self.annoter.Process()
         self.Setup()
+
+    def CallbackDeleteNotAnnotatedFilesButton(self):
+        ''' Callback.'''
+        button_reply = QMessageBox.question(self.window,
+                                            'Delete all not annotated images',
+                                            'Are you sure (delete not annotated) ?')
+        if button_reply == QMessageBox.Yes:
+            filesList = copy(self.annoter.GetFiles())
+            for fileEntry in filesList:
+                if (fileEntry['IsAnnotation'] is False):
+                    self.annoter.Delete(fileEntry)
 
     def CallbackNextFile(self):
         '''Callback'''

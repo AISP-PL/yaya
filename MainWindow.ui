@@ -209,6 +209,17 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="DeleteNotAnnotatedFilesButton">
+            <property name="text">
+             <string>Delete not annotated</string>
+            </property>
+            <property name="icon">
+             <iconset resource="icons/tango.qrc">
+              <normaloff>:/icons/32x32/process-stop.png</normaloff>:/icons/32x32/process-stop.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>

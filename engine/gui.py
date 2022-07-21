@@ -61,7 +61,7 @@ class Gui(object):
     def Start(self):
         ''' Start gui running.'''
         # Check - of existence of images.
-        if (self.annoter.GetImagesCount() == 0):
+        if (self.annoter.GetFilesCount() == 0):
             logging.error('(Gui) No images to process!')
             return False
 
@@ -69,7 +69,7 @@ class Gui(object):
         cv2.namedWindow(self.winname)
         # Images slider
         cv2.createTrackbar('Images', self.winname,
-                           0, self.annoter.GetImagesCount(), self._images_trackbar_cb)
+                           0, self.annoter.GetFilesCount(), self._images_trackbar_cb)
         # Classes slider
         cv2.createTrackbar('Classes',
                            self.winname,
@@ -293,7 +293,7 @@ class Gui(object):
         im = self.__drawCrosshair(im)
 
         cv2.setTrackbarPos('Images', self.winname,
-                           self.annoter.GetImageNumber())
+                           self.annoter.GetFileIndex())
         cv2.imshow(self.winname, im)
 
     def __popupYesNo(self, im, text=''):
