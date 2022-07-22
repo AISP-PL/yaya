@@ -307,6 +307,12 @@
              <iconset resource="icons/tango.qrc">
               <normaloff>:/icons/32x32/accessories-text-editor.png</normaloff>:/icons/32x32/accessories-text-editor.png</iconset>
             </property>
+            <property name="shortcut">
+             <string>N</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item>

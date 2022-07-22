@@ -7,7 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 
-from .ViewerEditorImage import ViewerEditorImage
+from ViewerEditorImage import ViewerEditorImage
 import tango_rc
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -199,6 +199,7 @@ class Ui_MainWindow(object):
         icon6.addPixmap(QtGui.QPixmap(
             ':/icons/32x32/accessories-text-editor.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.renameAnnotationsButton.setIcon(icon6)
+        self.renameAnnotationsButton.setCheckable(True)
         self.renameAnnotationsButton.setObjectName('renameAnnotationsButton')
         self.horizontalLayout_3.addWidget(self.renameAnnotationsButton)
         self.removeAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)

@@ -124,6 +124,7 @@ class MainWindowGui(Ui_MainWindow):
         self.modeButtonGroup.addButton(self.ui.addAnnotationsButton)
         self.modeButtonGroup.addButton(self.ui.removeAnnotationsButton)
         self.modeButtonGroup.addButton(self.ui.paintCircleButton)
+        self.modeButtonGroup.addButton(self.ui.renameAnnotationsButton)
 
         # Buttons player
         self.ui.nextFileButton.clicked.connect(self.CallbackNextFile)
@@ -138,6 +139,8 @@ class MainWindowGui(Ui_MainWindow):
         # Buttons - Annotations
         self.ui.addAnnotationsButton.clicked.connect(
             self.CallbackAddAnnotationsButton)
+        self.ui.renameAnnotationsButton.clicked.connect(
+            self.CallbackRenameAnnotationsButton)
         self.ui.removeAnnotationsButton.clicked.connect(
             self.CallbackRemoveAnnotationsButton)
         self.ui.detectAnnotationsButton.clicked.connect(
@@ -308,6 +311,13 @@ class MainWindowGui(Ui_MainWindow):
             self.ui.pageAnnotations)
         self.ui.viewerEditor.SetEditorMode(
             ViewerEditorImage.ModeAddAnnotation)
+
+    def CallbackRenameAnnotationsButton(self):
+        ''' Remove annotations.'''
+        self.ui.toolSettingsStackedWidget.setCurrentWidget(
+            self.ui.pageAnnotations)
+        self.ui.viewerEditor.SetEditorMode(
+            ViewerEditorImage.ModeRenameAnnotation)
 
     def CallbackRemoveAnnotationsButton(self):
         ''' Remove annotations.'''

@@ -23,8 +23,9 @@ class ViewerEditorImage(QWidget):
     ''' States of editor.'''
     ModeNone = 0
     ModeAddAnnotation = 1
-    ModeRemoveAnnotation = 2
-    ModePaintCircle = 3
+    ModeRenameAnnotation = 2
+    ModeRemoveAnnotation = 3
+    ModePaintCircle = 4
 
     # Define signals
     signalEditorFinished = pyqtSignal(int, name='EditorFinished')
@@ -190,6 +191,19 @@ class ViewerEditorImage(QWidget):
                 if (len(self.mouseClicks) >= 2):
                     self.CallbackEditorFinished()
 
+        # Mode Rename Annotation
+        elif (self.editorMode == self.ModeRenameAnnotation):
+            # LPM finds annotation
+            if (event.buttons() == Qt.LeftButton):
+                x, y = event.pos().x(), event.pos().y()
+                viewWidth, viewHeight = self.GetViewSize()
+                toDelete = self.GetHoveredAnnotation(boxes.PointToRelative((x, y),
+                                                                           viewWidth, viewHeight))
+                # If clicked on annotation the return
+                if (toDelete is not None):
+                    self.editorModeArgument = toDelete
+                    self.CallbackEditorFinished()
+
         # Mode Remove Annotation
         elif (self.editorMode == self.ModeRemoveAnnotation):
             # LPM finds annotation
@@ -200,12 +214,8 @@ class ViewerEditorImage(QWidget):
                                                                            viewWidth, viewHeight))
                 # If clicked on annotation the return
                 if (toDelete is not None):
-                    self.mouseClicks = [event.pos()]
+                    self.editorModeArgument = toDelete
                     self.CallbackEditorFinished()
-
-            # RPM returns
-            elif (event.buttons() == Qt.RightButton):
-                self.CallbackEditorFinished()
 
         # Mode Paint circle
         elif (self.editorMode == self.ModePaintCircle):
@@ -237,12 +247,14 @@ class ViewerEditorImage(QWidget):
             box = PointsToRect(clicksRel[0], clicksRel[1])
             self.annoter.AddAnnotation(box,
                                        self.classNumber)
+        # Mode Rename Annotation
+        elif (self.editorMode == self.ModeRenameAnnotation):
+            annote = self.editorModeArgument
+            annote.SetClassNumber(self.classNumber)
+
         # Mode Remove Annotation
         elif (self.editorMode == self.ModeRemoveAnnotation):
-            toDelete = self.GetHoveredAnnotation(clicksRel[0])
-            # If clicked on annotation the return
-            if (toDelete is not None):
-                self.annoter.RemoveAnnotation(toDelete)
+            self.annoter.RemoveAnnotation(self.editorModeArgument)
 
         # Mode Paint circle
         elif (self.editorMode == self.ModePaintCircle):

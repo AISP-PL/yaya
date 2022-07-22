@@ -93,6 +93,11 @@ class Annote():
             self.classNumber = classNumber
             self.className = className
 
+    def SetClassNumber(self, number):
+        ''' Returns class number.'''
+        self.classNumber = number
+        self.className = GetClassName(number)
+
     def GetClassNumber(self):
         ''' Returns class number.'''
         return self.classNumber
