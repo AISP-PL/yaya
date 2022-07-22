@@ -7,7 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 
-from ViewerEditorImage import ViewerEditorImage
+from .ViewerEditorImage import ViewerEditorImage
 import tango_rc
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -194,33 +194,40 @@ class Ui_MainWindow(object):
         self.addAnnotationsButton.setFlat(False)
         self.addAnnotationsButton.setObjectName('addAnnotationsButton')
         self.horizontalLayout_3.addWidget(self.addAnnotationsButton)
-        self.removeAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.renameAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
         icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(':/icons/16x16/list-remove.png'),
+        icon6.addPixmap(QtGui.QPixmap(
+            ':/icons/32x32/accessories-text-editor.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.renameAnnotationsButton.setIcon(icon6)
+        self.renameAnnotationsButton.setObjectName('renameAnnotationsButton')
+        self.horizontalLayout_3.addWidget(self.renameAnnotationsButton)
+        self.removeAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap(':/icons/16x16/list-remove.png'),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.removeAnnotationsButton.setIcon(icon6)
+        self.removeAnnotationsButton.setIcon(icon7)
         self.removeAnnotationsButton.setCheckable(True)
         self.removeAnnotationsButton.setObjectName('removeAnnotationsButton')
         self.horizontalLayout_3.addWidget(self.removeAnnotationsButton)
         self.ClearAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap(':/icons/16x16/edit-clear.png'),
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap(':/icons/16x16/edit-clear.png'),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.ClearAnnotationsButton.setIcon(icon7)
+        self.ClearAnnotationsButton.setIcon(icon8)
         self.ClearAnnotationsButton.setObjectName('ClearAnnotationsButton')
         self.horizontalLayout_3.addWidget(self.ClearAnnotationsButton)
         self.hideAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap(':/icons/16x16/go-jump.png'),
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(':/icons/16x16/go-jump.png'),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.hideAnnotationsButton.setIcon(icon8)
+        self.hideAnnotationsButton.setIcon(icon9)
         self.hideAnnotationsButton.setObjectName('hideAnnotationsButton')
         self.horizontalLayout_3.addWidget(self.hideAnnotationsButton)
         self.detectAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap(
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(QtGui.QPixmap(
             ':/icons/16x16/camera-photo.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.detectAnnotationsButton.setIcon(icon9)
+        self.detectAnnotationsButton.setIcon(icon10)
         self.detectAnnotationsButton.setObjectName('detectAnnotationsButton')
         self.horizontalLayout_3.addWidget(self.detectAnnotationsButton)
         spacerItem1 = QtWidgets.QSpacerItem(
@@ -234,10 +241,10 @@ class Ui_MainWindow(object):
         self.label_3.setObjectName('label_3')
         self.horizontalLayout_4.addWidget(self.label_3)
         self.paintCircleButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon10 = QtGui.QIcon()
-        icon10.addPixmap(QtGui.QPixmap(':/icons/32x32/list-add.png'),
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(QtGui.QPixmap(':/icons/32x32/list-add.png'),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.paintCircleButton.setIcon(icon10)
+        self.paintCircleButton.setIcon(icon11)
         self.paintCircleButton.setCheckable(True)
         self.paintCircleButton.setObjectName('paintCircleButton')
         self.horizontalLayout_4.addWidget(self.paintCircleButton)
@@ -589,6 +596,8 @@ class Ui_MainWindow(object):
         self.label.setText(_translate('MainWindow', 'Annotations'))
         self.addAnnotationsButton.setText(_translate('MainWindow', '(A)dd '))
         self.addAnnotationsButton.setShortcut(_translate('MainWindow', 'A'))
+        self.renameAnnotationsButton.setText(
+            _translate('MainWindow', 'Re(N)ame'))
         self.removeAnnotationsButton.setText(
             _translate('MainWindow', '(R)emove'))
         self.removeAnnotationsButton.setShortcut(_translate('MainWindow', 'R'))
