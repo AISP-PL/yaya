@@ -342,7 +342,8 @@ class Annoter():
             self.files.remove(fileEntry)
 
             # Step back offset
-            self.offset = max(0, self.offset-1)
+            self.offset = min(self.offset,
+                              self.GetFilesCount())
 
     def Create(self):
         ''' Creates new filepath for new image file.'''

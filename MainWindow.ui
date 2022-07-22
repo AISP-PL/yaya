@@ -299,6 +299,17 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="renameAnnotationsButton">
+            <property name="text">
+             <string>Re(N)ame</string>
+            </property>
+            <property name="icon">
+             <iconset resource="icons/tango.qrc">
+              <normaloff>:/icons/32x32/accessories-text-editor.png</normaloff>:/icons/32x32/accessories-text-editor.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="removeAnnotationsButton">
             <property name="text">
              <string>(R)emove</string>
