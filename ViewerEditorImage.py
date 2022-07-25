@@ -308,12 +308,15 @@ class ViewerEditorImage(QWidget):
             image = np.zeros([imWidth, imHeight, 3], dtype=np.uint8)
 
         # Select scaling mode
-        if (self.imageScaling == self.ImageScalingResizeAspectRatio):
+        if (self.imageScaling == self.ImageScalingResize):
+            viewportWidth, viewportHeight = widgetWidth, widgetHeight
+        elif (self.imageScaling == self.ImageScalingResizeAspectRatio):
             viewportWidth, viewportHeight = GetFixedFitToBox(
                 imWidth, imHeight, widgetWidth, widgetHeight)
             widgetPainter.setViewport(0, 0, viewportWidth, viewportHeight)
         elif (self.imageScaling == self.ImageScalingOriginalSize):
             widgetPainter.setViewport(0, 0, imWidth, imHeight)
+            viewportWidth, viewportHeight = imWidth, imHeight
 
         # Draw current OpenCV image as pixmap
         pixmap = CvImage2QtImage(image)
@@ -330,7 +333,7 @@ class ViewerEditorImage(QWidget):
                 # Get hovered annotation
                 annote = self.GetHoveredAnnotation(
                     boxes.PointToRelative((self.mousePosition.x(), self.mousePosition.y()),
-                                          viewWidth, viewHeight))
+                                          viewportWidth, viewportHeight))
                 if (annote is not None):
                     annote.QtDraw(widgetPainter,
                                   highlight=True,
@@ -351,7 +354,7 @@ class ViewerEditorImage(QWidget):
         if (self.editorMode == self.ModePaintCircle):
             if (self.mousePosition is not None):
                 imWidth, imHeight = self.GetImageSize()
-                radius = round((self.editorModeArgument/imWidth)*viewWidth)
+                radius = round((self.editorModeArgument/imWidth)*viewportWidth)
                 QDrawElipse(widgetPainter,
                             self.mousePosition,
                             radius)
@@ -359,6 +362,6 @@ class ViewerEditorImage(QWidget):
         # Draw crosshair
         if (self.mousePosition is not None):
             QDrawCrosshair(widgetPainter, self.mousePosition.x(), self.mousePosition.y(),
-                           viewWidth, viewHeight, Qt.red)
+                           widgetWidth, widgetHeight, Qt.red)
 
         widgetPainter.end()

@@ -227,6 +227,10 @@ class MainWindowGui(Ui_MainWindow):
                     imageNumber, i).setSelected(True)
             self.ui.fileSelectorTableWidget.verticalScrollBar().setValue(imageNumber)
 
+        # Setup slider
+        self.ui.fileNumberSlider.setValue(imageNumber)
+        self.ui.fileNumberSlider.setMaximum(imageCount)
+
         # Paint size slider
         self.ui.paintLabel.setText('Paint size %u' %
                                    self.ui.paintSizeSlider.value())
