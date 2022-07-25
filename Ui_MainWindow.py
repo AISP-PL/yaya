@@ -55,6 +55,16 @@ class Ui_MainWindow(object):
         self.isErrorsCheckBox.setCheckable(False)
         self.isErrorsCheckBox.setObjectName('isErrorsCheckBox')
         self.horizontalLayout.addWidget(self.isErrorsCheckBox)
+        self.label_4 = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.label_4.setObjectName('label_4')
+        self.horizontalLayout.addWidget(self.label_4)
+        self.imageScalingComboBox = QtWidgets.QComboBox(
+            self.verticalLayoutWidget)
+        self.imageScalingComboBox.setObjectName('imageScalingComboBox')
+        self.imageScalingComboBox.addItem('')
+        self.imageScalingComboBox.addItem('')
+        self.imageScalingComboBox.addItem('')
+        self.horizontalLayout.addWidget(self.imageScalingComboBox)
         self.progressBar = QtWidgets.QProgressBar(self.verticalLayoutWidget)
         self.progressBar.setProperty('value', 0)
         self.progressBar.setTextVisible(True)
@@ -574,6 +584,13 @@ class Ui_MainWindow(object):
             'MainWindow', 'YAYA - YOLO annoter'))
         self.isSavedCheckBox.setText(_translate('MainWindow', 'Saved'))
         self.isErrorsCheckBox.setText(_translate('MainWindow', 'isErrors?'))
+        self.label_4.setText(_translate('MainWindow', 'Image scaling:'))
+        self.imageScalingComboBox.setItemText(
+            0, _translate('MainWindow', 'Resize'))
+        self.imageScalingComboBox.setItemText(
+            1, _translate('MainWindow', 'ResizeAspectRatio'))
+        self.imageScalingComboBox.setItemText(
+            2, _translate('MainWindow', 'OriginalSize'))
         self.progressBar.setFormat(_translate('MainWindow', 'Annotated %p%'))
         self.fileLabel.setText(_translate(
             'MainWindow', 'Filename (number/all)'))
@@ -599,6 +616,7 @@ class Ui_MainWindow(object):
         self.addAnnotationsButton.setShortcut(_translate('MainWindow', 'A'))
         self.renameAnnotationsButton.setText(
             _translate('MainWindow', 'Re(N)ame'))
+        self.renameAnnotationsButton.setShortcut(_translate('MainWindow', 'N'))
         self.removeAnnotationsButton.setText(
             _translate('MainWindow', '(R)emove'))
         self.removeAnnotationsButton.setShortcut(_translate('MainWindow', 'R'))

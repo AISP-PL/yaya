@@ -60,6 +60,32 @@
            </widget>
           </item>
           <item>
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Image scaling:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="imageScalingComboBox">
+            <item>
+             <property name="text">
+              <string>Resize</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ResizeAspectRatio</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>OriginalSize</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
            <widget class="QProgressBar" name="progressBar">
             <property name="value">
              <number>0</number>

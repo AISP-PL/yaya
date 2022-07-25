@@ -6,6 +6,7 @@ Created on 30 gru 2020
 import os
 import subprocess
 import cv2
+import numpy as np
 from datetime import datetime
 from helpers.QtDrawing import QDrawPolygon, QDrawPolyline, QDrawJoints,\
     QDrawCrosshair, QDrawText, QDrawArrow, CvBGRColorToQColor, QDrawRectangle,\
@@ -17,15 +18,22 @@ from PyQt5.Qt import QPoint, QTimer
 from PyQt5.QtCore import Qt, pyqtSignal
 import helpers.boxes as boxes
 import logging
+from helpers.images import GetFixedFitToBox
 
 
 class ViewerEditorImage(QWidget):
     ''' States of editor.'''
+    # Editor mode
     ModeNone = 0
     ModeAddAnnotation = 1
     ModeRenameAnnotation = 2
     ModeRemoveAnnotation = 3
     ModePaintCircle = 4
+
+    # Image scaling mode
+    ImageScalingResize = 0
+    ImageScalingResizeAspectRatio = 1
+    ImageScalingOriginalSize = 2
 
     # Define signals
     signalEditorFinished = pyqtSignal(int, name='EditorFinished')
@@ -42,6 +50,8 @@ class ViewerEditorImage(QWidget):
         }
         # Background image loaded
         self.imageBg = None
+        # Mode of scaling image
+        self.imageScaling = self.ImageScalingResize
         # Annoter for image
         self.annoter = None
         # Current class number
@@ -143,6 +153,10 @@ class ViewerEditorImage(QWidget):
         if (image is not None):
             self.imageBg = image
             self.update()
+
+    def SetImageScaling(self, scalingMode):
+        ''' Sets image scaling mode.'''
+        self.imageScaling = scalingMode
 
     def GetImageSize(self):
         ''' Returns .'''
@@ -277,26 +291,33 @@ class ViewerEditorImage(QWidget):
         ''' Draw on every paint event.'''
         # Get Preview info width & height
         viewWidth, viewHeight = self.GetViewSize()
-
+        widgetWidth, widgetHeight = self.GetViewSize()
         # Create painter
         widgetPainter = QPainter()
         widgetPainter.begin(self)
 
         # If image is loaded?
         if (self.imageBg is not None):
+            # Setup image width & height
+            imHeight, imWidth = self.imageBg.shape[0:2]
             image = self.imageBg
-            pixmap = CvImage2QtImage(image)
-            widgetPainter.drawPixmap(self.rect(), pixmap)
         # If there is no image then fill Black and draw text
         else:
-            # Fill black background
-            widgetPainter.fillRect(self.geometry(),
-                                   QBrush(Qt.black))
-            widgetPainter.setPen(Qt.white)
-            widgetPainter.setFont(QFont('Decorative', 10))
-            widgetPainter.drawText(self.geometry(),
-                                   Qt.AlignCenter,
-                                   'No image loaded!')
+            # Setup image width & height
+            imWidth, imHeight = self.GetViewSize()
+            image = np.zeros([imWidth, imHeight, 3], dtype=np.uint8)
+
+        # Select scaling mode
+        if (self.imageScaling == self.ImageScalingResizeAspectRatio):
+            viewportWidth, viewportHeight = GetFixedFitToBox(
+                imWidth, imHeight, widgetWidth, widgetHeight)
+            widgetPainter.setViewport(0, 0, viewportWidth, viewportHeight)
+        elif (self.imageScaling == self.ImageScalingOriginalSize):
+            widgetPainter.setViewport(0, 0, imWidth, imHeight)
+
+        # Draw current OpenCV image as pixmap
+        pixmap = CvImage2QtImage(image)
+        widgetPainter.drawPixmap(self.rect(), pixmap)
 
         # Draw all annotations
         if (not self.config['isAnnotationsHidden']):

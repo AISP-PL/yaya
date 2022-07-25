@@ -63,6 +63,10 @@ class MainWindowGui(Ui_MainWindow):
         imageNumber = self.annoter.GetFileIndex()
         imageCount = self.annoter.GetFilesCount()
 
+        # Image scaling
+        self.ui.imageScalingComboBox.currentTextChanged.connect(
+            self.CallbackImageScalingTextChanged)
+
         # List of detector labels - Create
         for className in GetClasses():
             self.ui.labelsListWidget.addItem(
@@ -248,6 +252,20 @@ class MainWindowGui(Ui_MainWindow):
         '''  Run gui window thread and return exit code.'''
         self.window.show()
         return self.App.exec_()
+
+    def CallbackImageScalingTextChanged(self, text):
+        ''' Callback when image scaling text changed.'''
+        if (text == 'Resize'):
+            self.ui.viewerEditor.SetImageScaling(
+                ViewerEditorImage.ImageScalingResize)
+        elif (text == 'ResizeAspectRatio'):
+            self.ui.viewerEditor.SetImageScaling(
+                ViewerEditorImage.ImageScalingResizeAspectRatio)
+        elif (text == 'OriginalSize'):
+            self.ui.viewerEditor.SetImageScaling(
+                ViewerEditorImage.ImageScalingOriginalSize)
+        else:
+            logging.error('(MainWindow) Unknown value!')
 
     def CallbackKeycodeOffsetButtonClicked(self):
         ''' Callback when keycode offset button clicked.'''
