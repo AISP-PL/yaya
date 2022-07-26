@@ -171,6 +171,14 @@ class DetectorYOLOv4(Detector):
                 h, w = self.imheight, self.imwidth
                 for i, d in enumerate(detections):
                     className, confidence, box = d
+                    # Correct (-x, -y) value to fit inside box
+                    x1, y1, x2, y2 = box
+                    x1 = max(0, min(x1, w))
+                    x2 = max(0, min(x2, w))
+                    y1 = max(0, min(y1, h))
+                    y2 = max(0, min(y2, h))
+                    box = x1, y1, x2, y2
+                    # Change to relative
                     detections[i] = (className, confidence,
                                      ToRelative(box, w, h))
 
@@ -217,6 +225,14 @@ class DetectorYOLOv4(Detector):
                 h, w = boundaryWidth, boundaryWidth
                 for i, d in enumerate(detections):
                     className, confidence, box = d
+                    # Correct (-x, -y) value to fit inside box
+                    x1, y1, x2, y2 = box
+                    x1 = max(0, min(x1, w))
+                    x2 = max(0, min(x2, w))
+                    y1 = max(0, min(y1, h))
+                    y2 = max(0, min(y2, h))
+                    box = x1, y1, x2, y2
+                    # Change to relative
                     detections[i] = (className, confidence,
                                      ToRelative(box, w, h))
 

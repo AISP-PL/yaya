@@ -196,7 +196,7 @@ class Annote():
                   QPoint(x1, y1),
                   label,
                   bgColor=brushColor,
-                  textAlign='topright'
+                  textAlign='bottomright'
                   )
 
     def IsInside(self, point):

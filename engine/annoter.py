@@ -343,7 +343,7 @@ class Annoter():
 
             # Step back offset
             self.offset = min(self.offset,
-                              self.GetFilesCount())
+                              self.GetFilesCount()-1)
 
     def Create(self):
         ''' Creates new filepath for new image file.'''
