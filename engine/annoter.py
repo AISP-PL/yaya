@@ -367,9 +367,9 @@ class Annoter():
             result = cv2.imwrite(tmppath, self.image)
             # If saved then atomic move image to original image
             if (result is True):
-                os.system('mv -fv %s %s ' % (tmppath, imgpath))
+                os.system('mv -fv "%s" "%s" ' % (tmppath, imgpath))
             else:
-                logging.error('(Annoter) Writing image %s failed!', imgpath)
+                logging.error('(Annoter) Writing image "%s" failed!', imgpath)
 
         # Check other errors
         self.errors = self.__checkOfErrors()
