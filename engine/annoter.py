@@ -169,22 +169,21 @@ class Annoter():
 
             self.files = filesForClass
 
+        # Use only files with specific class detected
+        if (self.config['isOnlyDetectedClass'] is not None):
+            filesForClass = []
+            for offset, filename in enumerate(self.files):
+                self.offset = offset
+                self.Process(processImage=True, forceDetector=True)
+                # Check if detected class exists in annotations
+                if (len(self.annotations) != 0) and  \
+                        (len(self.GetAnnotationsForClass(self.config['isOnlyDetectedClass'])) != 0):
+                    filesForClass.append(filename)
+                # Logging progress
+                logging.info('Progress : [%u/%u]\r',
+                             offset, len(self.files))
 
-#         # Use only files with specific class detected
-#         if (self.config['isOnlyDetectedClass'] is not None):
-#             filesForClass = []
-#             for offset, filename in enumerate(self.filenames):
-#                 self.offset = offset
-#                 self.Process(processImage=True, forceDetector=True)
-#                 # Check if detected class exists in annotations
-#                 if (len(self.annotations) != 0) and  \
-#                         (len(self.GetAnnotationsForClass(self.config['isOnlyDetectedClass'])) != 0):
-#                     filesForClass.append(filename)
-#                 # Logging progress
-#                 logging.info('Progress : [%u/%u]\r',
-#                              offset, len(self.filenames))
-#
-#             self.filenames = filesForClass
+            self.files = filesForClass
 
         # Reset values at the end
         self.annotations = []
