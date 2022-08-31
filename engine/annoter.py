@@ -13,7 +13,7 @@ import helpers.boxes as boxes
 from helpers.files import IsImageFile, DeleteFile, GetNotExistingSha1Filepath, FixPath, GetFilename,\
     GetExtension
 from helpers.textAnnotations import ReadAnnotations, SaveAnnotations, IsExistsAnnotations,\
-    DeleteAnnotations
+    DeleteAnnotations, SaveDetections, ReadDetections
 from helpers.metrics import mAP, dSurplus
 from engine.annote import AnnoteAuthorType
 
@@ -132,17 +132,15 @@ class Annoter():
             detAnnotes = self.detector.Detect(im,
                                               confidence=0.3,
                                               boxRelative=True)
-            # Create annotes
-            detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
             # Save/Update detector annotations file
-            saveAnnotations = [annote.toTxtAnnote(el) for el in detAnnotes]
-            SaveAnnotations(filepath, saveAnnotations, extension='.detector')
+            SaveDetections(filepath, detAnnotes, extension='.detector')
 
         # Otherwise read previous annoations
         else:
-            detAnnotes = ReadAnnotations(filepath, extension='.detector')
-            detAnnotes = [annote.fromTxtAnnote(
-                el, defaultAuthor=AnnoteAuthorType.byDetector) for el in detAnnotes]
+            detAnnotes = ReadDetections(filepath, extension='.detector')
+
+        # Create annotes
+        detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
 
         # Calculate mAP
         detections_mAP = mAP(txtAnnotes, detAnnotes)

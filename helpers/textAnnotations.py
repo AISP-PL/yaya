@@ -34,6 +34,12 @@ def IsExistsImage(annotationPath):
     return False
 
 
+def DeleteAnnotations(imagePath, extension='.txt'):
+    '''Delete annotations file.'''
+    path = GetFilename(imagePath)+extension
+    DeleteFile(path)
+
+
 def ReadAnnotations(imagePath, extension='.txt'):
     '''Read annotations from file.'''
     annotations = []
@@ -50,10 +56,21 @@ def ReadAnnotations(imagePath, extension='.txt'):
     return annotations
 
 
-def DeleteAnnotations(imagePath, extension='.txt'):
-    '''Delete annotations file.'''
+def ReadDetections(imagePath, extension='.txt'):
+    '''Read annotations detections from file.'''
+    annotations = []
     path = GetFilename(imagePath)+extension
-    DeleteFile(path)
+    with open(path, 'r') as f:
+        for line in f:
+            txtAnnote = (line.rstrip('\n').split(' '))
+            className = str(txtAnnote[0])
+            confidence = float(txtAnnote[1])
+            box = (float(txtAnnote[2]), float(txtAnnote[3]),
+                   float(txtAnnote[4]), float(txtAnnote[5]))
+            box = boxes.Bbox2Rect(box)
+            annotations.append((className, confidence, box))
+
+    return annotations
 
 
 def SaveAnnotations(imagePath, annotations, extension='.txt'):
@@ -65,3 +82,14 @@ def SaveAnnotations(imagePath, annotations, extension='.txt'):
             box = boxes.Rect2Bbox(box)
             f.write('%u %2.6f %2.6f %2.6f %2.6f\n' %
                     (classNumber, box[0], box[1], box[2], box[3]))
+
+
+def SaveDetections(imagePath, annotations, extension='.txt'):
+    '''Save annotations for file.'''
+    path = GetFilename(imagePath)+extension
+    with open(path, 'w') as f:
+        for element in annotations:
+            className, confidence, box = element
+            box = boxes.Rect2Bbox(box)
+            f.write('%s %2.2f %2.6f %2.6f %2.6f %2.6f\n' %
+                    (className, confidence, box[0], box[1], box[2], box[3]))
