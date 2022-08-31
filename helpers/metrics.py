@@ -20,6 +20,22 @@ def MetricIOU(box1, box2):
     return 0
 
 
+def dDeficit(annotations, detections, minConfidence=0.5):
+    '''
+        Detections deficit +/-.
+        - positive = to few detections,
+        - negative = to many detctions,
+
+        @param expected annotations
+        @param detected annotations
+    '''
+    # 1. Drop detections with (confidence < minConfidence)
+    detections = [item for item in detections if (
+        item.confidence > minConfidence)]
+
+    return len(annotations) - len(detections)
+
+
 def mAP(annotations, detections, minConfidence=0.5, minIOU=0.5):
     '''
         @TODO not implemented yet real mAP,

@@ -14,7 +14,7 @@ from helpers.files import IsImageFile, DeleteFile, GetNotExistingSha1Filepath, F
     GetExtension
 from helpers.textAnnotations import ReadAnnotations, SaveAnnotations, IsExistsAnnotations,\
     DeleteAnnotations
-from helpers.metrics import mAP
+from helpers.metrics import mAP, dDeficit
 
 
 class Annoter():
@@ -149,6 +149,7 @@ class Annoter():
                 'Detections': None,
                 'Annotations': txtAnnotations,
                 'mAP': None,
+                'dDeficit': None,
             })
 
         # ------- Sorting ------------
@@ -452,6 +453,7 @@ class Annoter():
                 detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
                 # Calculate mAP @TODO
                 fileEntry['mAP'] = mAP(txtAnnotes, detAnnotes)
+                fileEntry['dDeficit'] = dDeficit(txtAnnotes, detAnnotes)
 
                 # Filter by IOU internal with same annotes
                 # and also with txt annotes.

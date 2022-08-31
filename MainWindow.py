@@ -86,7 +86,7 @@ class MainWindowGui(Ui_MainWindow):
             self.CallbackPaintSizeSlider)
 
         # Setup files selector table widget
-        labels = ['Name', 'IsAnnotated', 'Annotations', 'mAP']
+        labels = ['Name', 'IsAnnotated', 'Annotations', 'mAP', 'dDeficit']
         self.ui.fileSelectorTableWidget.setColumnCount(len(labels))
         self.ui.fileSelectorTableWidget.setHorizontalHeaderLabels(labels)
         self.ui.fileSelectorTableWidget.setRowCount(
@@ -115,6 +115,12 @@ class MainWindowGui(Ui_MainWindow):
 
             # mAP column
             item = QTableWidgetItem(str(fileEntry['mAP']))
+            item.setToolTip(str(rowIndex))
+            self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
+            colIndex += 1
+
+            # dDeficit column
+            item = QTableWidgetItem(str(fileEntry['dDeficit']))
             item.setToolTip(str(rowIndex))
             self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
             colIndex += 1
@@ -227,6 +233,9 @@ class MainWindowGui(Ui_MainWindow):
             # mAP column
             self.ui.fileSelectorTableWidget.item(
                 imageNumber, 3).setText(str(fileEntry['mAP']))
+            # dDeficit column
+            self.ui.fileSelectorTableWidget.item(
+                imageNumber, 4).setText(str(fileEntry['dDeficit']))
 
         # Setup files selector table widget
         self.ui.fileSelectorTableWidget.clearSelection()
