@@ -5,10 +5,7 @@ Created on 29 gru 2020
 '''
 import sys
 import os
-import glob
 import logging
-import subprocess
-import cv2
 from Ui_MainWindow import Ui_MainWindow
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTableWidgetItem,\
     QListWidgetItem, QButtonGroup, QMessageBox
@@ -75,18 +72,13 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.labelsListWidget.currentRowChanged.connect(
             self.CallbackLabelsRowChanged)
 
-        # File number slider - create
-        self.ui.fileNumberSlider.setMaximum(imageCount)
-        self.ui.fileNumberSlider.setValue(imageNumber)
-        self.ui.fileNumberSlider.valueChanged.connect(
-            self.CallbackFileNumberSlider)
-
         # Paint size slider
         self.ui.paintSizeSlider.valueChanged.connect(
             self.CallbackPaintSizeSlider)
 
         # Setup files selector table widget
-        labels = ['Name', 'IsAnnotated', 'Annotations', 'mAP', 'dDeficit']
+        labels = ['Name', 'IsAnnotated',
+                  'Annotations', 'mAP', 'dDeficit', 'Errors']
         self.ui.fileSelectorTableWidget.setColumnCount(len(labels))
         self.ui.fileSelectorTableWidget.setHorizontalHeaderLabels(labels)
         self.ui.fileSelectorTableWidget.setRowCount(
@@ -121,6 +113,12 @@ class MainWindowGui(Ui_MainWindow):
 
             # dDeficit column
             item = QTableWidgetItem(str(fileEntry['dDeficit']))
+            item.setToolTip(str(rowIndex))
+            self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
+            colIndex += 1
+
+            # dDeficit column
+            item = QTableWidgetItem(str(fileEntry['Errors']))
             item.setToolTip(str(rowIndex))
             self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
             colIndex += 1
@@ -221,33 +219,41 @@ class MainWindowGui(Ui_MainWindow):
 
         # Setup files selector table widget
         fileEntry = self.annoter.GetFile()
+        # Find rowIndex of imageNumber
+        for rowIndex in range(imageCount):
+            item = self.ui.fileSelectorTableWidget.item(rowIndex, 0)
+            if (int(item.toolTip()) == imageNumber):
+                break
+
         if (fileEntry is not None):
             # Filename column
-            self.ui.fileSelectorTableWidget.item(imageNumber, 0)
+            self.ui.fileSelectorTableWidget.item(rowIndex, 0)
             # IsAnnotation column
             self.ui.fileSelectorTableWidget.item(
-                imageNumber, 1).setText(str(fileEntry['IsAnnotation']))
+                rowIndex, 1).setText(str(fileEntry['IsAnnotation']))
             # Annotations column
             self.ui.fileSelectorTableWidget.item(
-                imageNumber, 2).setText(str(len(fileEntry['Annotations'])))
+                rowIndex, 2).setText(str(len(fileEntry['Annotations'])))
             # mAP column
             self.ui.fileSelectorTableWidget.item(
-                imageNumber, 3).setText(str(fileEntry['mAP']))
+                rowIndex, 3).setText(str(fileEntry['mAP']))
             # dDeficit column
             self.ui.fileSelectorTableWidget.item(
-                imageNumber, 4).setText(str(fileEntry['dDeficit']))
+                rowIndex, 4).setText(str(fileEntry['dDeficit']))
+            # Errors column
+            self.ui.fileSelectorTableWidget.item(
+                rowIndex, 5).setText(str(fileEntry['Errors']))
 
         # Setup files selector table widget
         self.ui.fileSelectorTableWidget.clearSelection()
         if (imageCount != 0):
+            # Select whole row with image
             for i in range(self.ui.fileSelectorTableWidget.columnCount()):
-                self.ui.fileSelectorTableWidget.item(
-                    imageNumber, i).setSelected(True)
-            self.ui.fileSelectorTableWidget.verticalScrollBar().setValue(imageNumber)
+                item = self.ui.fileSelectorTableWidget.item(rowIndex, i)
+                item.setSelected(True)
 
-        # Setup slider
-        self.ui.fileNumberSlider.setValue(imageNumber)
-        self.ui.fileNumberSlider.setMaximum(imageCount)
+#             Move verticall scroll bar also
+#             self.ui.fileSelectorTableWidget.verticalScrollBar().setValue(rowIndex)
 
         # Paint size slider
         self.ui.paintLabel.setText('Paint size %u' %
@@ -313,16 +319,6 @@ class MainWindowGui(Ui_MainWindow):
         ''' When file selector item was clicked.'''
         # Read current file number
         fileNumber = int(item.toolTip())
-        self.ui.fileNumberSlider.setValue(fileNumber)
-        # # Update annoter
-        # self.annoter.SetImageNumber(fileNumber)
-        # # Setup UI again
-        # self.Setup()
-
-    def CallbackFileNumberSlider(self):
-        ''' Callback for changed of file number slider.'''
-        # Read current file number
-        fileNumber = self.ui.fileNumberSlider.value()
         # Update annoter
         self.annoter.SetImageNumber(fileNumber)
         # Setup UI again

@@ -172,16 +172,6 @@
            </widget>
           </item>
           <item>
-           <widget class="QSlider" name="fileNumberSlider">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="tickPosition">
-             <enum>QSlider::TicksAbove</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QToolButton" name="nextFileButton">
             <property name="text">
              <string>...</string>

@@ -36,6 +36,8 @@ parser.add_argument('-oe', '--onlyFilesWithErrors', action='store_true',
                     required=False, help='Process only files with errors.')
 parser.add_argument('-d', '--detector', type=int, nargs='?', const=0, default=0,
                     required=False, help='Detector type - default 0')
+parser.add_argument('-f', '--forceDetector', action='store_true',
+                    required=False, help='Force detector for every file.')
 parser.add_argument('-v', '--verbose', action='store_true',
                     required=False, help='Show verbose finded and processed data')
 args = parser.parse_args()
@@ -75,6 +77,11 @@ noDetector = False
 if (args.noDetector is not None):
     noDetector = args.noDetector
 
+# Check - detector
+forceDetector = False
+if (args.forceDetector is not None):
+    forceDetector = args.forceDetector
+
 # Enabled logging
 if (__debug__ is True):
     logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
@@ -102,7 +109,9 @@ annoter = Annoter(FixPath(GetFileLocation(args.input)),
                   isOnlyOldFiles,
                   isOnlyErrorFiles,
                   isOnlyDetectedClass,
-                  isOnlySpecificClass)
+                  isOnlySpecificClass,
+                  forceDetector
+                  )
 
 # Start QtGui
 gui = MainWindowGui(args, detector, annoter)

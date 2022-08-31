@@ -114,11 +114,6 @@ class Ui_MainWindow(object):
         self.prevFileButton.setIcon(icon)
         self.prevFileButton.setObjectName('prevFileButton')
         self.sliderLayout.addWidget(self.prevFileButton)
-        self.fileNumberSlider = QtWidgets.QSlider(self.layoutWidget)
-        self.fileNumberSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.fileNumberSlider.setTickPosition(QtWidgets.QSlider.TicksAbove)
-        self.fileNumberSlider.setObjectName('fileNumberSlider')
-        self.sliderLayout.addWidget(self.fileNumberSlider)
         self.nextFileButton = QtWidgets.QToolButton(self.layoutWidget)
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(

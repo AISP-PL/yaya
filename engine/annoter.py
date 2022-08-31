@@ -36,13 +36,16 @@ class Annoter():
                  isOnlyOldFiles=False,
                  isOnlyErrorFiles=False,
                  isOnlyDetectedClass=None,
-                 isOnlySpecificClass=None):
+                 isOnlySpecificClass=None,
+                 forceDetector=False,
+                 ):
         '''
         Constructor
         '''
         # Set configuration
         self.config = {
             'sortMethod': sortMethod,
+            'forceDetector': forceDetector,
             'isOnlyNewFiles': isOnlyNewFiles,
             'isOnlyOldFiles': isOnlyOldFiles,
             'isOnlyErrorFiles': isOnlyErrorFiles,
@@ -109,6 +112,42 @@ class Annoter():
 
         return txtAnnotes
 
+    def GetFileImage(self, filepath):
+        ''' Read file annotations if possible.'''
+        im = None
+        if (os.path.exists(filepath)):
+            im = cv2.imread(filepath)
+
+        return im
+
+    def GetFileDetections(self, im, filepath, txtAnnotes):
+        ''' Read file annotations if possible.'''
+        if (self.detector is None) or (im is None):
+            return [], 0, 0
+
+        # Call detector
+        detAnnotes = self.detector.Detect(
+            im, confidence=0.3, boxRelative=True)
+        logging.debug(
+            '(Annoter) %u annotations to process.', len(detAnnotes))
+        # Create annotes
+        detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
+        # Calculate mAP @TODO
+        detections_mAP = mAP(txtAnnotes, detAnnotes)
+        detections_dDeficit = dDeficit(txtAnnotes, detAnnotes)
+
+        # Filter by IOU internal with same annotes
+        # and also with txt annotes.
+        detAnnotes = prefilters.FilterIOUbyConfidence(detAnnotes,
+                                                      detAnnotes + txtAnnotes)
+        logging.debug(
+            '(Annoter) Detected %u annotations with %2.2fmAP for %s!',
+            len(detAnnotes),
+            detections_mAP,
+            filepath)
+
+        return detAnnotes, detections_mAP, detections_dDeficit
+
     def OpenLocation(self, path):
         ''' Open images/annotations location.'''
         # Update dirpath
@@ -118,7 +157,7 @@ class Annoter():
 
         # ---------- Filtering -----------
         self.files = []
-        for filename in os.listdir(path):
+        for index, filename in enumerate(os.listdir(path)):
             # Filter excludes
             if (filename in excludes):
                 continue
@@ -127,30 +166,35 @@ class Annoter():
             if (not IsImageFile(filename)):
                 continue
 
+            # Check if annotations exists
             isAnnotation = IsExistsAnnotations(path+filename)
-            # if only new files - then filter all files with annotation.
-            if (self.config['isOnlyNewFiles'] == True) and (isAnnotation):
-                continue
-
-            # if only new files - then filter all files without annotation.
-            if (self.config['isOnlyOldFiles'] == True) and (not isAnnotation):
-                continue
 
             # Read annotations
             txtAnnotations = self.GetFileAnnotations(path+filename)
+
+            # Force detector if needed
+            detections, detections_mAP, detections_dDeficit = None, None, None
+            if (self.config['forceDetector'] == True):
+                im = self.GetFileImage(path+filename)
+                detections, detections_mAP, detections_dDeficit = self.GetFileDetections(
+                    im, path+filename, txtAnnotations)
 
             # Add file entry
             self.files.append({
                 'Name': filename,
                 'Path': path+filename,
                 'IsAnnotation': isAnnotation,
+                'Annotations': txtAnnotations,
                 'Datetime': os.lstat(path+filename).st_mtime,
                 'Errors': len(self.errors),
-                'Detections': None,
-                'Annotations': txtAnnotations,
-                'mAP': None,
-                'dDeficit': None,
+                'Detections': detections,
+                'mAP': detections_mAP,
+                'dDeficit': detections_dDeficit,
             })
+
+            # Logging progress
+            logging.info('Progress : [%u]\r',
+                         index)
 
         # ------- Sorting ------------
         # Sorting : by datetime
@@ -184,22 +228,6 @@ class Annoter():
                     fileEntry['Annotations'], [self.config['isOnlySpecificClass']])
                 if (annotations is not None) and (len(annotations) != 0):
                     filesForClass.append(fileEntry)
-
-            self.files = filesForClass
-
-        # Use only files with specific class detected
-        if (self.config['isOnlyDetectedClass'] is not None):
-            filesForClass = []
-            for offset, filename in enumerate(self.files):
-                self.offset = offset
-                self.Process(processImage=True, forceDetector=True)
-                # Check if detected class exists in annotations
-                if (len(self.annotations) != 0) and  \
-                        (len(self.GetAnnotationsForClass(self.config['isOnlyDetectedClass'])) != 0):
-                    filesForClass.append(filename)
-                # Logging progress
-                logging.info('Progress : [%u/%u]\r',
-                             offset, len(self.files))
 
             self.files = filesForClass
 
@@ -435,8 +463,7 @@ class Annoter():
 
             # Read image
             if (processImage is True):
-                im = cv2.imread(fileEntry['Path'])
-                self.image = im
+                self.image = im = self.GetFileImage(fileEntry['Path'])
 
             # All txt annotations
             txtAnnotes = self.GetFileAnnotations(fileEntry['Path'])
@@ -444,26 +471,10 @@ class Annoter():
             detAnnotes = []
             # if annotations file not exists or empty then detect.
             if (self.noDetector is False) and (processImage is True) and ((len(txtAnnotes) == 0) or (forceDetector is True)):
-                # Call detector
-                detAnnotes = self.detector.Detect(
-                    im, confidence=0.3, boxRelative=True)
-                logging.debug(
-                    '(Annoter) %u annotations to process.', len(detAnnotes))
-                # Create annotes
-                detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
-                # Calculate mAP @TODO
-                fileEntry['mAP'] = mAP(txtAnnotes, detAnnotes)
-                fileEntry['dDeficit'] = dDeficit(txtAnnotes, detAnnotes)
-
-                # Filter by IOU internal with same annotes
-                # and also with txt annotes.
-                detAnnotes = prefilters.FilterIOUbyConfidence(detAnnotes,
-                                                              detAnnotes + txtAnnotes)
-                logging.debug(
-                    '(Annoter) Detected %u annotations with %2.2fmAP for %s!',
-                    len(detAnnotes),
-                    fileEntry['mAP'],
-                    fileEntry['Path'])
+                detAnnotes, detections_mAP, detections_dDeficit = self.GetFileDetections(
+                    im, fileEntry['Path'], txtAnnotes)
+                fileEntry['mAP'] = detections_mAP
+                fileEntry['dDeficit'] = detections_dDeficit
 
             # All annotations
             self.annotations = txtAnnotes + detAnnotes
