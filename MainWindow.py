@@ -14,6 +14,7 @@ from engine.annote import GetClasses
 from ViewerEditorImage import ViewerEditorImage
 from helpers.files import FixPath
 from copy import copy
+from PyQt5.QtCore import Qt
 
 
 class MainWindowGui(Ui_MainWindow):
@@ -89,7 +90,7 @@ class MainWindowGui(Ui_MainWindow):
 
         # Setup files selector table widget
         labels = ['Name', 'IsAnnotated',
-                  'Annotations', 'mAP', 'dDeficit', 'Errors']
+                  'Annotations', 'mAP', 'dSurplus', 'Errors']
         self.ui.fileSelectorTableWidget.setColumnCount(len(labels))
         self.ui.fileSelectorTableWidget.setHorizontalHeaderLabels(labels)
         self.ui.fileSelectorTableWidget.setRowCount(
@@ -106,6 +107,10 @@ class MainWindowGui(Ui_MainWindow):
 
             # IsAnnotation column
             item = QTableWidgetItem(str(fileEntry['IsAnnotation']))
+            if (fileEntry['IsAnnotation']):
+                item.setBackground(Qt.green)
+            else:
+                item.setBackground(Qt.red)
             item.setToolTip(str(fileEntry['ID']))
             self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
             colIndex += 1
@@ -122,13 +127,13 @@ class MainWindowGui(Ui_MainWindow):
             self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
             colIndex += 1
 
-            # dDeficit column
-            item = QTableWidgetItem(str(fileEntry['dDeficit']))
+            # dSurplus column
+            item = QTableWidgetItem(str(fileEntry['dSurplus']))
             item.setToolTip(str(fileEntry['ID']))
             self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
             colIndex += 1
 
-            # dDeficit column
+            # dSurplus column
             item = QTableWidgetItem(str(fileEntry['Errors']))
             item.setToolTip(str(fileEntry['ID']))
             self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
@@ -239,17 +244,22 @@ class MainWindowGui(Ui_MainWindow):
             # Filename column
             self.ui.fileSelectorTableWidget.item(rowIndex, 0)
             # IsAnnotation column
-            self.ui.fileSelectorTableWidget.item(
-                rowIndex, 1).setText(str(fileEntry['IsAnnotation']))
+            item = self.ui.fileSelectorTableWidget.item(
+                rowIndex, 1)
+            if (fileEntry['IsAnnotation']):
+                item.setBackground(Qt.green)
+            else:
+                item.setBackground(Qt.red)
+            item.setText(str(fileEntry['IsAnnotation']))
             # Annotations column
             self.ui.fileSelectorTableWidget.item(
                 rowIndex, 2).setText(str(len(fileEntry['Annotations'])))
             # mAP column
             self.ui.fileSelectorTableWidget.item(
                 rowIndex, 3).setText(str(fileEntry['mAP']))
-            # dDeficit column
+            # dSurplus column
             self.ui.fileSelectorTableWidget.item(
-                rowIndex, 4).setText(str(fileEntry['dDeficit']))
+                rowIndex, 4).setText(str(fileEntry['dSurplus']))
             # Errors column
             self.ui.fileSelectorTableWidget.item(
                 rowIndex, 5).setText(str(fileEntry['Errors']))

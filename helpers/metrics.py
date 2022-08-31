@@ -7,6 +7,7 @@ Created on 15 wrz 2020
 import math
 from . import boxes
 from numba import njit
+from helpers import prefilters
 
 
 @njit(cache=True)
@@ -33,7 +34,29 @@ def dDeficit(annotations, detections, minConfidence=0.5):
     detections = [item for item in detections if (
         item.confidence > minConfidence)]
 
+    # Filter by IOU>=0.75 with itself.
+    detections = prefilters.FilterIOUbyConfidence(detections, detections)
+
     return len(annotations) - len(detections)
+
+
+def dSurplus(annotations, detections, minConfidence=0.5):
+    '''
+        Detections surplus +/-.
+        - positive = to many detections,
+        - negative = to few detctions,
+
+        @param expected annotations
+        @param detected annotations
+    '''
+    # 1. Drop detections with (confidence < minConfidence)
+    detections = [item for item in detections if (
+        item.confidence > minConfidence)]
+
+    # Filter by IOU>=0.75 with itself.
+    detections = prefilters.FilterIOUbyConfidence(detections, detections)
+
+    return len(detections) - len(annotations)
 
 
 def mAP(annotations, detections, minConfidence=0.5, minIOU=0.5):
