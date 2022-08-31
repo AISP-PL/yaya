@@ -183,6 +183,7 @@ class Annoter():
             self.files.append({
                 'Name': filename,
                 'Path': path+filename,
+                'ID': index,
                 'IsAnnotation': isAnnotation,
                 'Annotations': txtAnnotations,
                 'Datetime': os.lstat(path+filename).st_mtime,
@@ -279,6 +280,10 @@ class Annoter():
         ''' Returns images list'''
         return self.files
 
+    def GetFileID(self):
+        ''' Returns current image ID.'''
+        return self.files[self.offset]['ID']
+
     def GetFileIndex(self):
         ''' Returns current image number.'''
         return self.offset
@@ -292,6 +297,23 @@ class Annoter():
         annotated = sum([int(fileEntry['IsAnnotation'])
                          for fileEntry in self.files])
         return annotated
+
+    def SetImageID(self, fileID):
+        ''' Sets current image number.'''
+        # index of ID file
+        foundIndex = None
+        # Find image with these id
+        for index, fileEntry in enumerate(self.files):
+            if (fileEntry['ID'] == fileID):
+                foundIndex = index
+                break
+
+        if (foundIndex is not None) and (foundIndex) and (foundIndex < len(self.files)):
+            self.offset = foundIndex
+            self.Process()
+            return True
+
+        return False
 
     def SetImageNumber(self, number):
         ''' Sets current image number.'''

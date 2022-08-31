@@ -52,13 +52,24 @@ class MainWindowGui(Ui_MainWindow):
         self.SetupDefault()
         self.Setup()
 
+    def ImageIDToRowNumber(self, imageID):
+        ''' Image number to row index.'''
+        # Found index
+        foundIndex = None
+
+        # Find rowIndex of imageNumber
+        for rowIndex in range(self.ui.fileSelectorTableWidget.rowCount()):
+            item = self.ui.fileSelectorTableWidget.item(rowIndex, 0)
+            if (int(item.toolTip()) == imageID):
+                foundIndex = rowIndex
+                break
+
+        return foundIndex
+
     def SetupDefault(self):
         ''' Sets default for UI.'''
         # Annoter - process first time.
         self.annoter.Process()
-        # Read annoter results
-        imageNumber = self.annoter.GetFileIndex()
-        imageCount = self.annoter.GetFilesCount()
 
         # Image scaling
         self.ui.imageScalingComboBox.currentTextChanged.connect(
@@ -89,37 +100,37 @@ class MainWindowGui(Ui_MainWindow):
 
             # Filename column
             item = QTableWidgetItem(str(fileEntry['Name']))
-            item.setToolTip(str(rowIndex))
+            item.setToolTip(str(fileEntry['ID']))
             self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
             colIndex += 1
 
             # IsAnnotation column
             item = QTableWidgetItem(str(fileEntry['IsAnnotation']))
-            item.setToolTip(str(rowIndex))
+            item.setToolTip(str(fileEntry['ID']))
             self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
             colIndex += 1
 
             # Annotations column
             item = QTableWidgetItem(str(len(fileEntry['Annotations'])))
-            item.setToolTip(str(rowIndex))
+            item.setToolTip(str(fileEntry['ID']))
             self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
             colIndex += 1
 
             # mAP column
             item = QTableWidgetItem(str(fileEntry['mAP']))
-            item.setToolTip(str(rowIndex))
+            item.setToolTip(str(fileEntry['ID']))
             self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
             colIndex += 1
 
             # dDeficit column
             item = QTableWidgetItem(str(fileEntry['dDeficit']))
-            item.setToolTip(str(rowIndex))
+            item.setToolTip(str(fileEntry['ID']))
             self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
             colIndex += 1
 
             # dDeficit column
             item = QTableWidgetItem(str(fileEntry['Errors']))
-            item.setToolTip(str(rowIndex))
+            item.setToolTip(str(fileEntry['ID']))
             self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
             colIndex += 1
 
@@ -199,6 +210,7 @@ class MainWindowGui(Ui_MainWindow):
         filename = self.annoter.GetFilename()
         imageWidth, imageHeight, imageBytes = self.annoter.GetImageSize()
         imageNumber = self.annoter.GetFileIndex()
+        imageID = self.annoter.GetFileID()
         imageCount = self.annoter.GetFilesCount()
         imageAnnotatedCount = self.annoter.GetFilesAnnotatedCount()
 
@@ -209,7 +221,7 @@ class MainWindowGui(Ui_MainWindow):
 
         # Setup horizontal file slider
         self.ui.fileNumberSliderLabel.setText(
-            '%u/%u' % (imageNumber, imageCount))
+            'ID%u (%u/%u)' % (imageID, imageNumber, imageCount))
 
         # Setup file info
         self.ui.fileLabel.setText('[%upx x %upx x %uB] %s' % (imageWidth,
@@ -219,11 +231,9 @@ class MainWindowGui(Ui_MainWindow):
 
         # Setup files selector table widget
         fileEntry = self.annoter.GetFile()
+
         # Find rowIndex of imageNumber
-        for rowIndex in range(imageCount):
-            item = self.ui.fileSelectorTableWidget.item(rowIndex, 0)
-            if (int(item.toolTip()) == imageNumber):
-                break
+        rowIndex = self.ImageIDToRowNumber(imageID)
 
         if (fileEntry is not None):
             # Filename column
@@ -318,9 +328,9 @@ class MainWindowGui(Ui_MainWindow):
     def CallbackFileSelectorItemClicked(self, item):
         ''' When file selector item was clicked.'''
         # Read current file number
-        fileNumber = int(item.toolTip())
+        fileID = int(item.toolTip())
         # Update annoter
-        self.annoter.SetImageNumber(fileNumber)
+        self.annoter.SetImageID(fileID)
         # Setup UI again
         self.Setup()
 
@@ -379,9 +389,14 @@ class MainWindowGui(Ui_MainWindow):
 
     def CallbackDeleteImageAnnotationsButton(self):
         '''Callback'''
-        self.annoter.Delete()
-        self.annoter.Process()
-        self.Setup()
+        # Remove QtableWidget row
+        rowIndex = self.ImageIDToRowNumber(self.annoter.GetFileID())
+        if (rowIndex is not None):
+            self.ui.fileSelectorTableWidget.removeRow(rowIndex)
+            # Remove annoter data
+            self.annoter.Delete()
+            self.annoter.Process()
+            self.Setup()
 
     def CallbackDeleteNotAnnotatedFilesButton(self):
         ''' Callback.'''
