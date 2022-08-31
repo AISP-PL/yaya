@@ -15,6 +15,7 @@ from helpers.files import IsImageFile, DeleteFile, GetNotExistingSha1Filepath, F
 from helpers.textAnnotations import ReadAnnotations, SaveAnnotations, IsExistsAnnotations,\
     DeleteAnnotations
 from helpers.metrics import mAP, dSurplus
+from engine.annote import AnnoteAuthorType
 
 
 class Annoter():
@@ -120,18 +121,29 @@ class Annoter():
 
         return im
 
-    def GetFileDetections(self, im, filepath, txtAnnotes):
+    def GetFileDetections(self, im, filepath, txtAnnotes, forceDetector=False):
         ''' Read file annotations if possible.'''
         if (self.detector is None) or (im is None):
             return [], 0, 0
 
-        # Call detector
-        detAnnotes = self.detector.Detect(
-            im, confidence=0.3, boxRelative=True)
-        logging.debug(
-            '(Annoter) %u annotations to process.', len(detAnnotes))
-        # Create annotes
-        detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
+        # If detector annotations not exists then call detector
+        if (not IsExistsAnnotations(filepath, extension='.detector')) or (forceDetector):
+            # Call detector manually!
+            detAnnotes = self.detector.Detect(im,
+                                              confidence=0.3,
+                                              boxRelative=True)
+            # Create annotes
+            detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
+            # Save/Update detector annotations file
+            saveAnnotations = [annote.toTxtAnnote(el) for el in detAnnotes]
+            SaveAnnotations(filepath, saveAnnotations, extension='.detector')
+
+        # Otherwise read previous annoations
+        else:
+            detAnnotes = ReadAnnotations(filepath, extension='.detector')
+            detAnnotes = [annote.fromTxtAnnote(
+                el, defaultAuthor=AnnoteAuthorType.byDetector) for el in detAnnotes]
+
         # Calculate mAP
         detections_mAP = mAP(txtAnnotes, detAnnotes)
         detections_dSurplus = dSurplus(txtAnnotes, detAnnotes)
@@ -494,7 +506,7 @@ class Annoter():
             # if annotations file not exists or empty then detect.
             if (self.noDetector is False) and (processImage is True) and ((len(txtAnnotes) == 0) or (forceDetector is True)):
                 detAnnotes, detections_mAP, detections_dSurplus = self.GetFileDetections(
-                    im, fileEntry['Path'], txtAnnotes)
+                    im, fileEntry['Path'], txtAnnotes, forceDetector=True)
                 fileEntry['mAP'] = detections_mAP
                 fileEntry['dSurplus'] = detections_dSurplus
 

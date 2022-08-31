@@ -8,37 +8,36 @@ from helpers.files import GetFilename, DeleteFile
 import helpers.boxes as boxes
 
 
-def __getAnnotationFilepath(imagePath):
-    ''' Returns annotation filepath.'''
-    return GetFilename(imagePath) + '.txt'
-
 def GetImageFilepath(annotationPath):
     ''' Returns image filepath.'''
     path = GetFilename(annotationPath)
-    for suffix in [ '.png', '.jpeg', '.jpg', '.PNG', '.JPEG', '.JPG']:
+    for suffix in ['.png', '.jpeg', '.jpg', '.PNG', '.JPEG', '.JPG']:
         if (os.path.isfile(path+suffix) and os.access(path+suffix, os.R_OK)):
             return path+suffix
 
     return None
 
-def IsExistsAnnotations(imagePath):
+
+def IsExistsAnnotations(imagePath, extension='.txt'):
     ''' True if exists annotations file.'''
-    path = __getAnnotationFilepath(imagePath)
+    path = GetFilename(imagePath)+extension
     return os.path.isfile(path) and os.access(path, os.R_OK)
+
 
 def IsExistsImage(annotationPath):
     ''' True if exists annotations file.'''
     path = GetFilename(annotationPath)
-    for suffix in [ '.png', '.jpeg', '.jpg', '.PNG', '.JPEG', '.JPG']:
+    for suffix in ['.png', '.jpeg', '.jpg', '.PNG', '.JPEG', '.JPG']:
         if (os.path.isfile(path+suffix) and os.access(path+suffix, os.R_OK)):
             return True
 
     return False
 
-def ReadAnnotations(imagePath):
+
+def ReadAnnotations(imagePath, extension='.txt'):
     '''Read annotations from file.'''
     annotations = []
-    path = __getAnnotationFilepath(imagePath)
+    path = GetFilename(imagePath)+extension
     with open(path, 'r') as f:
         for line in f:
             txtAnnote = (line.rstrip('\n').split(' '))
@@ -50,15 +49,16 @@ def ReadAnnotations(imagePath):
 
     return annotations
 
-def DeleteAnnotations(imagePath):
+
+def DeleteAnnotations(imagePath, extension='.txt'):
     '''Delete annotations file.'''
-    path = __getAnnotationFilepath(imagePath)
+    path = GetFilename(imagePath)+extension
     DeleteFile(path)
 
 
-def SaveAnnotations(imagePath, annotations):
+def SaveAnnotations(imagePath, annotations, extension='.txt'):
     '''Save annotations for file.'''
-    path = __getAnnotationFilepath(imagePath)
+    path = GetFilename(imagePath)+extension
     with open(path, 'w') as f:
         for element in annotations:
             classNumber, box = element

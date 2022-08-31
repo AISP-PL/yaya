@@ -58,10 +58,10 @@ def toYoloDetection(annote):
     return (className, 100, box)
 
 
-def fromTxtAnnote(txtAnnote):
+def fromTxtAnnote(txtAnnote, defaultAuthor=AnnoteAuthorType.byHuman):
     ''' Creates Annote from txt annote.'''
     classNumber, box = txtAnnote
-    return Annote(box, classNumber=classNumber, authorType=AnnoteAuthorType.byHuman)
+    return Annote(box, classNumber=classNumber, authorType=defaultAuthor)
 
 
 def fromDetection(detection):
