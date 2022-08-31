@@ -98,6 +98,10 @@ class Annote():
         self.classNumber = number
         self.className = GetClassName(number)
 
+    def SetAuthorType(self, authorType):
+        ''' Returns author type.'''
+        self.authorType = authorType
+
     def GetClassNumber(self):
         ''' Returns class number.'''
         return self.classNumber

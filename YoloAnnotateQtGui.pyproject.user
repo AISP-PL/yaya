@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.11.0, 2022-07-25T23:27:07. -->
+<!-- Written by QtCreator 4.11.0, 2022-08-31T11:16:52. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -144,7 +144,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">Ui_MainWindow</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/spaszko/python/pyAITracker/tools/yolo-annotate/Ui_MainWindow.py</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/spaszko/python/pyAITracker/tools/yolo-annotate/Ui_MainWindow.py</value>
-    <value type="QString" key="PythonEditor.RunConfiguation.Interpreter">{c3bead79-edb7-4a0a-aed2-6ceafdb6aa8f}</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Interpreter">{8cc0637b-c61b-4a4f-b816-3a7c900f4b80}</value>
     <value type="QString" key="PythonEditor.RunConfiguation.Script"></value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
@@ -155,7 +155,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/spaszko/python/pyAITracker/tools/yolo-annotate</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default"></value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.1">
     <value type="QString" key="Analyzer.Perf.CallgraphMode">dwarf</value>

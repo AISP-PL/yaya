@@ -611,6 +611,7 @@ class Ui_MainWindow(object):
             _translate('MainWindow', 'X'))
         self.DeleteNotAnnotatedFilesButton.setText(
             _translate('MainWindow', 'Delete not annotated'))
+        self.fileSelectorTableWidget.setSortingEnabled(True)
         self.label.setText(_translate('MainWindow', 'Annotations'))
         self.addAnnotationsButton.setText(_translate('MainWindow', '(A)dd '))
         self.addAnnotationsButton.setShortcut(_translate('MainWindow', 'A'))

@@ -14,6 +14,7 @@ from helpers.files import IsImageFile, DeleteFile, GetNotExistingSha1Filepath, F
     GetExtension
 from helpers.textAnnotations import ReadAnnotations, SaveAnnotations, IsExistsAnnotations,\
     DeleteAnnotations
+from helpers.metrics import mAP
 
 
 class Annoter():
@@ -93,6 +94,21 @@ class Annoter():
                          len(filenames),
                          datasetPath)
 
+    def GetFileAnnotations(self, filepath):
+        ''' Read file annotations if possible.'''
+        txtAnnotes = []
+        # If exists annotations file
+        if (IsExistsAnnotations(filepath)):
+            txtAnnotes = ReadAnnotations(filepath)
+            txtAnnotes = [annote.fromTxtAnnote(el) for el in txtAnnotes]
+            logging.debug(
+                '(Annoter) Loaded annotations from %s!', filepath)
+
+            # Post-check of errors
+            self.errors = self.__checkOfErrors()
+
+        return txtAnnotes
+
     def OpenLocation(self, path):
         ''' Open images/annotations location.'''
         # Update dirpath
@@ -120,15 +136,19 @@ class Annoter():
             if (self.config['isOnlyOldFiles'] == True) and (not isAnnotation):
                 continue
 
+            # Read annotations
+            txtAnnotations = self.GetFileAnnotations(path+filename)
+
             # Add file entry
             self.files.append({
                 'Name': filename,
                 'Path': path+filename,
                 'IsAnnotation': isAnnotation,
                 'Datetime': os.lstat(path+filename).st_mtime,
-                'Errors': None,
+                'Errors': len(self.errors),
                 'Detections': None,
-                'Annotations': None,
+                'Annotations': txtAnnotations,
+                'mAP': None,
             })
 
         # ------- Sorting ------------
@@ -149,9 +169,7 @@ class Annoter():
         if (self.config['isOnlyErrorFiles'] == True):
             filesWithErrors = []
             for index, fileEntry in enumerate(self.files):
-                self.offset = index
-                self.Process()
-                if (len(self.errors) != 0):
+                if (fileEntry['Errors'] != 0):
                     filesWithErrors.append(fileEntry)
 
             # Swap with files
@@ -161,10 +179,9 @@ class Annoter():
         if (self.config['isOnlySpecificClass'] is not None):
             filesForClass = []
             for offset, fileEntry in enumerate(self.files):
-                self.offset = offset
-                self.Process(processImage=False)
-                if (len(self.annotations) != 0) and  \
-                        (len(self.GetAnnotationsForClass(self.config['isOnlySpecificClass'])) != 0):
+                annotations = self.AnnotationsSelectClasses(
+                    fileEntry['Annotations'], [self.config['isOnlySpecificClass']])
+                if (annotations is not None) and (len(annotations) != 0):
                     filesForClass.append(fileEntry)
 
             self.files = filesForClass
@@ -282,11 +299,18 @@ class Annoter():
         ''' Returns current annotations.'''
         return self.annotations
 
-    def GetAnnotationsForClass(self, classNumber):
+    @staticmethod
+    def AnnotationsSelectClasses(annotations, classes):
         ''' Returns current annotations.'''
-        annotations = [a for a in self.annotations if (
-            a.classNumber == classNumber)]
+        if (annotations is not None):
+            annotations = [a for a in annotations if (
+                a.classNumber in classes)]
+
         return annotations
+
+    def GetAnnotationsSelectClasses(self, classes):
+        ''' Returns current annotations.'''
+        return self.AnnotationsSelectClasses(self.annotations, classes)
 
     def AddAnnotation(self, box, classNumber):
         ''' Adds new annotation by human.'''
@@ -386,7 +410,7 @@ class Annoter():
 
         # Update file entry
         self.files[self.offset]['IsAnnotation'] = (len(self.annotations) != 0)
-        self.files[self.offset]['Annotations'] = len(self.annotations)
+        self.files[self.offset]['Annotations'] = self.annotations
 
     def IsEnd(self):
         '''True if files ended.'''
@@ -413,19 +437,12 @@ class Annoter():
                 im = cv2.imread(fileEntry['Path'])
                 self.image = im
 
-            annotations = []
-            txtAnnotes = []
+            # All txt annotations
+            txtAnnotes = self.GetFileAnnotations(fileEntry['Path'])
+            # Detector annotations list
             detAnnotes = []
-            # If exists annotations file
-            if (IsExistsAnnotations(fileEntry['Path'])):
-                txtAnnotes = ReadAnnotations(fileEntry['Path'])
-                txtAnnotes = [annote.fromTxtAnnote(el) for el in txtAnnotes]
-                logging.debug(
-                    '(Annoter) Loaded annotations from %s!', fileEntry['Path'])
-                annotations += txtAnnotes
-
             # if annotations file not exists or empty then detect.
-            if (self.noDetector is False) and (processImage is True) and ((len(annotations) == 0) or (forceDetector is True)):
+            if (self.noDetector is False) and (processImage is True) and ((len(txtAnnotes) == 0) or (forceDetector is True)):
                 # Call detector
                 detAnnotes = self.detector.Detect(
                     im, confidence=0.3, boxRelative=True)
@@ -433,17 +450,21 @@ class Annoter():
                     '(Annoter) %u annotations to process.', len(detAnnotes))
                 # Create annotes
                 detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
+                # Calculate mAP @TODO
+                fileEntry['mAP'] = mAP(txtAnnotes, detAnnotes)
+
                 # Filter by IOU internal with same annotes
                 # and also with txt annotes.
                 detAnnotes = prefilters.FilterIOUbyConfidence(detAnnotes,
                                                               detAnnotes + txtAnnotes)
                 logging.debug(
-                    '(Annoter) Detected %u annotations for %s!',
+                    '(Annoter) Detected %u annotations with %2.2fmAP for %s!',
                     len(detAnnotes),
+                    fileEntry['mAP'],
                     fileEntry['Path'])
-                annotations += detAnnotes
 
-            self.annotations = annotations
+            # All annotations
+            self.annotations = txtAnnotes + detAnnotes
 
             # Post-check of errors
             self.errors = self.__checkOfErrors()

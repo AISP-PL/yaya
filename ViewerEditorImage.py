@@ -19,6 +19,7 @@ from PyQt5.QtCore import Qt, pyqtSignal
 import helpers.boxes as boxes
 import logging
 from helpers.images import GetFixedFitToBox
+from engine.annote import AnnoteAuthorType
 
 
 class ViewerEditorImage(QWidget):
@@ -281,6 +282,7 @@ class ViewerEditorImage(QWidget):
         elif (self.editorMode == self.ModeRenameAnnotation):
             annote = self.editorModeArgument
             annote.SetClassNumber(self.classNumber)
+            annote.SetAuthorType(AnnoteAuthorType.byHand)
 
         # Mode Remove Annotation
         elif (self.editorMode == self.ModeRemoveAnnotation):
