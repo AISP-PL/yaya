@@ -90,7 +90,7 @@ class MainWindowGui(Ui_MainWindow):
 
         # Setup files selector table widget
         labels = ['Name', 'IsAnnotated', 'Annotations',
-                  'TP', 'TN', 'FN',
+                  'TP', 'FP', 'FN', 'Precision', 'Recall',
                   'dSurplus', 'Errors']
         self.ui.fileSelectorTableWidget.setColumnCount(len(labels))
         self.ui.fileSelectorTableWidget.setHorizontalHeaderLabels(labels)
@@ -128,14 +128,26 @@ class MainWindowGui(Ui_MainWindow):
             self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
             colIndex += 1
 
-            # TN column
-            item = QTableWidgetItem(str(fileEntry['TN']))
+            # FP column
+            item = QTableWidgetItem(str(fileEntry['FP']))
             item.setToolTip(str(fileEntry['ID']))
             self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
             colIndex += 1
 
             # FN column
             item = QTableWidgetItem(str(fileEntry['FN']))
+            item.setToolTip(str(fileEntry['ID']))
+            self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
+            colIndex += 1
+
+            # Precision column
+            item = QTableWidgetItem(str(fileEntry['Precision']))
+            item.setToolTip(str(fileEntry['ID']))
+            self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
+            colIndex += 1
+
+            # Recall column
+            item = QTableWidgetItem(str(fileEntry['Recall']))
             item.setToolTip(str(fileEntry['ID']))
             self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
             colIndex += 1
@@ -272,16 +284,22 @@ class MainWindowGui(Ui_MainWindow):
                 rowIndex, 3).setText(str(fileEntry['TP']))
             # TN column
             self.ui.fileSelectorTableWidget.item(
-                rowIndex, 4).setText(str(fileEntry['TN']))
+                rowIndex, 4).setText(str(fileEntry['FP']))
             # FN column
             self.ui.fileSelectorTableWidget.item(
                 rowIndex, 5).setText(str(fileEntry['FN']))
+            # Precision column
+            self.ui.fileSelectorTableWidget.item(
+                rowIndex, 6).setText(str(fileEntry['Precision']))
+            # Recall column
+            self.ui.fileSelectorTableWidget.item(
+                rowIndex, 7).setText(str(fileEntry['Recall']))
             # dSurplus column
             self.ui.fileSelectorTableWidget.item(
-                rowIndex, 6).setText(str(fileEntry['dSurplus']))
+                rowIndex, 8).setText(str(fileEntry['dSurplus']))
             # Errors column
             self.ui.fileSelectorTableWidget.item(
-                rowIndex, 7).setText(str(fileEntry['Errors']))
+                rowIndex, 9).setText(str(fileEntry['Errors']))
 
         # Setup files selector table widget
         self.ui.fileSelectorTableWidget.clearSelection()

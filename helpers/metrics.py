@@ -58,65 +58,85 @@ def dSurplus(annotations, detections, minConfidence=0.5):
 
     return len(detections) - len(annotations)
 
+# Definition of terms:
+#
+#     True Positive (TP) — Correct detection made by the model.
+#     False Positive (FP) — Incorrect detection made by the detector.
+#     False Negative (FN) — A Ground-truth missed (not detected) by the object detector.
+#     True Negative (TN) —This is backgound region correctly not detected by the model.
+#     This metric is not used in object detection because such regions are not explicitly annotated when preparing the annotations.
 
-def CalculateTPTNFN(annotations, detections, minConfidence=0.5, minIOU=0.5):
+
+def EvaluateMetrics(annotations, detections, minConfidence=0.5, minIOU=0.5):
     '''
-        @TODO not implemented yet real mAP,
-        temporary metric used instead.
-
         @param expected annotations
         @param detected annotations
     '''
-    # Best mAP for no annotations
+    # No annotations results.
     if (annotations is None) or (len(annotations) == 0):
         return len(detections), 0, 0
 
-    # Worst mAP for no detections
+    # No detections result.
     if (detections is None) or (len(detections) == 0):
-        return 0, 0, len(annotations)
+        return 0, len(annotations), 0
 
     # 1. Drop detections with (confidence < minConfidence)
     detections = [item for item in detections if (
         item.confidence > minConfidence)]
 
-    # True positives
-    TP = 0
-    # False positives
-    FP = 0
-    # True negatives
-    TN = 0
-    # False negatives
-    FN = 0
+    # Annotation with Detection => TP or FN
+    annotationsMatched = []
+    # Annotation lonely. => FN
+    annotationsUnmatched = []
+    # Detection lonely. => FP
+    detectionsUnmatched = []
 
-    # 2. Calculate all IOU matrix.
+    # For all annotations
     for annotation in annotations:
-        # For each expected bbox score 1 for TruePositive
-        # and score 0.5 for FalsePositive with threshold minIOU.
-        matches = []
-        for detection in detections:
-            iou = MetricIOU(annotation.box, detection.box)
-            if (iou > minIOU):
-                matches.append((iou, detection))
-
-        matches = sorted(matches, key=lambda x: x[0], reverse=True)
-
-        # Check if matches has TP or FP or other.
-        if (len(matches)):
-            # Check only first match.
-            iou, detection = matches[0]
-            # Label and GroundTruth.
-            if (detection.classNumber == annotation.classNumber):
-                TP += 1
-            # Not Label and GroundTruth.
-            else:
-                TN += 1
-        # Not Label and not GroundTruth
+        # 1. Calculate all possibilities (detections)
+        possibilities = [(MetricIOU(annotation.box, detection.box), detection)
+                         for detection in detections]
+        # Sort possibilities by IOU
+        possibilities = sorted(possibilities, key=lambda x: x[0], reverse=True)
+        # Check first(biggest IOU) possibility
+        if (len(possibilities) and (possibilities[0][0] >= minIOU)):
+            _iou, detection = possibilities[0]
+            annotationsMatched.append(annotation)
+            detections.remove(detection)
+        # Otherwise not matched
         else:
-            FN += 1
+            annotationsUnmatched.append(annotation)
+
+    # Detections unmatched are detections left in list.
+    detectionsUnmatched = detections
+
+    # True positives
+    TP = len(annotationsMatched)
+    # False positives
+    FP = len(detectionsUnmatched)
+    # False negatives
+    FN = len(annotationsUnmatched)
 
     # 4. Calculate TruePositives / ALL.
-    return TP, TN, FN
+    return TP, FP, FN
+
+
+def Precision(TP, FP):
+    ''' Returns metric.'''
+    if ((TP+FP) == 0):
+        return 0
+
+    return TP/(TP+FP)
+
+
+def Recall(TP, FN):
+    ''' Returns metric.'''
+    if ((TP+FN) == 0):
+        return 0
+
+    return TP/(TP+FN)
 
 
 def mAP(TP, length):
+    ''' Returns metric.'''
     return TP/length

@@ -14,7 +14,7 @@ from helpers.files import IsImageFile, DeleteFile, GetNotExistingSha1Filepath, F
     GetExtension
 from helpers.textAnnotations import ReadAnnotations, SaveAnnotations, IsExistsAnnotations,\
     DeleteAnnotations, SaveDetections, ReadDetections
-from helpers.metrics import mAP, dSurplus, CalculateTPTNFN
+from helpers.metrics import mAP, dSurplus, EvaluateMetrics, Precision, Recall
 from engine.annote import AnnoteAuthorType
 
 
@@ -149,13 +149,17 @@ class Annoter():
 
     def CalculateYoloMetrics(self, txtAnnotes, detAnnotes):
         ''' Calculate mAP between two annotations sets.'''
-        TP, TN, FN = 0, 0, 0
+        TP, FP, FN = 0, 0, 0
         if (len(txtAnnotes)):
-            TP, TN, FN = CalculateTPTNFN(txtAnnotes, detAnnotes)
+            TP, FP, FN = EvaluateMetrics(txtAnnotes, detAnnotes)
 
+        precision = Precision(TP, FP)
+        recall = Recall(TP, FN)
+
+        # Calculate detections surplus
         surplus = dSurplus(txtAnnotes, detAnnotes)
 
-        return TP, TN, FN, surplus
+        return TP, FP, FN, precision, recall, surplus
 
     def OpenLocation(self, path):
         ''' Open images/annotations location.'''
@@ -192,7 +196,7 @@ class Annoter():
                 detections = self.ReadFileDetections(path+filename)
 
             # Calculate metrics
-            TP, TN, FN, dSurplus = self.CalculateYoloMetrics(
+            TP, FP, FN, precision, recall, surplus = self.CalculateYoloMetrics(
                 txtAnnotations, detections)
             # For view : Filter by IOU internal with same annotes and also with txt annotes.
             detections = prefilters.FilterIOUbyConfidence(detections,
@@ -209,9 +213,11 @@ class Annoter():
                 'Errors': len(self.errors),
                 'Detections': detections,
                 'TP': TP,
-                'TN': TN,
+                'FP': FP,
                 'FN': FN,
-                'dSurplus': dSurplus,
+                'Precision': precision,
+                'Recall': recall,
+                'dSurplus': surplus,
             })
 
             # Logging progress
@@ -518,7 +524,7 @@ class Annoter():
                 detAnnotes = self.ProcessFileDetections(im, fileEntry['Path'])
 
                 # Calculate metrics
-                TP, TN, FN, dSurplus = self.CalculateYoloMetrics(
+                TP, FP, FN, precision, recall, surplus = self.CalculateYoloMetrics(
                     txtAnnotations, detAnnotes)
                 # For view : Filter by IOU internal with same annotes and also with txt annotes.
                 detAnnotes = prefilters.FilterIOUbyConfidence(detAnnotes,
@@ -526,9 +532,11 @@ class Annoter():
 
                 # Store metrics
                 fileEntry['TP'] = TP
-                fileEntry['TN'] = TN
+                fileEntry['FP'] = FP
                 fileEntry['FN'] = FN
-                fileEntry['dSurplus'] = dSurplus
+                fileEntry['Precision'] = precision
+                fileEntry['Recall'] = recall
+                fileEntry['dSurplus'] = surplus
 
             # All annotations
             self.annotations = txtAnnotations + detAnnotes
