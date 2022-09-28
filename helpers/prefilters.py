@@ -11,7 +11,7 @@ from . import metrics
 
 def FilterIOUbyConfidence(annotations1,
                           annotations2,
-                          maxIOU=0.75):
+                          maxIOU=0.70):
     '''
         Filter annotation1 with annotations2
         if has bigger IOU > maxIOU.

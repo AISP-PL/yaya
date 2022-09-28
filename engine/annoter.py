@@ -138,7 +138,7 @@ class Annoter():
 
         # Call detector manually!
         detAnnotes = self.detector.Detect(im,
-                                          confidence=0.3,
+                                          confidence=0.5,
                                           boxRelative=True)
         # Save/Update detector annotations file
         SaveDetections(filepath, detAnnotes, extension='.detector')
