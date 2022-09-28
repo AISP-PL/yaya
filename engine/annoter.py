@@ -121,42 +121,42 @@ class Annoter():
 
         return im
 
-    def GetFileDetections(self, im, filepath, txtAnnotes, forceDetector=False):
+    def ReadFileDetections(self, filepath):
+        ''' Read file annotations if possible.'''
+        detAnnotes = []
+        # If detector annotations not exists then call detector
+        if (IsExistsAnnotations(filepath, extension='.detector')):
+            detAnnotes = ReadDetections(filepath, extension='.detector')
+            detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
+
+        return detAnnotes
+
+    def ProcessFileDetections(self, im, filepath):
         ''' Read file annotations if possible.'''
         if (self.detector is None) or (im is None):
             return [], 0, 0
 
-        # If detector annotations not exists then call detector
-        if (not IsExistsAnnotations(filepath, extension='.detector')) or (forceDetector):
-            # Call detector manually!
-            detAnnotes = self.detector.Detect(im,
-                                              confidence=0.3,
-                                              boxRelative=True)
-            # Save/Update detector annotations file
-            SaveDetections(filepath, detAnnotes, extension='.detector')
-
-        # Otherwise read previous annoations
-        else:
-            detAnnotes = ReadDetections(filepath, extension='.detector')
+        # Call detector manually!
+        detAnnotes = self.detector.Detect(im,
+                                          confidence=0.3,
+                                          boxRelative=True)
+        # Save/Update detector annotations file
+        SaveDetections(filepath, detAnnotes, extension='.detector')
 
         # Create annotes
         detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
+        return detAnnotes
 
-        # Calculate mAP
+    def CalculatemAP(self, txtAnnotes, detAnnotes):
+        ''' Calculate mAP between two annotations sets.'''
         detections_mAP = mAP(txtAnnotes, detAnnotes)
         detections_dSurplus = dSurplus(txtAnnotes, detAnnotes)
-
-        # Filter by IOU internal with same annotes
-        # and also with txt annotes.
-        detAnnotes = prefilters.FilterIOUbyConfidence(detAnnotes,
-                                                      detAnnotes + txtAnnotes)
         logging.debug(
-            '(Annoter) Detected %u annotations with %2.2fmAP for %s!',
+            '(Annoter) Detected %u annotations with %2.2fmAP!',
             len(detAnnotes),
-            detections_mAP,
-            filepath)
+            detections_mAP)
 
-        return detAnnotes, detections_mAP, detections_dSurplus
+        return detections_mAP, detections_dSurplus
 
     def OpenLocation(self, path):
         ''' Open images/annotations location.'''
@@ -184,10 +184,20 @@ class Annoter():
 
             # Force detector if needed
             detections, detections_mAP, detections_dSurplus = None, None, None
+            # Force detector to process every image
             if (self.config['forceDetector'] == True):
                 im = self.GetFileImage(path+filename)
-                detections, detections_mAP, detections_dSurplus = self.GetFileDetections(
-                    im, path+filename, txtAnnotations)
+                detections = self.ProcessFileDetections(im, path+filename)
+            # Read historical detections
+            else:
+                detections = self.ReadFileDetections(path+filename)
+
+            # Calculate metrics
+            detections_mAP, detections_dSurplus = self.CalculatemAP(
+                txtAnnotations, detections)
+            # For view : Filter by IOU internal with same annotes and also with txt annotes.
+            detections = prefilters.FilterIOUbyConfidence(detections,
+                                                          detections + txtAnnotations)
 
             # Add file entry
             self.files.append({
@@ -498,18 +508,27 @@ class Annoter():
                 self.image = im = self.GetFileImage(fileEntry['Path'])
 
             # All txt annotations
-            txtAnnotes = self.GetFileAnnotations(fileEntry['Path'])
+            txtAnnotations = self.GetFileAnnotations(fileEntry['Path'])
             # Detector annotations list
             detAnnotes = []
             # if annotations file not exists or empty then detect.
-            if (self.noDetector is False) and (processImage is True) and ((len(txtAnnotes) == 0) or (forceDetector is True)):
-                detAnnotes, detections_mAP, detections_dSurplus = self.GetFileDetections(
-                    im, fileEntry['Path'], txtAnnotes, forceDetector=True)
+            if (self.noDetector is False) and ((processImage is True) or (len(txtAnnotations) == 0)):
+                # Process detector
+                detAnnotes = self.ProcessFileDetections(im, fileEntry['Path'])
+
+                # Calculate metrics
+                detections_mAP, detections_dSurplus = self.CalculatemAP(
+                    txtAnnotations, detAnnotes)
+                # For view : Filter by IOU internal with same annotes and also with txt annotes.
+                detAnnotes = prefilters.FilterIOUbyConfidence(detAnnotes,
+                                                              detAnnotes + txtAnnotations)
+
+                # Store metrics
                 fileEntry['mAP'] = detections_mAP
                 fileEntry['dSurplus'] = detections_dSurplus
 
             # All annotations
-            self.annotations = txtAnnotes + detAnnotes
+            self.annotations = txtAnnotations + detAnnotes
 
             # Post-check of errors
             self.errors = self.__checkOfErrors()

@@ -10,6 +10,7 @@ from enum import Enum
 from helpers.QtDrawing import QDrawRectangle, QDrawText
 from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import Qt
+import logging
 
 classNames = []
 
@@ -35,7 +36,11 @@ def GetClassName(number):
 
 def GetClassNumber(name):
     ''' Retruns class number '''
-    return classNames.index(name)
+    if (name in classNames):
+        return classNames.index(name)
+
+    logging.error('(Annote) Invalid class name %s.', name)
+    return 0
 
 
 class AnnoteAuthorType(Enum):
