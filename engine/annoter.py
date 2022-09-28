@@ -149,17 +149,14 @@ class Annoter():
 
     def CalculateYoloMetrics(self, txtAnnotes, detAnnotes):
         ''' Calculate mAP between two annotations sets.'''
-        TP, FP, FN = 0, 0, 0
+        TP, FP, FN, LTP, LTN = 0, 0, 0, 0, 0
         if (len(txtAnnotes)):
-            TP, FP, FN = EvaluateMetrics(txtAnnotes, detAnnotes)
+            TP, FP, FN, LTP, LTN = EvaluateMetrics(txtAnnotes, detAnnotes)
 
         precision = Precision(TP, FP)
         recall = Recall(TP, FN)
 
-        # Calculate detections surplus
-        surplus = dSurplus(txtAnnotes, detAnnotes)
-
-        return TP, FP, FN, precision, recall, surplus
+        return TP, FP, FN, precision, recall, LTP, LTN
 
     def OpenLocation(self, path):
         ''' Open images/annotations location.'''
@@ -196,7 +193,7 @@ class Annoter():
                 detections = self.ReadFileDetections(path+filename)
 
             # Calculate metrics
-            TP, FP, FN, precision, recall, surplus = self.CalculateYoloMetrics(
+            TP, FP, FN, precision, recall, LTP, LTN = self.CalculateYoloMetrics(
                 txtAnnotations, detections)
             # For view : Filter by IOU internal with same annotes and also with txt annotes.
             detections = prefilters.FilterIOUbyConfidence(detections,
@@ -217,7 +214,8 @@ class Annoter():
                 'FN': FN,
                 'Precision': precision,
                 'Recall': recall,
-                'dSurplus': surplus,
+                'LTP': LTP,
+                'LTN': LTN,
             })
 
             # Logging progress
@@ -524,7 +522,7 @@ class Annoter():
                 detAnnotes = self.ProcessFileDetections(im, fileEntry['Path'])
 
                 # Calculate metrics
-                TP, FP, FN, precision, recall, surplus = self.CalculateYoloMetrics(
+                TP, FP, FN, precision, recall, LTP, LTN = self.CalculateYoloMetrics(
                     txtAnnotations, detAnnotes)
                 # For view : Filter by IOU internal with same annotes and also with txt annotes.
                 detAnnotes = prefilters.FilterIOUbyConfidence(detAnnotes,
@@ -536,7 +534,8 @@ class Annoter():
                 fileEntry['FN'] = FN
                 fileEntry['Precision'] = precision
                 fileEntry['Recall'] = recall
-                fileEntry['dSurplus'] = surplus
+                fileEntry['LTP'] = LTP
+                fileEntry['LTN'] = LTN
 
             # All annotations
             self.annotations = txtAnnotations + detAnnotes

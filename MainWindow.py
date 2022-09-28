@@ -91,7 +91,7 @@ class MainWindowGui(Ui_MainWindow):
         # Setup files selector table widget
         labels = ['Name', 'IsAnnotated', 'Annotations',
                   'TP', 'FP', 'FN', 'Precision', 'Recall',
-                  'dSurplus', 'Errors']
+                  'LTP', 'LTN', 'Errors']
         self.ui.fileSelectorTableWidget.setColumnCount(len(labels))
         self.ui.fileSelectorTableWidget.setHorizontalHeaderLabels(labels)
         self.ui.fileSelectorTableWidget.setRowCount(
@@ -152,13 +152,19 @@ class MainWindowGui(Ui_MainWindow):
             self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
             colIndex += 1
 
-            # dSurplus column
-            item = QTableWidgetItem(str(fileEntry['dSurplus']))
+            # LTP column
+            item = QTableWidgetItem(str(fileEntry['LTP']))
             item.setToolTip(str(fileEntry['ID']))
             self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
             colIndex += 1
 
-            # dSurplus column
+            # LTN column
+            item = QTableWidgetItem(str(fileEntry['LTN']))
+            item.setToolTip(str(fileEntry['ID']))
+            self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
+            colIndex += 1
+
+            # Errors column
             item = QTableWidgetItem(str(fileEntry['Errors']))
             item.setToolTip(str(fileEntry['ID']))
             self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
@@ -294,12 +300,15 @@ class MainWindowGui(Ui_MainWindow):
             # Recall column
             self.ui.fileSelectorTableWidget.item(
                 rowIndex, 7).setText(str(fileEntry['Recall']))
-            # dSurplus column
+            # LTP column
             self.ui.fileSelectorTableWidget.item(
-                rowIndex, 8).setText(str(fileEntry['dSurplus']))
+                rowIndex, 8).setText(str(fileEntry['LTP']))
+            # LTN Surplus column
+            self.ui.fileSelectorTableWidget.item(
+                rowIndex, 9).setText(str(fileEntry['LTN']))
             # Errors column
             self.ui.fileSelectorTableWidget.item(
-                rowIndex, 9).setText(str(fileEntry['Errors']))
+                rowIndex, 10).setText(str(fileEntry['Errors']))
 
         # Setup files selector table widget
         self.ui.fileSelectorTableWidget.clearSelection()

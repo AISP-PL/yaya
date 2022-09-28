@@ -58,27 +58,26 @@ def dSurplus(annotations, detections, minConfidence=0.5):
 
     return len(detections) - len(annotations)
 
-# Definition of terms:
-#
-#     True Positive (TP) — Correct detection made by the model.
-#     False Positive (FP) — Incorrect detection made by the detector.
-#     False Negative (FN) — A Ground-truth missed (not detected) by the object detector.
-#     True Negative (TN) —This is backgound region correctly not detected by the model.
-#     This metric is not used in object detection because such regions are not explicitly annotated when preparing the annotations.
-
 
 def EvaluateMetrics(annotations, detections, minConfidence=0.5, minIOU=0.5):
     '''
+        Definition of terms:
+            True Positive (TP) — Correct detection made by the model.
+            False Positive (FP) — Incorrect detection made by the detector.
+            False Negative (FN) — A Ground-truth missed (not detected) by the object detector.
+            True Negative (TN) —This is backgound region correctly not detected by the model.
+        This metric is not used in object detection because such regions are not explicitly annotated when preparing the annotations.
+
         @param expected annotations
         @param detected annotations
     '''
     # No annotations results.
     if (annotations is None) or (len(annotations) == 0):
-        return len(detections), 0, 0
+        return len(detections), 0, 0, len(detections), 0
 
     # No detections result.
     if (detections is None) or (len(detections) == 0):
-        return 0, len(annotations), 0
+        return 0, len(annotations), 0, 0, len(detections)
 
     # 1. Drop detections with (confidence < minConfidence)
     detections = [item for item in detections if (
@@ -101,7 +100,7 @@ def EvaluateMetrics(annotations, detections, minConfidence=0.5, minIOU=0.5):
         # Check first(biggest IOU) possibility
         if (len(possibilities) and (possibilities[0][0] >= minIOU)):
             _iou, detection = possibilities[0]
-            annotationsMatched.append(annotation)
+            annotationsMatched.append((annotation, detection))
             detections.remove(detection)
         # Otherwise not matched
         else:
@@ -116,9 +115,14 @@ def EvaluateMetrics(annotations, detections, minConfidence=0.5, minIOU=0.5):
     FP = len(detectionsUnmatched)
     # False negatives
     FN = len(annotationsUnmatched)
+    # Labels matched annotations (TP)
+    LTP = sum(1 if (annotation.classNumber == detection.classNumber)
+              else 0 for annotation, detection in annotationsMatched)
+    # Labels unmatched annotations (N-LTP)
+    LTN = len(annotations) - LTP
 
     # 4. Calculate TruePositives / ALL.
-    return TP, FP, FN
+    return TP, FP, FN, LTP, LTN
 
 
 def Precision(TP, FP):
