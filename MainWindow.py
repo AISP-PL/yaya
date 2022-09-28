@@ -89,8 +89,9 @@ class MainWindowGui(Ui_MainWindow):
             self.CallbackPaintSizeSlider)
 
         # Setup files selector table widget
-        labels = ['Name', 'IsAnnotated',
-                  'Annotations', 'mAP', 'dSurplus', 'Errors']
+        labels = ['Name', 'IsAnnotated', 'Annotations',
+                  'TP', 'TN', 'FN',
+                  'dSurplus', 'Errors']
         self.ui.fileSelectorTableWidget.setColumnCount(len(labels))
         self.ui.fileSelectorTableWidget.setHorizontalHeaderLabels(labels)
         self.ui.fileSelectorTableWidget.setRowCount(
@@ -121,8 +122,20 @@ class MainWindowGui(Ui_MainWindow):
             self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
             colIndex += 1
 
-            # mAP column
-            item = QTableWidgetItem(str(fileEntry['mAP']))
+            # TP column
+            item = QTableWidgetItem(str(fileEntry['TP']))
+            item.setToolTip(str(fileEntry['ID']))
+            self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
+            colIndex += 1
+
+            # TN column
+            item = QTableWidgetItem(str(fileEntry['TN']))
+            item.setToolTip(str(fileEntry['ID']))
+            self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
+            colIndex += 1
+
+            # FN column
+            item = QTableWidgetItem(str(fileEntry['FN']))
             item.setToolTip(str(fileEntry['ID']))
             self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
             colIndex += 1
@@ -254,15 +267,21 @@ class MainWindowGui(Ui_MainWindow):
             # Annotations column
             self.ui.fileSelectorTableWidget.item(
                 rowIndex, 2).setText(str(len(fileEntry['Annotations'])))
-            # mAP column
+            # TP column
             self.ui.fileSelectorTableWidget.item(
-                rowIndex, 3).setText(str(fileEntry['mAP']))
+                rowIndex, 3).setText(str(fileEntry['TP']))
+            # TN column
+            self.ui.fileSelectorTableWidget.item(
+                rowIndex, 4).setText(str(fileEntry['TN']))
+            # FN column
+            self.ui.fileSelectorTableWidget.item(
+                rowIndex, 5).setText(str(fileEntry['FN']))
             # dSurplus column
             self.ui.fileSelectorTableWidget.item(
-                rowIndex, 4).setText(str(fileEntry['dSurplus']))
+                rowIndex, 6).setText(str(fileEntry['dSurplus']))
             # Errors column
             self.ui.fileSelectorTableWidget.item(
-                rowIndex, 5).setText(str(fileEntry['Errors']))
+                rowIndex, 7).setText(str(fileEntry['Errors']))
 
         # Setup files selector table widget
         self.ui.fileSelectorTableWidget.clearSelection()

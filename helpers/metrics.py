@@ -59,7 +59,7 @@ def dSurplus(annotations, detections, minConfidence=0.5):
     return len(detections) - len(annotations)
 
 
-def mAP(annotations, detections, minConfidence=0.5, minIOU=0.5):
+def CalculateTPTNFN(annotations, detections, minConfidence=0.5, minIOU=0.5):
     '''
         @TODO not implemented yet real mAP,
         temporary metric used instead.
@@ -69,11 +69,11 @@ def mAP(annotations, detections, minConfidence=0.5, minIOU=0.5):
     '''
     # Best mAP for no annotations
     if (annotations is None) or (len(annotations) == 0):
-        return 1.0
+        return len(detections), 0, 0
 
     # Worst mAP for no detections
     if (detections is None) or (len(detections) == 0):
-        return 0.0
+        return 0, 0, len(annotations)
 
     # 1. Drop detections with (confidence < minConfidence)
     detections = [item for item in detections if (
@@ -115,4 +115,8 @@ def mAP(annotations, detections, minConfidence=0.5, minIOU=0.5):
             FN += 1
 
     # 4. Calculate TruePositives / ALL.
-    return TP / len(annotations)
+    return TP, TN, FN
+
+
+def mAP(TP, length):
+    return TP/length
