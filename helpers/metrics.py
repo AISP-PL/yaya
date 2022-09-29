@@ -8,6 +8,7 @@ import math
 from . import boxes
 from numba import njit
 from helpers import prefilters
+from engine.annote import AnnoteEvaluation
 
 
 @njit(cache=True)
@@ -100,10 +101,15 @@ def EvaluateMetrics(annotations, detections, minConfidence=0.5, minIOU=0.5):
         # Check first(biggest IOU) possibility
         if (len(possibilities) and (possibilities[0][0] >= minIOU)):
             _iou, detection = possibilities[0]
+            if (annotation.classNumber == detection.classNumber):
+                annotation.SetEvalution(AnnoteEvaluation.TruePositiveLabel)
+            else:
+                annotation.SetEvalution(AnnoteEvaluation.TruePositive)
             annotationsMatched.append((annotation, detection))
             detections.remove(detection)
         # Otherwise not matched
         else:
+            annotation.SetEvalution(AnnoteEvaluation.FalseNegative)
             annotationsUnmatched.append(annotation)
 
     # Detections unmatched are detections left in list.
