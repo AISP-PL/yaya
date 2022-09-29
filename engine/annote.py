@@ -202,7 +202,7 @@ class Annote():
             if (self.evalution in [AnnoteEvaluation.noEvaluation, AnnoteEvaluation.TruePositiveLabel]):
                 brushColor = Qt.black
             elif (self.evalution == AnnoteEvaluation.TruePositive):
-                brushColor = Qt.yellow
+                brushColor = Qt.darkYellow
             elif (self.evalution == AnnoteEvaluation.FalseNegative):
                 brushColor = Qt.red
 
