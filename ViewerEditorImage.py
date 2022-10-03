@@ -48,6 +48,7 @@ class ViewerEditorImage(QWidget):
         self.config = {
             'isConfidence': True,
             'isAnnotationsHidden': False,
+            'isLabelsHidden': False,
         }
         # Background image loaded
         self.imageBg = None
@@ -363,7 +364,8 @@ class ViewerEditorImage(QWidget):
         if (not self.config['isAnnotationsHidden']):
             for annotate in self.annoter.GetAnnotations():
                 annotate.QtDraw(widgetPainter,
-                                isConfidence=True)
+                                isConfidence=True,
+                                isLabel=not self.config['isLabelsHidden'])
 
             # Draw hovered annotation
             if (mousePosition is not None):
@@ -374,7 +376,8 @@ class ViewerEditorImage(QWidget):
                 if (annote is not None):
                     annote.QtDraw(widgetPainter,
                                   highlight=True,
-                                  isConfidence=True)
+                                  isConfidence=True,
+                                  isLabel=not self.config['isLabelsHidden'])
 
         # -------- Mode Annotation Draw -------
         if (self.editorMode == self.ModeAddAnnotation):

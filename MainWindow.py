@@ -206,6 +206,8 @@ class MainWindowGui(Ui_MainWindow):
             self.CallbackRemoveAnnotationsButton)
         self.ui.detectAnnotationsButton.clicked.connect(
             self.CallbackDetectAnnotations)
+        self.ui.hideLabelsButton.clicked.connect(
+            self.CallbackHideLabelsButton)
         self.ui.hideAnnotationsButton.clicked.connect(
             self.CallbackHideAnnotationsButton)
         self.ui.ClearAnnotationsButton.clicked.connect(
@@ -427,6 +429,11 @@ class MainWindowGui(Ui_MainWindow):
             self.ui.pageAnnotations)
         self.ui.viewerEditor.SetEditorMode(
             ViewerEditorImage.ModeRemoveAnnotation)
+
+    def CallbackHideLabelsButton(self):
+        '''Callback'''
+        self.ui.viewerEditor.SetOption('isLabelsHidden',
+                                       not self.ui.viewerEditor.GetOption('isLabelsHidden'))
 
     def CallbackHideAnnotationsButton(self):
         '''Callback'''

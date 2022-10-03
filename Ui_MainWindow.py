@@ -167,6 +167,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.fileSelectorTableWidget.sizePolicy().hasHeightForWidth())
         self.fileSelectorTableWidget.setSizePolicy(sizePolicy)
+        self.fileSelectorTableWidget.setMinimumSize(QtCore.QSize(0, 200))
         self.fileSelectorTableWidget.setVerticalScrollBarPolicy(
             QtCore.Qt.ScrollBarAlwaysOn)
         self.fileSelectorTableWidget.setSizeAdjustPolicy(
@@ -179,11 +180,6 @@ class Ui_MainWindow(object):
         self.fileSelectorTableWidget.setColumnCount(0)
         self.fileSelectorTableWidget.setRowCount(0)
         self.verticalLayoutRight.addWidget(self.fileSelectorTableWidget)
-        self.line = QtWidgets.QFrame(self.layoutWidget)
-        self.line.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line.setObjectName('line')
-        self.verticalLayoutRight.addWidget(self.line)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName('horizontalLayout_3')
         self.label = QtWidgets.QLabel(self.layoutWidget)
@@ -222,18 +218,25 @@ class Ui_MainWindow(object):
         self.ClearAnnotationsButton.setIcon(icon8)
         self.ClearAnnotationsButton.setObjectName('ClearAnnotationsButton')
         self.horizontalLayout_3.addWidget(self.ClearAnnotationsButton)
-        self.hideAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.hideLabelsButton = QtWidgets.QPushButton(self.layoutWidget)
         icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap(':/icons/16x16/go-jump.png'),
+        icon9.addPixmap(QtGui.QPixmap(':/icons/32x32/go-jump.png'),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.hideAnnotationsButton.setIcon(icon9)
+        self.hideLabelsButton.setIcon(icon9)
+        self.hideLabelsButton.setObjectName('hideLabelsButton')
+        self.horizontalLayout_3.addWidget(self.hideLabelsButton)
+        self.hideAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(QtGui.QPixmap(':/icons/16x16/go-jump.png'),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.hideAnnotationsButton.setIcon(icon10)
         self.hideAnnotationsButton.setObjectName('hideAnnotationsButton')
         self.horizontalLayout_3.addWidget(self.hideAnnotationsButton)
         self.detectAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon10 = QtGui.QIcon()
-        icon10.addPixmap(QtGui.QPixmap(
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(QtGui.QPixmap(
             ':/icons/16x16/camera-photo.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.detectAnnotationsButton.setIcon(icon10)
+        self.detectAnnotationsButton.setIcon(icon11)
         self.detectAnnotationsButton.setObjectName('detectAnnotationsButton')
         self.horizontalLayout_3.addWidget(self.detectAnnotationsButton)
         spacerItem1 = QtWidgets.QSpacerItem(
@@ -247,10 +250,10 @@ class Ui_MainWindow(object):
         self.label_3.setObjectName('label_3')
         self.horizontalLayout_4.addWidget(self.label_3)
         self.paintCircleButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon11 = QtGui.QIcon()
-        icon11.addPixmap(QtGui.QPixmap(':/icons/32x32/list-add.png'),
+        icon12 = QtGui.QIcon()
+        icon12.addPixmap(QtGui.QPixmap(':/icons/32x32/list-add.png'),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.paintCircleButton.setIcon(icon11)
+        self.paintCircleButton.setIcon(icon12)
         self.paintCircleButton.setCheckable(True)
         self.paintCircleButton.setObjectName('paintCircleButton')
         self.horizontalLayout_4.addWidget(self.paintCircleButton)
@@ -570,7 +573,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuPomoc.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.toolSettingsStackedWidget.setCurrentIndex(1)
+        self.toolSettingsStackedWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -619,6 +622,9 @@ class Ui_MainWindow(object):
         self.ClearAnnotationsButton.setText(
             _translate('MainWindow', '(C)lear'))
         self.ClearAnnotationsButton.setShortcut(_translate('MainWindow', 'C'))
+        self.hideLabelsButton.setText(
+            _translate('MainWindow', '(L)abels hide'))
+        self.hideLabelsButton.setShortcut(_translate('MainWindow', 'L'))
         self.hideAnnotationsButton.setText(_translate('MainWindow', '(H)ide'))
         self.hideAnnotationsButton.setShortcut(_translate('MainWindow', 'H'))
         self.detectAnnotationsButton.setText(

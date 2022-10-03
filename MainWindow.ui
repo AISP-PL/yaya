@@ -258,6 +258,12 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>200</height>
+           </size>
+          </property>
           <property name="verticalScrollBarPolicy">
            <enum>Qt::ScrollBarAlwaysOn</enum>
           </property>
@@ -272,13 +278,6 @@
           </property>
           <property name="sortingEnabled">
            <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="Line" name="line">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
@@ -362,6 +361,20 @@
             </property>
             <property name="shortcut">
              <string>C</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="hideLabelsButton">
+            <property name="text">
+             <string>(L)abels hide</string>
+            </property>
+            <property name="icon">
+             <iconset resource="icons/tango.qrc">
+              <normaloff>:/icons/32x32/go-jump.png</normaloff>:/icons/32x32/go-jump.png</iconset>
+            </property>
+            <property name="shortcut">
+             <string>L</string>
             </property>
            </widget>
           </item>
@@ -473,7 +486,7 @@
            <number>1</number>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="pageAnnotations">
            <layout class="QVBoxLayout" name="verticalLayout_2">

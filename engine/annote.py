@@ -185,7 +185,10 @@ class Annote():
                     (x1, y2 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                     (255, 255, 255), 1)
 
-    def QtDraw(self, painter, highlight=False, isConfidence=True):
+    def QtDraw(self, painter,
+               highlight=False,
+               isConfidence=True,
+               isLabel=True):
         ''' Draw self.'''
         width, height = painter.window().getRect()[2:]
         x1, y1, x2, y2 = boxes.ToAbsolute(self.box, width, height)
@@ -228,12 +231,13 @@ class Annote():
                        )
 
         # Text
-        QDrawText(painter,
-                  QPoint(x1, y1),
-                  label,
-                  bgColor=brushColor,
-                  textAlign='bottomright'
-                  )
+        if (isLabel):
+            QDrawText(painter,
+                      QPoint(x1, y1),
+                      label,
+                      bgColor=brushColor,
+                      textAlign='bottomright'
+                      )
 
     def IsInside(self, point):
         ''' True if point is inside note box.'''
