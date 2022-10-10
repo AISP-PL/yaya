@@ -1012,7 +1012,7 @@
    </property>
    <widget class="QMenu" name="menuMenu">
     <property name="title">
-     <string>Menu</string>
+     <string>File</string>
     </property>
     <addaction name="actionOtworzLokacje"/>
     <addaction name="actionZapisz"/>
@@ -1023,7 +1023,14 @@
      <string>Help</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionSave_screenshoot"/>
+   </widget>
    <addaction name="menuMenu"/>
+   <addaction name="menuEdit"/>
    <addaction name="menuPomoc"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -1101,6 +1108,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+,</string>
+   </property>
+  </action>
+  <action name="actionSave_screenshoot">
+   <property name="text">
+    <string>Save screenshoot</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+S</string>
    </property>
   </action>
  </widget>

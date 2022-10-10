@@ -13,7 +13,7 @@ from helpers.QtDrawing import QDrawPolygon, QDrawPolyline, QDrawJoints,\
     CvImage2QtImage, CvRGBColorToQColor, QDrawElipse
 from helpers.boxes import PointToRelative, PointToAbsolute, PointsToRect
 from PyQt5.QtWidgets import QWidget
-from PyQt5.QtGui import QPainter, QBrush, QFont
+from PyQt5.QtGui import QPainter, QBrush, QFont, QPixmap
 from PyQt5.Qt import QPoint, QTimer
 from PyQt5.QtCore import Qt, pyqtSignal
 import helpers.boxes as boxes
@@ -187,6 +187,19 @@ class ViewerEditorImage(QWidget):
                     founded = element
 
         return founded
+
+    def SaveScreenshot(self, filepath):
+        ''' Returns screenshot.'''
+        pixmap = QPixmap((self.size()))
+        self.render(pixmap)
+        pixmap.save(filepath)
+
+    def ScreenshotToFile(self, path) -> bool:
+        '''Public method which renders widget to file.'''
+        # Render to pixmap of same width and height
+        pixmap = self.grab(self.rect())
+        # Save to filepath (return bool)
+        return pixmap.save(path)
 
     def mouseMoveEvent(self, event):
         ''' Handle mouse move event.'''

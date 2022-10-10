@@ -15,6 +15,7 @@ from ViewerEditorImage import ViewerEditorImage
 from helpers.files import FixPath
 from copy import copy
 from PyQt5.QtCore import Qt
+from datetime import datetime
 
 
 class MainWindowGui(Ui_MainWindow):
@@ -179,6 +180,8 @@ class MainWindowGui(Ui_MainWindow):
             self.CallbackSaveFileAnnotationsButton)
         self.ui.actionOtworzLokacje.triggered.connect(
             self.CallbackOpenLocation)
+        self.ui.actionSave_screenshoot.triggered.connect(
+            self.CallbackScreenshot)
 
         # Buttons group - for mode buttons
         self.modeButtonGroup = QButtonGroup(self.window)
@@ -494,3 +497,25 @@ class MainWindowGui(Ui_MainWindow):
         ''' Close GUI callback.'''
         logging.debug('Closing application!')
         self.window.close()
+
+    def CallbackScreenshot(self):
+        ''' Save configuration.'''
+        file = self.annoter.GetFile()
+
+        if (file is not None):
+            # Set default screenshots location
+            ''' TODO fix windows and linux hanling of this code. '''
+            if (os.name == 'posix'):
+                screenshotsPath = '/home/%s/Obrazy/' % (
+                    os.environ.get('USER', 'Error'))
+            else:
+                screenshotsPath = 'C:\\'
+            # Set screenshot filename
+            screenshotFilename = file['Name'] + \
+                datetime.now().strftime('%Y%d%m-%H%M%S.png')
+            # Call ui save
+            result = self.ui.viewerEditor.ScreenshotToFile(
+                screenshotsPath+screenshotFilename)
+
+            if (result is None):
+                logging.error('Screenshot error!')

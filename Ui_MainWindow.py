@@ -540,6 +540,8 @@ class Ui_MainWindow(object):
         self.menuMenu.setObjectName('menuMenu')
         self.menuPomoc = QtWidgets.QMenu(self.menubar)
         self.menuPomoc.setObjectName('menuPomoc')
+        self.menuEdit = QtWidgets.QMenu(self.menubar)
+        self.menuEdit.setObjectName('menuEdit')
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName('statusbar')
@@ -566,10 +568,14 @@ class Ui_MainWindow(object):
         self.actionNextConfiguration.setObjectName('actionNextConfiguration')
         self.actionPrevConfiguration = QtWidgets.QAction(MainWindow)
         self.actionPrevConfiguration.setObjectName('actionPrevConfiguration')
+        self.actionSave_screenshoot = QtWidgets.QAction(MainWindow)
+        self.actionSave_screenshoot.setObjectName('actionSave_screenshoot')
         self.menuMenu.addAction(self.actionOtworzLokacje)
         self.menuMenu.addAction(self.actionZapisz)
         self.menuMenu.addAction(self.actionZamknijProgram)
+        self.menuEdit.addAction(self.actionSave_screenshoot)
         self.menubar.addAction(self.menuMenu.menuAction())
+        self.menubar.addAction(self.menuEdit.menuAction())
         self.menubar.addAction(self.menuPomoc.menuAction())
 
         self.retranslateUi(MainWindow)
@@ -662,8 +668,9 @@ class Ui_MainWindow(object):
         self.button6.setText(_translate('MainWindow', '6'))
         self.button6.setShortcut(_translate('MainWindow', '6'))
         self.paintLabel.setText(_translate('MainWindow', 'Painting Size'))
-        self.menuMenu.setTitle(_translate('MainWindow', 'Menu'))
+        self.menuMenu.setTitle(_translate('MainWindow', 'File'))
         self.menuPomoc.setTitle(_translate('MainWindow', 'Help'))
+        self.menuEdit.setTitle(_translate('MainWindow', 'Edit'))
         self.actionOtw_rz.setText(_translate('MainWindow', 'Otwórz'))
         self.actionZamknij.setText(_translate('MainWindow', 'Zamknij'))
         self.actionO_programie.setText(_translate('MainWindow', 'O programie'))
@@ -692,3 +699,7 @@ class Ui_MainWindow(object):
             _translate('MainWindow', 'Poprzednia konfiguracja'))
         self.actionPrevConfiguration.setShortcut(
             _translate('MainWindow', 'Ctrl+,'))
+        self.actionSave_screenshoot.setText(
+            _translate('MainWindow', 'Save screenshoot'))
+        self.actionSave_screenshoot.setShortcut(
+            _translate('MainWindow', 'Shift+S'))
