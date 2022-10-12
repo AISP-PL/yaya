@@ -390,7 +390,7 @@ class ViewerEditorImage(QWidget):
                     annote.QtDraw(widgetPainter,
                                   highlight=True,
                                   isConfidence=True,
-                                  isLabel=not self.config['isLabelsHidden'])
+                                  isLabel=True)
 
         # -------- Mode Annotation Draw -------
         if (self.editorMode == self.ModeAddAnnotation):
