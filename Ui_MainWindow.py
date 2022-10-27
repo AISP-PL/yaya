@@ -80,7 +80,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.viewerEditor.sizePolicy().hasHeightForWidth())
         self.viewerEditor.setSizePolicy(sizePolicy)
-        self.viewerEditor.setMinimumSize(QtCore.QSize(800, 240))
+        self.viewerEditor.setMinimumSize(QtCore.QSize(100, 100))
         self.viewerEditor.setObjectName('viewerEditor')
         self.verticalLayoutLeft.addWidget(self.viewerEditor)
         self.layoutWidget = QtWidgets.QWidget(self.splitter_4)
