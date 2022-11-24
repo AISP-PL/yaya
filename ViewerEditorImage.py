@@ -11,11 +11,12 @@ from datetime import datetime
 from helpers.QtDrawing import QDrawPolygon, QDrawPolyline, QDrawJoints,\
     QDrawCrosshair, QDrawText, QDrawArrow, CvBGRColorToQColor, QDrawRectangle,\
     CvImage2QtImage, CvRGBColorToQColor, QDrawElipse
-from helpers.boxes import PointToRelative, PointToAbsolute, PointsToRect
+from helpers.boxes import PointToRelative, PointToAbsolute, PointsToRect,\
+    IsInside
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QPainter, QBrush, QFont, QPixmap
 from PyQt5.Qt import QPoint, QTimer
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal, QRect
 import helpers.boxes as boxes
 import logging
 from helpers.images import GetFixedFitToBox
@@ -319,6 +320,33 @@ class ViewerEditorImage(QWidget):
         # Emit signal
         self.signalEditorFinished.emit(previousMode)
 
+    def paintMiniature(self,
+                       painter: QPainter,
+                       image: np.array,
+                       miniWidth: int = 128,
+                       miniHeight: int = 128) -> None:
+        ''' Painting miniature of image in painter.'''
+        # Get Preview info width & height
+        widgetWidth, widgetHeight = self.GetViewSize()
+        # Get image dimensions
+        imHeight, imWidth = image.shape[0:2]
+        # Get fitted image dimensions
+        miniWidth, miniHeight = GetFixedFitToBox(
+            imWidth, imHeight, miniWidth, miniHeight)
+        # Change cv2 image to pixmap
+        pixmap = CvImage2QtImage(cv2.resize(image, (miniWidth, miniHeight)))
+        # Create position Qrect
+        miniaturePosition = QPoint(0, 0)
+
+        # Check if mouse over miniature
+        if (self.mousePosition is not None):
+            point = (self.mousePosition.x(), self.mousePosition.y())
+            if (IsInside(point, (0, 0, miniWidth, miniHeight))):
+                miniaturePosition = QPoint(widgetWidth-miniWidth, 0)
+
+        # Draw on painter in QRect corner
+        painter.drawPixmap(miniaturePosition, pixmap)
+
     def paintEvent(self, event):
         ''' Draw on every paint event.'''
         # Get Preview info width & height
@@ -372,6 +400,9 @@ class ViewerEditorImage(QWidget):
         # Draw current OpenCV image as pixmap
         pixmap = CvImage2QtImage(image)
         widgetPainter.drawPixmap(self.rect(), pixmap)
+
+        # Draw miniature
+        self.paintMiniature(widgetPainter, image)
 
         # Draw all annotations
         if (not self.config['isAnnotationsHidden']):
