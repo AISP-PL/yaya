@@ -4,14 +4,11 @@ Created on 15 wrz 2020
 @author: spasz
 '''
 
-import math
 from . import boxes
-from numba import njit
 from helpers import prefilters
 from engine.annote import AnnoteEvaluation
 
 
-@njit(cache=True)
 def MetricIOU(box1, box2):
     ''' Calculates metric.'''
     area1 = boxes.GetArea(box1)

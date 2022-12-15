@@ -24,7 +24,6 @@ Windows Python 2.7 version: https://github.com/AlexeyAB/darknet/blob/fc496d52bf2
 from ctypes import *
 import random
 import os
-from numba import njit
 
 
 class BOX(Structure):
@@ -74,7 +73,6 @@ def network_height(net):
     return lib.network_height(net)
 
 
-@njit(cache=True)
 def bbox2points(bbox):
     """
     From bounding box yolo format
