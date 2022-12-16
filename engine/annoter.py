@@ -307,7 +307,10 @@ class Annoter():
 
     def GetFileID(self):
         ''' Returns current image ID.'''
-        return self.files[self.offset]['ID']
+        if (self.offset < len(self.files)):
+            return self.files[self.offset]['ID']
+
+        return ''
 
     def GetFileIndex(self):
         ''' Returns current image number.'''
