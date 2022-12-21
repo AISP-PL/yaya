@@ -16,7 +16,7 @@ from helpers.boxes import PointToRelative, PointToAbsolute, PointsToRect,\
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QPainter, QBrush, QFont, QPixmap
 from PyQt5.Qt import QPoint, QTimer
-from PyQt5.QtCore import Qt, pyqtSignal, QRect
+from PyQt5.QtCore import Qt, pyqtSignal, QRect, QPointF
 import helpers.boxes as boxes
 import logging
 from helpers.images import GetFixedFitToBox
@@ -84,7 +84,7 @@ class ViewerEditorImage(QWidget):
         for element in trajectory:
             x, y = PointToAbsolute((element[0], element[1]),
                                    width, height)
-            qtrajectory.append(QPoint(x, y))
+            qtrajectory.append(QPointF(x, y))
 
         return qtrajectory
 
@@ -336,13 +336,13 @@ class ViewerEditorImage(QWidget):
         # Change cv2 image to pixmap
         pixmap = CvImage2QtImage(cv2.resize(image, (miniWidth, miniHeight)))
         # Create position Qrect
-        miniaturePosition = QPoint(0, 0)
+        miniaturePosition = QPointF(0, 0)
 
         # Check if mouse over miniature
         if (self.mousePosition is not None):
             point = (self.mousePosition.x(), self.mousePosition.y())
             if (IsInside(point, (0, 0, miniWidth, miniHeight))):
-                miniaturePosition = QPoint(widgetWidth-miniWidth, 0)
+                miniaturePosition = QPointF(widgetWidth-miniWidth, 0)
 
         # Draw on painter in QRect corner
         painter.drawPixmap(miniaturePosition, pixmap)
@@ -387,7 +387,7 @@ class ViewerEditorImage(QWidget):
         if (self.mousePosition is not None):
             mx, my = boxes.PointToRelative((self.mousePosition.x(), self.mousePosition.y()),
                                            viewportWidth, viewportHeight)
-            mousePosition = QPoint(mx*widgetWidth, my*widgetHeight)
+            mousePosition = QPointF(mx*widgetWidth, my*widgetHeight)
 
         # Recalculate mouse clicks to viewport
         mouseClicks = []
@@ -395,7 +395,7 @@ class ViewerEditorImage(QWidget):
             for mouseClick in self.mouseClicks:
                 mx, my = boxes.PointToRelative((mouseClick.x(), mouseClick.y()),
                                                viewportWidth, viewportHeight)
-                mouseClicks.append(QPoint(mx*widgetWidth, my*widgetHeight))
+                mouseClicks.append(QPointF(mx*widgetWidth, my*widgetHeight))
 
         # Draw current OpenCV image as pixmap
         pixmap = CvImage2QtImage(image)

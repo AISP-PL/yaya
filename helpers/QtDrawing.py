@@ -177,10 +177,10 @@ def QDrawRectangle(painter, points,
     p1 = points[0]
     p2 = points[1]
     polygon = QPolygon()
-    polygon.append(QPoint(p2.x(), p1.y()))  # top right
-    polygon.append(QPoint(p1.x(), p1.y()))  # top left
-    polygon.append(QPoint(p1.x(), p2.y()))  # bottom left
-    polygon.append(QPoint(p2.x(), p2.y()))  # bottom right
+    polygon.append(QPoint(int(p2.x()), int(p1.y())))  # top right
+    polygon.append(QPoint(int(p1.x()), int(p1.y())))  # top left
+    polygon.append(QPoint(int(p1.x()), int(p2.y())))  # bottom left
+    polygon.append(QPoint(int(p2.x()), int(p2.y())))  # bottom right
 
     # Set pen and brush
     pen = QPen(pen, penThickness, penStyle)
@@ -243,8 +243,8 @@ def QDrawCrosshair(painter, x, y, width, height, penColor=Qt.black, penColorAlph
     pen = QPen(color, penThickness, penStyle)
     painter.setPen(pen)
     # Draw
-    painter.drawLine(x, 0, x, height)
-    painter.drawLine(0, y, width, y)
+    painter.drawLine(int(x), 0, int(x), int(height))
+    painter.drawLine(0, int(y), int(width), int(y))
 
 
 def QDrawPolygon(painter, pointsList, pen=Qt.black, brushColor=Qt.white, brushStyle=Qt.CrossPattern, brushOpacity=1):
