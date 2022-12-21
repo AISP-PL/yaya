@@ -132,3 +132,4 @@ dmypy.json
 *.weights
 *.names
 ObjectDetectors/yolov4*
+env*/
