@@ -131,10 +131,10 @@ class Annoter():
 
         return detAnnotes
 
-    def ProcessFileDetections(self, im, filepath):
+    def ProcessFileDetections(self, im, filepath) -> list:
         ''' Read file annotations if possible.'''
         if (self.detector is None) or (im is None):
-            return [], 0, 0
+            return []
 
         # Call detector manually!
         detAnnotes = self.detector.Detect(im,
@@ -183,7 +183,7 @@ class Annoter():
             txtAnnotations = self.GetFileAnnotations(path+filename)
 
             # Force detector if needed
-            detections, detections_mAP, detections_dSurplus = None, None, None
+            detections, detections_mAP, detections_dSurplus = [], None, None
             # Force detector to process every image
             if (self.config['forceDetector'] == True):
                 im = self.GetFileImage(path+filename)
