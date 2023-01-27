@@ -98,6 +98,10 @@ def main():
     detector = None
     if (IsDarknet() and (noDetector is False)):
         detector = CreateDetector(args.detector, path=scriptPath)
+        if (detector is None):
+            logging.error('Wrong detector!')
+            return
+            
         detector.Init()
         annote.Init(detector.GetClassNames())
     # CUDA not installed

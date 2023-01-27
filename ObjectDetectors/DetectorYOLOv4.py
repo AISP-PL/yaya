@@ -26,7 +26,7 @@ class DetectorYOLOv4(Detector):
     def __init__(self,
                  cfgPath,
                  weightPath,
-                 namesPath,
+                 dataPath,
                  name='YOLOv4',
                  imageStrategy=None,
                  ):
@@ -37,7 +37,7 @@ class DetectorYOLOv4(Detector):
         # Store yolo configuartion paths
         self.config = {'Config': cfgPath,
                        'Weights': weightPath,
-                       'Names': namesPath,
+                       'Names': dataPath,
                        }
         # Network pointer
         self.net = None
@@ -59,7 +59,7 @@ class DetectorYOLOv4(Detector):
         self.colors = []
         # Pre-Read and strip all labels
         self.classes = open(GetFilepath(
-            namesPath, dropExtension=True)+'.names').read().splitlines()
+            dataPath, dropExtension=True)+'.names').read().splitlines()
         self.classes = list(map(str.strip, self.classes))  # strip names
 
         # Validate labels
