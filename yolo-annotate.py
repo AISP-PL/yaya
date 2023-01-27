@@ -93,9 +93,11 @@ def main():
     logging.debug('Logging enabled!')
 
     # Create detector
+
+    scriptPath = os.path.dirname(os.path.realpath(__file__))
     detector = None
     if (IsDarknet() and (noDetector is False)):
-        detector = CreateDetector(args.detector)
+        detector = CreateDetector(args.detector, path=scriptPath)
         detector.Init()
         annote.Init(detector.GetClassNames())
     # CUDA not installed

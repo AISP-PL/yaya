@@ -4,6 +4,7 @@ from helpers.files import GetFiles, GetFilename, FixPath
 from ObjectDetectors.DetectorYOLOv4 import DetectorYOLOv4
 from lib2to3.fixes.fix_paren import FixParen
 
+
 def IsDarknet():
     ''' Checks if darknet exists cuda is installed and working.'''
     if (os.system('ls /usr/local/lib/libdarknet.so') == 0):
@@ -19,10 +20,10 @@ def IsCuda():
     return False
 
 
-def ListDetectors():
+def ListDetectors(path:str=''):
     ''' List detectors in directory.'''
     detectors = []
-    path = 'ObjectDetectors/'
+    path = f'{path}/ObjectDetectors/'
     for filename in os.listdir(path):
         filepath = path + filename
         # Get directories
@@ -41,9 +42,9 @@ def ListDetectors():
     return detectors
 
 
-def CreateDetector(detectorID=0, gpuID=0):
+def CreateDetector(detectorID=0, gpuID=0, path=None):
     ''' Creates detector.'''
-    detectors = ListDetectors()
+    detectors = ListDetectors(path)
     # Create detector
     if (detectorID < len(detectors)):
         cfgPath, weightPath, metaPath = detectors[detectorID]
