@@ -8,7 +8,7 @@ import logging
 import pandas as pd
 from pathlib import Path
 import cv2
-from helpers.files import FixPath, GetExtension, GetFileLocation
+from helpers.files import FixPath, GetExtension, GetFileLocation, GetFilename
 import matplotlib.pyplot as plt
 import matplotlib
 from PIL import Image
@@ -44,6 +44,8 @@ class Distribution:
         self.verifyImages = args.verifyImages
         # Is showcase enabled
         self.isShowcase = args.showcase
+        # Excluded files
+        self.excluded = ['dataset.txt']
         # Statistics dataframe of all annotations
         self.distribution = {
             'Directory': [],
@@ -67,7 +69,7 @@ class Distribution:
         # For every file
         for filepath in os.listdir(dirpath):
             # Check if annotation's
-            if (GetExtension(filepath) == '.txt'):
+            if (filepath not in self.excluded) and (GetExtension(filepath) == '.txt'):
                 # Open annotations files
                 annotations = ReadAnnotations(dirpath+filepath)
                 # Correct all annotations
@@ -169,7 +171,7 @@ class Distribution:
         # Create distribution dataframe
         df = pd.DataFrame.from_dict(self.distribution)
         if (len(df) == 0):
-            logging.error('(Distributoin) Missing annotations!')
+            logging.error('(Distribution) Missing annotations!')
             return
 
         dirpath = FixPath(dirpath)
