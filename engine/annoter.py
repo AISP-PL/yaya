@@ -235,7 +235,16 @@ class Annoter():
             self.files = sorted(self.files,
                                 key=lambda i: i['Name'])
 
-        # ------- Extra processing ------------
+        # ------- Filtering  ------------
+        # Use only not annotated files
+        if (self.config['isOnlyNewFiles'] is True):
+            newFiles = []
+            for offset, fileEntry in enumerate(self.files):
+                if (not fileEntry['IsAnnotation']):
+                    newFiles.append(fileEntry)
+
+            self.files = newFiles
+
         # Use only files with errors
         if (self.config['isOnlyErrorFiles'] == True):
             filesWithErrors = []
@@ -310,7 +319,7 @@ class Annoter():
         if (self.offset < len(self.files)):
             return self.files[self.offset]['ID']
 
-        return ''
+        return 0
 
     def GetFileIndex(self):
         ''' Returns current image number.'''

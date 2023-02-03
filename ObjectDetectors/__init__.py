@@ -20,10 +20,16 @@ def IsCuda():
     return False
 
 
-def ListDetectors(path:str=''):
+def ListDetectors(path:str=None):
     ''' List detectors in directory.'''
     detectors = []
-    path = f'{path}/ObjectDetectors/'
+    
+    # Handle path
+    if (path is None):
+        path='ObjectDetectors/'
+    else:
+        path = f'{path}/ObjectDetectors/'
+
     for filename in os.listdir(path):
         filepath = path + filename
         # Get directories
