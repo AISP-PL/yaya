@@ -31,6 +31,10 @@ class ViewerEditorImage(QWidget):
     ModeRenameAnnotation = 2
     ModeRemoveAnnotation = 3
     ModePaintCircle = 4
+    
+    # Miniature position
+    MiniatureLeft = 0
+    MiniatureRight = 1
 
     # Image scaling mode
     ImageScalingResize = 0
@@ -73,6 +77,8 @@ class ViewerEditorImage(QWidget):
         self.mouseClicks = []
         # Is dragging
         self.mouseDragging = False
+        # Miniature current position
+        self.miniaturePosition = ViewerEditorImage.MiniatureLeft
 
         # UI init and show
         self.setMouseTracking(True)
@@ -336,13 +342,21 @@ class ViewerEditorImage(QWidget):
         # Change cv2 image to pixmap
         pixmap = CvImage2QtImage(cv2.resize(image, (miniWidth, miniHeight)))
         # Create position Qrect
-        miniaturePosition = QPointF(0, 0)
+        if (self.miniaturePosition == ViewerEditorImage.MiniatureLeft):
+            miniaturePosition = QPointF(0, 0)
+        else:
+            miniaturePosition = QPointF(widgetWidth-miniWidth, 0)
 
         # Check if mouse over miniature
         if (self.mousePosition is not None):
             point = (self.mousePosition.x(), self.mousePosition.y())
-            if (IsInside(point, (0, 0, miniWidth, miniHeight))):
-                miniaturePosition = QPointF(widgetWidth-miniWidth, 0)
+            mx, my = miniaturePosition.x(), miniaturePosition.y()
+            if (IsInside(point, (mx, my, mx+miniWidth, my+miniHeight))):
+                # Miniature position : Switch
+                if (self.miniaturePosition == ViewerEditorImage.MiniatureLeft):
+                    self.miniaturePosition = ViewerEditorImage.MiniatureRight
+                else:
+                    self.miniaturePosition = ViewerEditorImage.MiniatureLeft
 
         # Draw on painter in QRect corner
         painter.drawPixmap(miniaturePosition, pixmap)
