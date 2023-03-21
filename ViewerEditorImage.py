@@ -40,6 +40,11 @@ class ViewerEditorImage(QWidget):
     ImageScalingResize = 0
     ImageScalingResizeAspectRatio = 1
     ImageScalingOriginalSize = 2
+    
+    # Image scaling algorithm
+    ImageScalingLinear = 0
+    ImageScalingNearest = 1
+    
 
     # Define signals
     signalEditorFinished = pyqtSignal(int, name='EditorFinished')
