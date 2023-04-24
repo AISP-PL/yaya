@@ -14,7 +14,7 @@ from helpers.files import IsImageFile, DeleteFile, GetNotExistingSha1Filepath, F
     GetExtension
 from helpers.textAnnotations import ReadAnnotations, SaveAnnotations, IsExistsAnnotations,\
     DeleteAnnotations, SaveDetections, ReadDetections
-from helpers.metrics import mAP, dSurplus, EvaluateMetrics, Precision, Recall
+from helpers.metrics import Metrics,  EvaluateMetrics
 from engine.annote import AnnoteAuthorType
 
 
@@ -147,23 +147,26 @@ class Annoter():
         detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
         return detAnnotes
 
-    def CalculateYoloMetrics(self, txtAnnotes, detAnnotes):
+    def CalculateYoloMetrics(self, txtAnnotes : list, detAnnotes : list):
         ''' Calculate mAP between two annotations sets.'''
-        TP, FP, FN, LTP, LTN = 0, 0, 0, 0, 0
         if (len(txtAnnotes)):
-            TP, FP, FN, LTP, LTN = EvaluateMetrics(txtAnnotes, detAnnotes)
+            metrics = EvaluateMetrics(txtAnnotes, detAnnotes)
+        else:
+            metrics = Metrics()
+        
+        return metrics
 
-        precision = Precision(TP, FP)
-        recall = Recall(TP, FN)
 
-        return TP, FP, FN, precision, recall, LTP, LTN
-
-    def OpenLocation(self, path):
+    def OpenLocation(self, path : str):
         ''' Open images/annotations location.'''
         # Update dirpath
         self.dirpath = path
         # filter only images and not excludes
         excludes = ['.', '..', './', '.directory']
+
+        if (not os.path.exists(path)):
+            logging.error('(Annoter) Path `%s` not exists!', path)
+            return
 
         # ---------- Filtering -----------
         self.files = []
@@ -191,10 +194,15 @@ class Annoter():
             # Read historical detections
             else:
                 detections = self.ReadFileDetections(path+filename)
+            
+            # For calculation : Filter detections with itself for multiple detections catches.
+            detections = prefilters.FilterIOUbyConfidence(detections,
+                                                          detections)
 
             # Calculate metrics
-            TP, FP, FN, precision, recall, LTP, LTN = self.CalculateYoloMetrics(
+            metrics = self.CalculateYoloMetrics(
                 txtAnnotations, detections)
+
             # For view : Filter by IOU internal with same annotes and also with txt annotes.
             detections = prefilters.FilterIOUbyConfidence(detections,
                                                           detections + txtAnnotations)
@@ -209,13 +217,7 @@ class Annoter():
                 'Datetime': os.lstat(path+filename).st_mtime,
                 'Errors': len(self.errors),
                 'Detections': detections,
-                'TP': TP,
-                'FP': FP,
-                'FN': FN,
-                'Precision': precision,
-                'Recall': recall,
-                'LTP': LTP,
-                'LTN': LTN,
+                'Metrics' : metrics,
             })
 
             # Logging progress
@@ -534,20 +536,14 @@ class Annoter():
                 detAnnotes = self.ProcessFileDetections(im, fileEntry['Path'])
 
                 # Calculate metrics
-                TP, FP, FN, precision, recall, LTP, LTN = self.CalculateYoloMetrics(
+                metrics = self.CalculateYoloMetrics(
                     txtAnnotations, detAnnotes)
                 # For view : Filter by IOU internal with same annotes and also with txt annotes.
                 detAnnotes = prefilters.FilterIOUbyConfidence(detAnnotes,
                                                               detAnnotes + txtAnnotations)
 
                 # Store metrics
-                fileEntry['TP'] = TP
-                fileEntry['FP'] = FP
-                fileEntry['FN'] = FN
-                fileEntry['Precision'] = precision
-                fileEntry['Recall'] = recall
-                fileEntry['LTP'] = LTP
-                fileEntry['LTN'] = LTN
+                fileEntry['Metrics'] = metrics
 
             # All annotations
             self.annotations = txtAnnotations + detAnnotes

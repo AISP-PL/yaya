@@ -4,9 +4,70 @@ Created on 15 wrz 2020
 @author: spasz
 '''
 
+from dataclasses import dataclass, field
 from . import boxes
 from helpers import prefilters
 from engine.annote import AnnoteEvaluation
+
+@dataclass
+class Metrics:
+    ''' List of evaluated metrics '''
+    All : int = field(init=True, default = 0)
+    TP : int = field(init=True, default = 0)
+    FP : int = field(init=True, default = 0)
+    TN : int = field(init=True, default = 0)
+    FN : int = field(init=True, default = 0)
+    # Label true positive
+    LTP : int = field(init=True, default=0)
+
+    def __post_init__(self):
+        ''' Post initiliatizaton.'''
+    
+    @property
+    def correct(self) -> float:
+        ''' Returns % of correct detections.'''
+        if (self.All == 0):
+            return 0
+
+        return 100* self.LTP / self.All
+    
+    @property
+    def correct_bboxes(self) -> float:
+        ''' Returns % of correct detections.'''
+        if (self.All == 0):
+            return 0
+
+        return 100*self.TP / self.All
+
+    @property
+    def new_detections(self) -> int:
+        ''' Newly detected bboxes'''
+        return self.FP
+
+
+    @property
+    def precision(self):
+        ''' Returns metric.'''
+        if (self.TP + self.FP) == 0:
+            return 0
+
+        return self.TP/(self.TP+self.FP)
+
+
+    @property
+    def recall(self) -> float:
+        ''' Returns metric.'''
+        if ((self.TP+self.FN) == 0):
+            return 0
+
+        return self.TP/(self.TP+self.FN)
+
+    @property
+    def mAP(self):
+        ''' Returns metric.'''
+        return self.TP/self.All
+
+    
 
 
 def MetricIOU(box1, box2):
@@ -56,8 +117,13 @@ def dSurplus(annotations, detections, minConfidence=0.5):
 
     return len(detections) - len(annotations)
 
+    
 
-def EvaluateMetrics(annotations, detections, minConfidence=0.5, minIOU=0.5):
+def EvaluateMetrics(annotations : list, 
+                    detections : list, 
+                    minConfidence : float =0.5, 
+                    minIOU : float =0.7) -> tuple:
+
     '''
         Definition of terms:
             True Positive (TP) — Correct detection made by the model.
@@ -95,6 +161,7 @@ def EvaluateMetrics(annotations, detections, minConfidence=0.5, minIOU=0.5):
                          for detection in detections]
         # Sort possibilities by IOU
         possibilities = sorted(possibilities, key=lambda x: x[0], reverse=True)
+
         # Check first(biggest IOU) possibility
         if (len(possibilities) and (possibilities[0][0] >= minIOU)):
             _iou, detection = possibilities[0]
@@ -112,38 +179,21 @@ def EvaluateMetrics(annotations, detections, minConfidence=0.5, minIOU=0.5):
     # Detections unmatched are detections left in list.
     detectionsUnmatched = detections
 
-    # True positives
+    # True positives // Annotations Bboxes matched
     TP = len(annotationsMatched)
-    # False positives
+    # False positives // Detections unmatched, new!
     FP = len(detectionsUnmatched)
-    # False negatives
+    # False negatives // Annotations bboxes unmatched
     FN = len(annotationsUnmatched)
-    # Labels matched annotations (TP)
+
+    # Labels properly matched annotations (TP) in %
     LTP = sum(1 if (annotation.classNumber == detection.classNumber)
-              else 0 for annotation, detection in annotationsMatched)
-    # Labels unmatched annotations (N-LTP)
-    LTN = len(annotations) - LTP
+              else 0 for annotation, detection in annotationsMatched) / len(annotations)
 
-    # 4. Calculate TruePositives / ALL.
-    return TP, FP, FN, LTP, LTN
+    return Metrics(All = len(annotations),
+                   TP=TP,
+                   FP=FP,
+                   FN=FN,
+                   LTP=LTP
+                   )
 
-
-def Precision(TP, FP):
-    ''' Returns metric.'''
-    if ((TP+FP) == 0):
-        return 0
-
-    return TP/(TP+FP)
-
-
-def Recall(TP, FN):
-    ''' Returns metric.'''
-    if ((TP+FN) == 0):
-        return 0
-
-    return TP/(TP+FN)
-
-
-def mAP(TP, length):
-    ''' Returns metric.'''
-    return TP/length

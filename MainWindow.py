@@ -17,6 +17,9 @@ from copy import copy
 from PyQt5.QtCore import Qt
 from datetime import datetime
 
+from views.ViewImagesTable import ViewImagesTable
+from views.ViewImagesTableRow import ViewImagesTableRow
+
 
 class MainWindowGui(Ui_MainWindow):
     '''
@@ -89,88 +92,8 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.paintSizeSlider.valueChanged.connect(
             self.CallbackPaintSizeSlider)
 
-        # Setup files selector table widget
-        labels = ['Name', 'IsAnnotated', 'Annotations',
-                  'TP', 'FP', 'FN', 'Precision', 'Recall',
-                  'LTP', 'LTN', 'Errors']
-        self.ui.fileSelectorTableWidget.setColumnCount(len(labels))
-        self.ui.fileSelectorTableWidget.setHorizontalHeaderLabels(labels)
-        self.ui.fileSelectorTableWidget.setRowCount(
-            self.annoter.GetFilesCount())
-        for rowIndex, fileEntry in enumerate(self.annoter.GetFiles()):
-            # Start from column zero
-            colIndex = 0
-
-            # Filename column
-            item = QTableWidgetItem(str(fileEntry['Name']))
-            item.setToolTip(str(fileEntry['ID']))
-            self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
-            colIndex += 1
-
-            # IsAnnotation column
-            item = QTableWidgetItem(str(fileEntry['IsAnnotation']))
-            if (fileEntry['IsAnnotation']):
-                item.setBackground(Qt.green)
-            else:
-                item.setBackground(Qt.red)
-            item.setToolTip(str(fileEntry['ID']))
-            self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
-            colIndex += 1
-
-            # Annotations column
-            item = QTableWidgetItem(str(len(fileEntry['Annotations'])))
-            item.setToolTip(str(fileEntry['ID']))
-            self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
-            colIndex += 1
-
-            # TP column
-            item = QTableWidgetItem(str(fileEntry['TP']))
-            item.setToolTip(str(fileEntry['ID']))
-            self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
-            colIndex += 1
-
-            # FP column
-            item = QTableWidgetItem(str(fileEntry['FP']))
-            item.setToolTip(str(fileEntry['ID']))
-            self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
-            colIndex += 1
-
-            # FN column
-            item = QTableWidgetItem(str(fileEntry['FN']))
-            item.setToolTip(str(fileEntry['ID']))
-            self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
-            colIndex += 1
-
-            # Precision column
-            item = QTableWidgetItem(str(fileEntry['Precision']))
-            item.setToolTip(str(fileEntry['ID']))
-            self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
-            colIndex += 1
-
-            # Recall column
-            item = QTableWidgetItem(str(fileEntry['Recall']))
-            item.setToolTip(str(fileEntry['ID']))
-            self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
-            colIndex += 1
-
-            # LTP column
-            item = QTableWidgetItem(str(fileEntry['LTP']))
-            item.setToolTip(str(fileEntry['ID']))
-            self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
-            colIndex += 1
-
-            # LTN column
-            item = QTableWidgetItem(str(fileEntry['LTN']))
-            item.setToolTip(str(fileEntry['ID']))
-            self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
-            colIndex += 1
-
-            # Errors column
-            item = QTableWidgetItem(str(fileEntry['Errors']))
-            item.setToolTip(str(fileEntry['ID']))
-            self.ui.fileSelectorTableWidget.setItem(rowIndex, colIndex, item)
-            colIndex += 1
-
+        # Images table : Setup
+        ViewImagesTable.View(self.ui.fileSelectorTableWidget, self.annoter.GetFiles())
         self.ui.fileSelectorTableWidget.itemClicked.connect(
             self.CallbackFileSelectorItemClicked)
 
@@ -277,43 +200,9 @@ class MainWindowGui(Ui_MainWindow):
         rowIndex = self.ImageIDToRowNumber(imageID)
 
         if (fileEntry is not None):
-            # Filename column
-            self.ui.fileSelectorTableWidget.item(rowIndex, 0)
-            # IsAnnotation column
-            item = self.ui.fileSelectorTableWidget.item(
-                rowIndex, 1)
-            if (fileEntry['IsAnnotation']):
-                item.setBackground(Qt.green)
-            else:
-                item.setBackground(Qt.red)
-            item.setText(str(fileEntry['IsAnnotation']))
-            # Annotations column
-            self.ui.fileSelectorTableWidget.item(
-                rowIndex, 2).setText(str(len(fileEntry['Annotations'])))
-            # TP column
-            self.ui.fileSelectorTableWidget.item(
-                rowIndex, 3).setText(str(fileEntry['TP']))
-            # TN column
-            self.ui.fileSelectorTableWidget.item(
-                rowIndex, 4).setText(str(fileEntry['FP']))
-            # FN column
-            self.ui.fileSelectorTableWidget.item(
-                rowIndex, 5).setText(str(fileEntry['FN']))
-            # Precision column
-            self.ui.fileSelectorTableWidget.item(
-                rowIndex, 6).setText(str(fileEntry['Precision']))
-            # Recall column
-            self.ui.fileSelectorTableWidget.item(
-                rowIndex, 7).setText(str(fileEntry['Recall']))
-            # LTP column
-            self.ui.fileSelectorTableWidget.item(
-                rowIndex, 8).setText(str(fileEntry['LTP']))
-            # LTN Surplus column
-            self.ui.fileSelectorTableWidget.item(
-                rowIndex, 9).setText(str(fileEntry['LTN']))
-            # Errors column
-            self.ui.fileSelectorTableWidget.item(
-                rowIndex, 10).setText(str(fileEntry['Errors']))
+            ViewImagesTableRow.View(self.ui.fileSelectorTableWidget,
+                                    rowIndex,
+                                    fileEntry)
 
         # Setup files selector table widget
         self.ui.fileSelectorTableWidget.clearSelection()

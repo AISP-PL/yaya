@@ -11,14 +11,17 @@ import fnmatch
 from helpers.hashing import GetRandomSha1
 
 
-def CreateDirectory(path):
+def CreateDirectory(path : str) -> Path:
     ''' Creates directory.'''
     return Path(path).mkdir(parents=True, exist_ok=True)
 
 
-def GetFileLocation(path):
+def GetFileLocation(path : str) -> str:
     ''' Returns file location '''
-    return os.path.dirname(path)
+    if (path is None):
+        return None
+
+    return os.path.dirname(path.strip())
 
 
 def GetFiles(base, pattern):
