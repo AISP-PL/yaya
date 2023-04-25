@@ -3,7 +3,9 @@ Created on 17 lis 2020
 
 @author: spasz
 '''
+from datetime import timedelta
 import os
+import time
 import cv2
 import logging
 import engine.annote as annote
@@ -175,17 +177,14 @@ class Annoter():
             logging.error('(Annoter) Path `%s` not exists!', path)
             return
 
-        # ---------- Filtering -----------
+        # Fiels : List all directory files and exclude not needed.
+        filesToParse = [filename for filename in os.listdir(path)
+                        if (filename not in excludes) and (IsImageFile(filename))]
+
+        # Processing all files
         self.files = []
-        for index, filename in enumerate(os.listdir(path)):
-            # Filter excludes
-            if (filename in excludes):
-                continue
-
-            # Filter not images
-            if (not IsImageFile(filename)):
-                continue
-
+        startTime = time.time()
+        for index, filename in enumerate(filesToParse):
             # Check if annotations exists
             isAnnotation = IsExistsAnnotations(path+filename)
 
@@ -193,7 +192,7 @@ class Annoter():
             txtAnnotations = self.GetFileAnnotations(path+filename)
 
             # Force detector if needed
-            detections, detections_mAP, detections_dSurplus = [], None, None
+            detections = []
             # Force detector to process every image
             if (self.config['forceDetector'] == True):
                 im = self.GetFileImage(path+filename)
@@ -231,8 +230,19 @@ class Annoter():
             })
 
             # Logging progress
-            logging.info('Progress : [%u]\r',
-                         index)
+            logging.info('(Annoter) Progress: %2.2f%% [%u/%u].',
+                         100*index/len(filesToParse),
+                         index,
+                         len(filesToParse)
+                         )
+            # Logging files per second
+            duration = time.time()-startTime
+            filesPerSecond = index/duration
+            secondsLeft = (len(filesToParse)-index)/(filesPerSecond+0.01)
+            logging.info('(Annoter) FPS: %2.2f. Estimated time left: %s.',
+                         filesPerSecond,
+                         str(timedelta(seconds=secondsLeft))
+                         )
 
         # ------- Sorting ------------
         # Sorting : by datetime

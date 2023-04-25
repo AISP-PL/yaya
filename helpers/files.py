@@ -11,12 +11,12 @@ import fnmatch
 from helpers.hashing import GetRandomSha1
 
 
-def CreateDirectory(path : str) -> Path:
+def CreateDirectory(path: str) -> Path:
     ''' Creates directory.'''
     return Path(path).mkdir(parents=True, exist_ok=True)
 
 
-def GetFileLocation(path : str) -> str:
+def GetFileLocation(path: str) -> str:
     ''' Returns file location '''
     if (path is None):
         return None
@@ -62,7 +62,7 @@ def CreateOutputDirectory(filepath):
     Path(path).mkdir(parents=True, exist_ok=True)
 
 
-def IsImageFile(filepath):
+def IsImageFile(filepath: str) -> bool:
     ''' Checks if file is image file.'''
     return GetExtension(filepath).lower() in ['.gif', '.png', '.jpg', '.jpeg', '.tiff']
 
