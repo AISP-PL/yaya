@@ -8,24 +8,23 @@ from PyQt5.QtCore import Qt
 from Gui.widgets.FloatTableWidgetItem import FloatTableWidgetItem
 from Gui.widgets.PercentTableWidgetItem import PercentTableWidgetItem
 
+
 class ViewImagesTableRow:
 
     @staticmethod
-    def View(table : QTableWidget, rowIndex:int, fileEntry : dict):
+    def View(table: QTableWidget, rowIndex: int, fileEntry: dict):
         ''' View images in table.'''
         # Get translations
         _translate = QtCore.QCoreApplication.translate
 
         # Check : Invalid metrics
         if ('Metrics' not in fileEntry):
-            return 
-
+            return
         # Metrics
         metrics = fileEntry['Metrics']
+        # Get visuals
+        visuals = fileEntry['Visuals']
 
-        if (isinstance(metrics, tuple)):
-            logging.error('Fatal')
-        
         # Start from column zero
         colIndex = 0
 
@@ -39,14 +38,15 @@ class ViewImagesTableRow:
         item = QTableWidgetItem()
         if (fileEntry['IsAnnotation']):
             item.setBackground(Qt.green)
-            item.setText(f"{fileEntry['IsAnnotation']} / {len(fileEntry['Annotations'])}")
+            item.setText(
+                f"{fileEntry['IsAnnotation']} / {len(fileEntry['Annotations'])}")
         else:
             item.setBackground(Qt.red)
             item.setText(f"{fileEntry['IsAnnotation']}")
         item.setToolTip(str(fileEntry['ID']))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
-            
+
         # Correct [%]
         item = PercentTableWidgetItem(metrics.correct)
         item.setToolTip(str(fileEntry['ID']))
@@ -60,7 +60,7 @@ class ViewImagesTableRow:
         colIndex += 1
 
         # New detections [j]
-        item = QTableWidgetItem(f"{metrics.new_detections}")
+        item = QTableWidgetItem(f'{metrics.new_detections}')
         item.setToolTip(str(fileEntry['ID']))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
@@ -73,6 +73,24 @@ class ViewImagesTableRow:
 
         # Recall column
         item = FloatTableWidgetItem(metrics.recall)
+        item.setToolTip(str(fileEntry['ID']))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1
+
+        # Hue column
+        item = FloatTableWidgetItem(visuals.hue)
+        item.setToolTip(str(fileEntry['ID']))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1
+
+        # Saturation column
+        item = FloatTableWidgetItem(visuals.saturation)
+        item.setToolTip(str(fileEntry['ID']))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1
+
+        # Brightness column
+        item = FloatTableWidgetItem(visuals.brightness)
         item.setToolTip(str(fileEntry['ID']))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1

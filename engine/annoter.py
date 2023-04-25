@@ -16,6 +16,7 @@ from helpers.textAnnotations import ReadAnnotations, SaveAnnotations, IsExistsAn
     DeleteAnnotations, SaveDetections, ReadDetections
 from helpers.metrics import Metrics,  EvaluateMetrics
 from engine.annote import AnnoteAuthorType
+from helpers.visuals import Visuals
 
 
 class Annoter():
@@ -113,19 +114,20 @@ class Annoter():
 
         return txtAnnotes
 
-    def GetFileImage(self, filepath : str):
+    def GetFileImage(self, filepath: str):
         ''' Read file annotations if possible.'''
         if (filepath is None) or (len(filepath) == 0):
             return None
 
         if (not os.path.exists(filepath)):
             return None
-        
-        try: 
+
+        try:
             image = cv2.imread(filepath)
             return image
         except:
-            logging.fatal('(Annoter) CV2 error when readings image `%s`!', filepath)
+            logging.fatal(
+                '(Annoter) CV2 error when readings image `%s`!', filepath)
             return None
 
     def ReadFileDetections(self, filepath):
@@ -154,16 +156,15 @@ class Annoter():
         detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
         return detAnnotes
 
-    def CalculateYoloMetrics(self, txtAnnotes : list, detAnnotes : list) -> Metrics:
+    def CalculateYoloMetrics(self, txtAnnotes: list, detAnnotes: list) -> Metrics:
         ''' Calculate mAP between two annotations sets.'''
         metrics = Metrics()
         if (len(txtAnnotes)):
             metrics = EvaluateMetrics(txtAnnotes, detAnnotes)
-        
+
         return metrics
 
-
-    def OpenLocation(self, path : str):
+    def OpenLocation(self, path: str):
         ''' Open images/annotations location.'''
         # Update dirpath
         self.dirpath = path
@@ -200,7 +201,7 @@ class Annoter():
             # Read historical detections
             else:
                 detections = self.ReadFileDetections(path+filename)
-            
+
             # For calculation : Filter detections with itself for multiple detections catches.
             detections = prefilters.FilterIOUbyConfidence(detections,
                                                           detections)
@@ -208,6 +209,8 @@ class Annoter():
             # Calculate metrics
             metrics = self.CalculateYoloMetrics(
                 txtAnnotations, detections)
+            # Calculate visuals
+            visuals = Visuals.LoadCreate(path+filename)
 
             # For view : Filter by IOU internal with same annotes and also with txt annotes.
             detections = prefilters.FilterIOUbyConfidence(detections,
@@ -223,7 +226,8 @@ class Annoter():
                 'Datetime': os.lstat(path+filename).st_mtime,
                 'Errors': len(self.errors),
                 'Detections': detections,
-                'Metrics' : metrics,
+                'Metrics': metrics,
+                'Visuals': visuals,
             })
 
             # Logging progress
@@ -337,7 +341,7 @@ class Annoter():
         ''' Returns count of processed images number.'''
         if (self.files is None):
             return 0
-        
+
         return len(self.files)
 
     def GetFilesAnnotatedCount(self):
