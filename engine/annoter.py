@@ -113,13 +113,20 @@ class Annoter():
 
         return txtAnnotes
 
-    def GetFileImage(self, filepath):
+    def GetFileImage(self, filepath : str):
         ''' Read file annotations if possible.'''
-        im = None
-        if (os.path.exists(filepath)):
-            im = cv2.imread(filepath)
+        if (filepath is None) or (len(filepath) == 0):
+            return None
 
-        return im
+        if (not os.path.exists(filepath)):
+            return None
+        
+        try: 
+            image = cv2.imread(filepath)
+            return image
+        except:
+            logging.fatal('(Annoter) CV2 error when readings image `%s`!', filepath)
+            return None
 
     def ReadFileDetections(self, filepath):
         ''' Read file annotations if possible.'''
@@ -147,12 +154,11 @@ class Annoter():
         detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
         return detAnnotes
 
-    def CalculateYoloMetrics(self, txtAnnotes : list, detAnnotes : list):
+    def CalculateYoloMetrics(self, txtAnnotes : list, detAnnotes : list) -> Metrics:
         ''' Calculate mAP between two annotations sets.'''
+        metrics = Metrics()
         if (len(txtAnnotes)):
             metrics = EvaluateMetrics(txtAnnotes, detAnnotes)
-        else:
-            metrics = Metrics()
         
         return metrics
 
@@ -327,8 +333,11 @@ class Annoter():
         ''' Returns current image number.'''
         return self.offset
 
-    def GetFilesCount(self):
+    def GetFilesCount(self) -> int:
         ''' Returns count of processed images number.'''
+        if (self.files is None):
+            return 0
+        
         return len(self.files)
 
     def GetFilesAnnotatedCount(self):

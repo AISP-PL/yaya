@@ -16,7 +16,6 @@ from helpers.files import FixPath
 from copy import copy
 from PyQt5.QtCore import Qt
 from datetime import datetime
-
 from views.ViewImagesTable import ViewImagesTable
 from views.ViewImagesTableRow import ViewImagesTableRow
 

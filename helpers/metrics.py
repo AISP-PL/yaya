@@ -135,13 +135,13 @@ def EvaluateMetrics(annotations : list,
         @param expected annotations
         @param detected annotations
     '''
-    # No annotations results.
+    # Check : No annotations, then all detections as FP.
     if (annotations is None) or (len(annotations) == 0):
-        return len(detections), 0, 0, len(detections), 0
+        return Metrics(FP=len(detections))
 
-    # No detections result.
+    # Check : No detections, all annotations as missed.
     if (detections is None) or (len(detections) == 0):
-        return 0, len(annotations), 0, 0, len(detections)
+        return Metrics(All=len(annotations))
 
     # 1. Drop detections with (confidence < minConfidence)
     detections = [item for item in detections if (

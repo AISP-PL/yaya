@@ -1,9 +1,12 @@
 '''
     View of images QTableWidget.
 '''
+import logging
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QAbstractItemView
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
+from Gui.widgets.FloatTableWidgetItem import FloatTableWidgetItem
+from Gui.widgets.PercentTableWidgetItem import PercentTableWidgetItem
 
 class ViewImagesTableRow:
 
@@ -12,8 +15,16 @@ class ViewImagesTableRow:
         ''' View images in table.'''
         # Get translations
         _translate = QtCore.QCoreApplication.translate
+
+        # Check : Invalid metrics
+        if ('Metrics' not in fileEntry):
+            return 
+
         # Metrics
         metrics = fileEntry['Metrics']
+
+        if (isinstance(metrics, tuple)):
+            logging.error('Fatal')
         
         # Start from column zero
         colIndex = 0
@@ -37,13 +48,13 @@ class ViewImagesTableRow:
         colIndex += 1
             
         # Correct [%]
-        item = QTableWidgetItem(f"{metrics.correct:2.2f}%")
+        item = PercentTableWidgetItem(metrics.correct)
         item.setToolTip(str(fileEntry['ID']))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 
         # Correct boxes [%]
-        item = QTableWidgetItem(f"{metrics.correct_bboxes:2.2f}%")
+        item = PercentTableWidgetItem(metrics.correct_bboxes)
         item.setToolTip(str(fileEntry['ID']))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
@@ -55,13 +66,13 @@ class ViewImagesTableRow:
         colIndex += 1
 
         # Precision column
-        item = QTableWidgetItem(f"{metrics.precision:2.2f}")
+        item = FloatTableWidgetItem(metrics.precision)
         item.setToolTip(str(fileEntry['ID']))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 
         # Recall column
-        item = QTableWidgetItem(f"{metrics.recall:2.2f}")
+        item = FloatTableWidgetItem(metrics.recall)
         item.setToolTip(str(fileEntry['ID']))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
@@ -71,8 +82,3 @@ class ViewImagesTableRow:
         item.setToolTip(str(fileEntry['ID']))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
-
-        # GUI - Enable sorting again
-        table.setSortingEnabled(True)
-        table.resizeColumnsToContents()
-        table.resizeRowsToContents()
