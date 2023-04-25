@@ -15,7 +15,7 @@ import tango_rc
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName('MainWindow')
-        MainWindow.resize(1591, 828)
+        MainWindow.resize(1591, 834)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -577,10 +577,13 @@ class Ui_MainWindow(object):
         self.actionPrevConfiguration.setObjectName('actionPrevConfiguration')
         self.actionSave_screenshoot = QtWidgets.QAction(MainWindow)
         self.actionSave_screenshoot.setObjectName('actionSave_screenshoot')
+        self.actionSave_copy = QtWidgets.QAction(MainWindow)
+        self.actionSave_copy.setObjectName('actionSave_copy')
         self.menuMenu.addAction(self.actionOtworzLokacje)
         self.menuMenu.addAction(self.actionZapisz)
         self.menuMenu.addAction(self.actionZamknijProgram)
         self.menuEdit.addAction(self.actionSave_screenshoot)
+        self.menuEdit.addAction(self.actionSave_copy)
         self.menubar.addAction(self.menuMenu.menuAction())
         self.menubar.addAction(self.menuEdit.menuAction())
         self.menubar.addAction(self.menuPomoc.menuAction())
@@ -711,3 +714,5 @@ class Ui_MainWindow(object):
             _translate('MainWindow', 'Save screenshoot'))
         self.actionSave_screenshoot.setShortcut(
             _translate('MainWindow', 'Shift+S'))
+        self.actionSave_copy.setText(_translate('MainWindow', 'Save copy'))
+        self.actionSave_copy.setShortcut(_translate('MainWindow', 'Shift+C'))

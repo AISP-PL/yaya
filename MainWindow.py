@@ -3,6 +3,7 @@ Created on 29 gru 2020
 
 @author: spasz
 '''
+import shutil
 import sys
 import os
 import logging
@@ -12,7 +13,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTableWidget
 from PyQt5 import QtCore, QtGui
 from engine.annote import GetClasses
 from ViewerEditorImage import ViewerEditorImage
-from helpers.files import FixPath
+from helpers.files import ChangeExtension, FixPath
 from copy import copy
 from PyQt5.QtCore import Qt
 from datetime import datetime
@@ -110,6 +111,8 @@ class MainWindowGui(Ui_MainWindow):
             self.CallbackOpenLocation)
         self.ui.actionSave_screenshoot.triggered.connect(
             self.CallbackScreenshot)
+        self.ui.actionSave_copy.triggered.connect(
+            self.CallbackSaveCopy)
 
         # Buttons group - for mode buttons
         self.modeButtonGroup = QButtonGroup(self.window)
@@ -415,3 +418,25 @@ class MainWindowGui(Ui_MainWindow):
 
             if (result is None):
                 logging.error('Screenshot error!')
+
+    def CallbackSaveCopy(self):
+        ''' Save configuration.'''
+        file = self.annoter.GetFile()
+
+        if (file is not None):
+            # Set default screenshots location
+            if (os.name == 'posix'):
+                screenshotsPath = '/home/%s/Obrazy/' % (
+                    os.environ.get('USER', 'Error'))
+            else:
+                screenshotsPath = 'C:\\'
+
+            # Copy original image file to screenshots path
+            shutil.copy(file['Path'],
+                        screenshotsPath+file['Name'])
+
+            # Copy annotations .txt file to screenshots path
+            annotationsPath = ChangeExtension(file['Path'], '.txt')
+            if (os.path.exists(annotationsPath)):
+                shutil.copy(annotationsPath,
+                            screenshotsPath+ChangeExtension(file['Name'], '.txt'))

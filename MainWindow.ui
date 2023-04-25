@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1591</width>
-    <height>828</height>
+    <height>834</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1051,6 +1051,7 @@
      <string>Edit</string>
     </property>
     <addaction name="actionSave_screenshoot"/>
+    <addaction name="actionSave_copy"/>
    </widget>
    <addaction name="menuMenu"/>
    <addaction name="menuEdit"/>
@@ -1139,6 +1140,14 @@
    </property>
    <property name="shortcut">
     <string>Shift+S</string>
+   </property>
+  </action>
+  <action name="actionSave_copy">
+   <property name="text">
+    <string>Save copy</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+C</string>
    </property>
   </action>
  </widget>
