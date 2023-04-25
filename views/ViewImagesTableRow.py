@@ -49,19 +49,19 @@ class ViewImagesTableRow:
         colIndex += 1
 
         # New detections [j]
-        item = QTableWidgetItem(f"{metrics.new_detections}d")
+        item = QTableWidgetItem(f"{metrics.new_detections}")
         item.setToolTip(str(fileEntry['ID']))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 
         # Precision column
-        item = QTableWidgetItem(f"{metrics.precision}")
+        item = QTableWidgetItem(f"{metrics.precision:2.2f}")
         item.setToolTip(str(fileEntry['ID']))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 
         # Recall column
-        item = QTableWidgetItem(f"{metrics.recall}")
+        item = QTableWidgetItem(f"{metrics.recall:2.2f}")
         item.setToolTip(str(fileEntry['ID']))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1

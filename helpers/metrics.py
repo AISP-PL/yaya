@@ -188,7 +188,7 @@ def EvaluateMetrics(annotations : list,
 
     # Labels properly matched annotations (TP) in %
     LTP = sum(1 if (annotation.classNumber == detection.classNumber)
-              else 0 for annotation, detection in annotationsMatched) / len(annotations)
+              else 0 for annotation, detection in annotationsMatched)
 
     return Metrics(All = len(annotations),
                    TP=TP,
