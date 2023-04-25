@@ -13,16 +13,30 @@ from engine.annote import AnnoteEvaluation
 @dataclass
 class Metrics:
     ''' List of evaluated metrics '''
+    # Number of all annotations
     All: int = field(init=True, default=0)
+    # Average width of all annotations
+    AvgWidth: float = field(init=True, default=0)
+    # Average height of all annotations
+    AvgHeight: float = field(init=True, default=0)
+    # True postive validated annotations
     TP: int = field(init=True, default=0)
+    # False positive validated annotations
     FP: int = field(init=True, default=0)
+    # False negative validated annotations
     TN: int = field(init=True, default=0)
+    # Label true positive
     FN: int = field(init=True, default=0)
     # Label true positive
     LTP: int = field(init=True, default=0)
 
     def __post_init__(self):
         ''' Post initiliatizaton.'''
+
+    @property
+    def AvgSize(self) -> float:
+        ''' Returns metric.'''
+        return self.AvgWidth * self.AvgHeight
 
     @property
     def correct(self) -> float:
@@ -188,7 +202,15 @@ def EvaluateMetrics(annotations: list,
     LTP = sum(1 if (annotation.classNumber == detection.classNumber)
               else 0 for annotation, detection in annotationsMatched)
 
+    # Get average width and height of annotations.
+    avgWidth = sum(
+        [annotation.width for annotation in annotations]) / len(annotations)
+    avgHeight = sum(
+        [annotation.height for annotation in annotations]) / len(annotations)
+
     return Metrics(All=len(annotations),
+                   AvgWidth=avgWidth,
+                   AvgHeight=avgHeight,
                    TP=TP,
                    FP=FP,
                    FN=FN,

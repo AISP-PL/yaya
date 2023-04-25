@@ -210,7 +210,8 @@ class Annoter():
             metrics = self.CalculateYoloMetrics(
                 txtAnnotations, detections)
             # Calculate visuals
-            visuals = Visuals.LoadCreate(path+filename)
+            visuals = Visuals.LoadCreate(path+filename,
+                                         force=self.config['forceDetector'])
 
             # For view : Filter by IOU internal with same annotes and also with txt annotes.
             detections = prefilters.FilterIOUbyConfidence(detections,

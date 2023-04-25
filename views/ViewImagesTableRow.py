@@ -7,6 +7,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 from Gui.widgets.FloatTableWidgetItem import FloatTableWidgetItem
 from Gui.widgets.PercentTableWidgetItem import PercentTableWidgetItem
+from Gui.widgets.RectTableWidgetItem import RectTableWidgetItem
 
 
 class ViewImagesTableRow:
@@ -77,6 +78,12 @@ class ViewImagesTableRow:
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 
+        # Average width, height, size
+        item = RectTableWidgetItem(metrics.AvgWidth, metrics.AvgHeight)
+        item.setToolTip(str(fileEntry['ID']))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1
+
         # Hue column
         item = FloatTableWidgetItem(visuals.hue)
         item.setToolTip(str(fileEntry['ID']))
@@ -91,6 +98,12 @@ class ViewImagesTableRow:
 
         # Brightness column
         item = FloatTableWidgetItem(visuals.brightness)
+        item.setToolTip(str(fileEntry['ID']))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1
+
+        # width, height
+        item = RectTableWidgetItem(visuals.width, visuals.height)
         item.setToolTip(str(fileEntry['ID']))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1

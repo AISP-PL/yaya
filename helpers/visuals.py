@@ -17,6 +17,10 @@ class Visuals:
     ''' Dataclass with visual properties of image. '''
     # Path to analyzed image
     imagepath: str = field(init=True, default=None)
+    # Image width
+    width: float = field(init=True, default=0)
+    # Image height
+    height: float = field(init=True, default=0)
     # Hue - dominant hue color
     hue: float = 0
     # Saturation of colors 0 to 1.0
@@ -40,12 +44,12 @@ class Visuals:
         jsonWrite(jsonpath, asdict(self))
 
     @staticmethod
-    def LoadCreate(imagepath: str) -> Visuals:
+    def LoadCreate(imagepath: str, force: bool = False) -> Visuals:
         ''' Load or create visuals from image.'''
 
         # 1. Load from json file
         loaded = Visuals.Load(imagepath)
-        if (loaded is not None):
+        if (loaded is not None) and (not force):
             return loaded
 
         # 2. Otherwise create and save
@@ -78,6 +82,9 @@ class Visuals:
         if (image is None):
             return Visuals(imagepath=imagepath)
 
+        # Get image size
+        height, width, _ = image.shape
+
         # Obliczenie średniej jasności, saturacji oraz barwy
         image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         hue = np.mean(image_hsv[:, :, 0])  # Średnia barwa (hue)
@@ -85,6 +92,8 @@ class Visuals:
         brightness = np.mean(image_hsv[:, :, 2])  # Średnia jasność
 
         return Visuals(imagepath=imagepath,
+                       width=width,
+                       height=height,
                        hue=hue,
                        saturation=saturation,
                        brightness=brightness)

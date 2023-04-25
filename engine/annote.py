@@ -130,6 +130,16 @@ class Annote():
         ''' Returns class name.'''
         return self.className
 
+    @property
+    def width(self):
+        ''' Returns width.'''
+        return self.box[2] - self.box[0]
+
+    @property
+    def height(self):
+        ''' Returns height.'''
+        return self.box[3] - self.box[1]
+
     def GetBox(self):
         ''' Returns box.'''
         return self.box
