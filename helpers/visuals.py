@@ -69,15 +69,17 @@ class Visuals:
     @staticmethod
     def Create(imagepath: str) -> Visuals:
         ''' Create visuals from image.'''
-        # Check : Not existing image
+        # Check : Not existing image, empty visuals
         if (not os.path.exists(imagepath)):
-            return None
+            return Visuals(imagepath=imagepath)
 
-        # Load image and convert HSV
+        # Load/Check image
         image = cv2.imread(imagepath)
-        image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        if (image is None):
+            return Visuals(imagepath=imagepath)
 
         # Obliczenie średniej jasności, saturacji oraz barwy
+        image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         hue = np.mean(image_hsv[:, :, 0])  # Średnia barwa (hue)
         saturation = np.mean(image_hsv[:, :, 1])  # Średnia saturacja
         brightness = np.mean(image_hsv[:, :, 2])  # Średnia jasność
