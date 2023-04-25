@@ -16,6 +16,7 @@ from helpers.files import FixPath
 from copy import copy
 from PyQt5.QtCore import Qt
 from datetime import datetime
+from views.ViewImagesSummary import ViewImagesSummary
 from views.ViewImagesTable import ViewImagesTable
 from views.ViewImagesTableRow import ViewImagesTableRow
 
@@ -96,6 +97,10 @@ class MainWindowGui(Ui_MainWindow):
             self.ui.fileSelectorTableWidget, self.annoter.GetFiles())
         self.ui.fileSelectorTableWidget.itemClicked.connect(
             self.CallbackFileSelectorItemClicked)
+
+        # Images summary : Setup
+        ViewImagesSummary.View(self.ui.fileSummaryLabel,
+                               self.annoter.GetFiles())
 
         # Menu handling
         self.ui.actionZamknijProgram.triggered.connect(self.CallbackClose)
@@ -200,9 +205,11 @@ class MainWindowGui(Ui_MainWindow):
         rowIndex = self.ImageIDToRowNumber(imageID)
 
         if (fileEntry is not None):
+            self.ui.fileSelectorTableWidget.setSortingEnabled(False)
             ViewImagesTableRow.View(self.ui.fileSelectorTableWidget,
                                     rowIndex,
                                     fileEntry)
+            self.ui.fileSelectorTableWidget.setSortingEnabled(True)
 
 #         # Setup files selector table widget
 #         self.ui.fileSelectorTableWidget.clearSelection()

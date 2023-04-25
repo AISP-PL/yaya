@@ -7,9 +7,9 @@
 # WARNING! All changes made in this file will be lost!
 
 
+from PyQt5 import QtCore, QtGui, QtWidgets
 from ViewerEditorImage import ViewerEditorImage
 import tango_rc
-from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_MainWindow(object):
@@ -121,6 +121,9 @@ class Ui_MainWindow(object):
         self.nextFileButton.setIcon(icon1)
         self.nextFileButton.setObjectName('nextFileButton')
         self.sliderLayout.addWidget(self.nextFileButton)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.sliderLayout.addItem(spacerItem)
         self.verticalLayoutRight.addLayout(self.sliderLayout)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName('horizontalLayout_2')
@@ -154,10 +157,14 @@ class Ui_MainWindow(object):
         self.DeleteNotAnnotatedFilesButton.setObjectName(
             'DeleteNotAnnotatedFilesButton')
         self.horizontalLayout_2.addWidget(self.DeleteNotAnnotatedFilesButton)
-        spacerItem = QtWidgets.QSpacerItem(
+        spacerItem1 = QtWidgets.QSpacerItem(
             40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem)
+        self.horizontalLayout_2.addItem(spacerItem1)
         self.verticalLayoutRight.addLayout(self.horizontalLayout_2)
+        self.fileSummaryLabel = QtWidgets.QLabel(self.layoutWidget)
+        self.fileSummaryLabel.setTextFormat(QtCore.Qt.MarkdownText)
+        self.fileSummaryLabel.setObjectName('fileSummaryLabel')
+        self.verticalLayoutRight.addWidget(self.fileSummaryLabel)
         self.fileSelectorTableWidget = QtWidgets.QTableWidget(
             self.layoutWidget)
         sizePolicy = QtWidgets.QSizePolicy(
@@ -239,9 +246,9 @@ class Ui_MainWindow(object):
         self.detectAnnotationsButton.setIcon(icon11)
         self.detectAnnotationsButton.setObjectName('detectAnnotationsButton')
         self.horizontalLayout_3.addWidget(self.detectAnnotationsButton)
-        spacerItem1 = QtWidgets.QSpacerItem(
+        spacerItem2 = QtWidgets.QSpacerItem(
             40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem1)
+        self.horizontalLayout_3.addItem(spacerItem2)
         self.verticalLayoutRight.addLayout(self.horizontalLayout_3)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName('horizontalLayout_4')
@@ -257,9 +264,9 @@ class Ui_MainWindow(object):
         self.paintCircleButton.setCheckable(True)
         self.paintCircleButton.setObjectName('paintCircleButton')
         self.horizontalLayout_4.addWidget(self.paintCircleButton)
-        spacerItem2 = QtWidgets.QSpacerItem(
+        spacerItem3 = QtWidgets.QSpacerItem(
             40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_4.addItem(spacerItem2)
+        self.horizontalLayout_4.addItem(spacerItem3)
         self.verticalLayoutRight.addLayout(self.horizontalLayout_4)
         self.toolSettingsStackedWidget = QtWidgets.QStackedWidget(
             self.layoutWidget)
@@ -498,9 +505,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_7.addWidget(self.button6)
         self.horizontalLayout_6.addWidget(self.frame)
         self.verticalLayout_2.addLayout(self.horizontalLayout_6)
-        spacerItem3 = QtWidgets.QSpacerItem(
+        spacerItem4 = QtWidgets.QSpacerItem(
             20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_2.addItem(spacerItem3)
+        self.verticalLayout_2.addItem(spacerItem4)
         self.toolSettingsStackedWidget.addWidget(self.pageAnnotations)
         self.pageCircle = QtWidgets.QWidget()
         self.pageCircle.setObjectName('pageCircle')
@@ -521,9 +528,9 @@ class Ui_MainWindow(object):
         self.paintSizeSlider.setObjectName('paintSizeSlider')
         self.horizontalLayout_5.addWidget(self.paintSizeSlider)
         self.verticalLayout.addLayout(self.horizontalLayout_5)
-        spacerItem4 = QtWidgets.QSpacerItem(
+        spacerItem5 = QtWidgets.QSpacerItem(
             20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem4)
+        self.verticalLayout.addItem(spacerItem5)
         self.toolSettingsStackedWidget.addWidget(self.pageCircle)
         self.pageKeycodes = QtWidgets.QWidget()
         self.pageKeycodes.setObjectName('pageKeycodes')
@@ -615,6 +622,7 @@ class Ui_MainWindow(object):
             _translate('MainWindow', 'X'))
         self.DeleteNotAnnotatedFilesButton.setText(
             _translate('MainWindow', 'Delete not annotated'))
+        self.fileSummaryLabel.setText(_translate('MainWindow', 'TextLabel'))
         self.fileSelectorTableWidget.setSortingEnabled(True)
         self.label.setText(_translate('MainWindow', 'Annotations'))
         self.addAnnotationsButton.setText(_translate('MainWindow', '(A)dd '))

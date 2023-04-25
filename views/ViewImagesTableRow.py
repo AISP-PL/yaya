@@ -25,9 +25,6 @@ class ViewImagesTableRow:
         # Get visuals
         visuals = fileEntry['Visuals']
 
-        # Sorting : disable
-        table.setSortingEnabled(False)
-
         # Start from column zero
         colIndex = 0
 
@@ -103,6 +100,3 @@ class ViewImagesTableRow:
         item.setToolTip(str(fileEntry['ID']))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
-
-        # Sorting : enable again
-        table.setSortingEnabled(True)
