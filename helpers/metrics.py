@@ -9,28 +9,29 @@ from . import boxes
 from helpers import prefilters
 from engine.annote import AnnoteEvaluation
 
+
 @dataclass
 class Metrics:
     ''' List of evaluated metrics '''
-    All : int = field(init=True, default = 0)
-    TP : int = field(init=True, default = 0)
-    FP : int = field(init=True, default = 0)
-    TN : int = field(init=True, default = 0)
-    FN : int = field(init=True, default = 0)
+    All: int = field(init=True, default=0)
+    TP: int = field(init=True, default=0)
+    FP: int = field(init=True, default=0)
+    TN: int = field(init=True, default=0)
+    FN: int = field(init=True, default=0)
     # Label true positive
-    LTP : int = field(init=True, default=0)
+    LTP: int = field(init=True, default=0)
 
     def __post_init__(self):
         ''' Post initiliatizaton.'''
-    
+
     @property
     def correct(self) -> float:
         ''' Returns % of correct detections.'''
         if (self.All == 0):
             return 0
 
-        return 100* self.LTP / self.All
-    
+        return 100 * self.LTP / self.All
+
     @property
     def correct_bboxes(self) -> float:
         ''' Returns % of correct detections.'''
@@ -44,7 +45,6 @@ class Metrics:
         ''' Newly detected bboxes'''
         return self.FP
 
-
     @property
     def precision(self):
         ''' Returns metric.'''
@@ -52,7 +52,6 @@ class Metrics:
             return 0
 
         return self.TP/(self.TP+self.FP)
-
 
     @property
     def recall(self) -> float:
@@ -66,8 +65,6 @@ class Metrics:
     def mAP(self):
         ''' Returns metric.'''
         return self.TP/self.All
-
-    
 
 
 def MetricIOU(box1, box2):
@@ -117,13 +114,11 @@ def dSurplus(annotations, detections, minConfidence=0.5):
 
     return len(detections) - len(annotations)
 
-    
 
-def EvaluateMetrics(annotations : list, 
-                    detections : list, 
-                    minConfidence : float =0.5, 
-                    minIOU : float =0.7) -> tuple:
-
+def EvaluateMetrics(annotations: list,
+                    detections: list,
+                    minConfidence: float = 0.5,
+                    minIOU: float = 0.5) -> tuple:
     '''
         Definition of terms:
             True Positive (TP) — Correct detection made by the model.
@@ -178,6 +173,9 @@ def EvaluateMetrics(annotations : list,
 
     # Detections unmatched are detections left in list.
     detectionsUnmatched = detections
+    # For view : Filter by IOU internal with same annotes and also with txt annotes.
+    detectionsUnmatched = prefilters.FilterIOUbyConfidence(detectionsUnmatched,
+                                                           annotations)
 
     # True positives // Annotations Bboxes matched
     TP = len(annotationsMatched)
@@ -190,10 +188,9 @@ def EvaluateMetrics(annotations : list,
     LTP = sum(1 if (annotation.classNumber == detection.classNumber)
               else 0 for annotation, detection in annotationsMatched)
 
-    return Metrics(All = len(annotations),
+    return Metrics(All=len(annotations),
                    TP=TP,
                    FP=FP,
                    FN=FN,
                    LTP=LTP
                    )
-

@@ -92,7 +92,8 @@ class MainWindowGui(Ui_MainWindow):
             self.CallbackPaintSizeSlider)
 
         # Images table : Setup
-        ViewImagesTable.View(self.ui.fileSelectorTableWidget, self.annoter.GetFiles())
+        ViewImagesTable.View(
+            self.ui.fileSelectorTableWidget, self.annoter.GetFiles())
         self.ui.fileSelectorTableWidget.itemClicked.connect(
             self.CallbackFileSelectorItemClicked)
 
@@ -203,16 +204,16 @@ class MainWindowGui(Ui_MainWindow):
                                     rowIndex,
                                     fileEntry)
 
-        # Setup files selector table widget
-        self.ui.fileSelectorTableWidget.clearSelection()
-        if (imageCount != 0):
-            # Select whole row with image
-            for i in range(self.ui.fileSelectorTableWidget.columnCount()):
-                item = self.ui.fileSelectorTableWidget.item(rowIndex, i)
-                item.setSelected(True)
+#         # Setup files selector table widget
+#         self.ui.fileSelectorTableWidget.clearSelection()
+#         if (imageCount != 0):
+#             # Select whole row with image
+#             for i in range(self.ui.fileSelectorTableWidget.columnCount()):
+#                 item = self.ui.fileSelectorTableWidget.item(rowIndex, i)
+#                 item.setSelected(True)
 
-#             Move verticall scroll bar also
-#             self.ui.fileSelectorTableWidget.verticalScrollBar().setValue(rowIndex)
+# #             Move verticall scroll bar also
+# #             self.ui.fileSelectorTableWidget.verticalScrollBar().setValue(rowIndex)
 
         # Paint size slider
         self.ui.paintLabel.setText('Paint size %u' %
