@@ -23,7 +23,8 @@ class ViewImagesTable:
         # Update GUI data
         table.clear()
         labels = _translate('ViewImagesTable',
-                            'Name;IsAnnotated;Correct [%];Correct [boxes][%];New [j];Precision;Recall;Size;Hue;Saturation;Brightness;ImSize;Errors').split(';')
+                            'Name;ImSize;Hue;Saturation;Brightness;' +
+                            'IsAnnotated;Classes;Size;Correct [%];Correct [boxes][%];New [j];Precision;Recall;Errors').split(';')
         table.setColumnCount(len(labels))
         table.setHorizontalHeaderLabels(labels)
         table.setRowCount(len(files))

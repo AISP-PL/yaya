@@ -224,6 +224,7 @@ class Annoter():
                 'ID': index,
                 'IsAnnotation': isAnnotation,
                 'Annotations': txtAnnotations,
+                'AnnotationsClasses': ','.join({f'{item.classNumber}' for item in txtAnnotations}),
                 'Datetime': os.lstat(path+filename).st_mtime,
                 'Errors': len(self.errors),
                 'Detections': detections,
@@ -526,6 +527,8 @@ class Annoter():
         # Update file entry
         self.files[self.offset]['IsAnnotation'] = (len(self.annotations) != 0)
         self.files[self.offset]['Annotations'] = self.annotations
+        self.files[self.offset]['AnnotationsClasses'] = ','.join(
+            {f'{item.classNumber}' for item in self.annotations})
 
     def IsEnd(self):
         '''True if files ended.'''

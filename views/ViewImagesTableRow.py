@@ -35,6 +35,30 @@ class ViewImagesTableRow:
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 
+        # width, height
+        item = RectTableWidgetItem(visuals.width, visuals.height)
+        item.setToolTip(str(fileEntry['ID']))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1
+
+        # Hue column
+        item = FloatTableWidgetItem(visuals.hue)
+        item.setToolTip(str(fileEntry['ID']))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1
+
+        # Saturation column
+        item = FloatTableWidgetItem(visuals.saturation)
+        item.setToolTip(str(fileEntry['ID']))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1
+
+        # Brightness column
+        item = FloatTableWidgetItem(visuals.brightness)
+        item.setToolTip(str(fileEntry['ID']))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1
+
         # IsAnnotation column
         item = QTableWidgetItem()
         if (fileEntry['IsAnnotation']):
@@ -44,6 +68,19 @@ class ViewImagesTableRow:
         else:
             item.setBackground(Qt.red)
             item.setText(f"{fileEntry['IsAnnotation']}")
+        item.setToolTip(str(fileEntry['ID']))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1
+
+        # Annotation classes
+        item = QTableWidgetItem()
+        item.setText(fileEntry['AnnotationsClasses'])
+        item.setToolTip(str(fileEntry['ID']))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1
+
+        # Average width, height, size
+        item = RectTableWidgetItem(metrics.AvgWidth, metrics.AvgHeight)
         item.setToolTip(str(fileEntry['ID']))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
@@ -74,36 +111,6 @@ class ViewImagesTableRow:
 
         # Recall column
         item = FloatTableWidgetItem(metrics.recall)
-        item.setToolTip(str(fileEntry['ID']))
-        table.setItem(rowIndex, colIndex, item)
-        colIndex += 1
-
-        # Average width, height, size
-        item = RectTableWidgetItem(metrics.AvgWidth, metrics.AvgHeight)
-        item.setToolTip(str(fileEntry['ID']))
-        table.setItem(rowIndex, colIndex, item)
-        colIndex += 1
-
-        # Hue column
-        item = FloatTableWidgetItem(visuals.hue)
-        item.setToolTip(str(fileEntry['ID']))
-        table.setItem(rowIndex, colIndex, item)
-        colIndex += 1
-
-        # Saturation column
-        item = FloatTableWidgetItem(visuals.saturation)
-        item.setToolTip(str(fileEntry['ID']))
-        table.setItem(rowIndex, colIndex, item)
-        colIndex += 1
-
-        # Brightness column
-        item = FloatTableWidgetItem(visuals.brightness)
-        item.setToolTip(str(fileEntry['ID']))
-        table.setItem(rowIndex, colIndex, item)
-        colIndex += 1
-
-        # width, height
-        item = RectTableWidgetItem(visuals.width, visuals.height)
         item.setToolTip(str(fileEntry['ID']))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
