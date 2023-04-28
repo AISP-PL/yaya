@@ -4,11 +4,21 @@
 
 `YAYA - Yet Another YOLO Annoter` with `QT5 widgets` gui, and ...
 
-- Rewritten in python,
-- Checks for errors of overriding boxes,
-- Auto-annotation feature added  - use yolo to detect and describe annotations of your image,
+- Rewritten in **python**,
+- Checks for errors of **overriding boxes**,
+- Displays **image properties** `size`, `hue`, `saturation`, `brightness`,
+- Displays **annotations properties**, `average size`, `class numbers`,
+- Uses given **YOLOv4 detectors** to detect every file and store detections!
+- Calculate **metrics TP,TN,FP,FN,Precision,Recall** for every photo!
+- Auto-annotation with **YOLOv4 detectors** feature added  - use yolo to detect and describe annotations of your image,
 - Manual Yolo detection by presing 'd' - to check YOLO with original data,
 - You can use standard YOLOv4 (MSCOCO) or your custom YOLOv4
+
+### Requirements
+
+`pip install -r requirements`
+
+Install YOLOv4 darknet library  `libdarknet.so` in your operating system (https://github.com/AlexeyAB/darknet) for usage of custom YOLOv4 detectors.
 
 
 ### How to start?
@@ -53,7 +63,3 @@ optional arguments:
 - Auto-annotation feature added  - use yolo to detect and describe annotations of your image,
 - Manual Yolo detection by presing 'd' - to check YOLO with original data,
 - You can use standard YOLOv4 (MSCOCO) or your custom YOLOv4
-
-
-
-

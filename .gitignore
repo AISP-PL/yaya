@@ -133,3 +133,6 @@ dmypy.json
 *.names
 ObjectDetectors/yolov4*
 env*/
+input/*.detector
+input/*.json
+input/*.txt
