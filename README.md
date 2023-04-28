@@ -21,7 +21,28 @@
 Install YOLOv4 darknet library  `libdarknet.so` in your operating system (https://github.com/AlexeyAB/darknet) for usage of custom YOLOv4 detectors.
 
 
+
+### How to add custom YOLOv4 detector?
+
+1. Inside directory `ObjectDetectors/` create your detector directory (for example `yolov4custom`).
+2. Copy all YOLOv4 detector files  : `yolo.cfg`,  `yolo.data`,  `yolo.names`,  `yolo.weights` (names should be identicall)
+3. Got it! Now you can use this detector!
+
+Found detectors list is also shown at the program start, example :
+
+```
+python ./yolo-annotate.py -i input/
+DEBUG:root:Logging enabled!
+/usr/local/lib/libdarknet.so
+INFO:root:(Found detector) 0 - /home/spasz/python/aisp-tools/yaya/ObjectDetectors/yolov4custom/yolo.
+```
+
+
+
 ### How to start?
+
+To load all test images from `input` directory and start application, you can use command
+
 `./yolo-annotate.py -i input/`
 
 ### Key codes
