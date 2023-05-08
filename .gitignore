@@ -131,7 +131,7 @@ dmypy.json
 .directory
 *.weights
 *.names
-ObjectDetectors/yolov4*
+ObjectDetectors/yolov*
 env*/
 input/*.detector
 input/*.json
