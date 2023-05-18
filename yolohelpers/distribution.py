@@ -45,7 +45,7 @@ class Distribution:
         # Is showcase enabled
         self.isShowcase = args.showcase
         # Excluded files
-        self.excluded = ['dataset.txt']
+        self.excluded = ['dataset.txt', 'train.txt']
         # Statistics dataframe of all annotations
         self.distribution = {
             'Directory': [],

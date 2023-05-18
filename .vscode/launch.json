@@ -19,7 +19,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/yolo-distribution.py",
             "console": "integratedTerminal",
-            "args": ["-i", "input/"],
+            "args": ["-i", "/media/spasz/CrucialExt240gb/Datasets/CrowdHuman/yolov4_crowdhuman/data/crowdhuman-1280x704/", "-d", "0", "-r", "1:12"],
             "justMyCode": true
 
         }
