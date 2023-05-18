@@ -12,6 +12,16 @@
             "console": "integratedTerminal",
             "args": ["-i /home/spasz/Dokumenty/git/aisp-imgdb/data/extgdkkia-verify/","-d 1","-f"],
             "justMyCode": true
+        },
+        {
+            "name": "YoloDistribution",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/yolo-distribution.py",
+            "console": "integratedTerminal",
+            "args": ["-i", "input/"],
+            "justMyCode": true
+
         }
     ]
 }

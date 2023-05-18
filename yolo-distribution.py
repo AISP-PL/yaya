@@ -16,6 +16,8 @@ parser.add_argument('-i', '--input', type=str,
                     required=True, help='Input path')
 parser.add_argument('-r', '--rename', type=str,
                     required=False, help='Rename class number `class0` to `class1`. class0:class1')
+parser.add_argument('-d', '--delete', type=int, nargs='?', const=None, default=None,
+                    required=False, help='Delete all annotations with class `number`')
 parser.add_argument('-va', '--verifyAnnotations', action='store_true',
                     required=False, help='Verify/Check of text annotations.')
 parser.add_argument('-vi', '--verifyImages', action='store_true',

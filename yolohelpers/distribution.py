@@ -53,6 +53,9 @@ class Distribution:
             'Width': [],
             'Height': []
         }
+        # Delete class number
+        self.delete = args.delete
+
         # Rename class x to y
         self.rename = None
         if (args.rename is not None):
@@ -72,12 +75,20 @@ class Distribution:
             if (filepath not in self.excluded) and (GetExtension(filepath) == '.txt'):
                 # Open annotations files
                 annotations = ReadAnnotations(dirpath+filepath)
+
                 # Correct all annotations
                 correctedAnnotations = [self.__CorrectAnnotationRect(
                     entry) for entry in annotations]
+
+                # Delete all annotations with class `number`
+                if (self.delete is not None):
+                    correctedAnnotations = [
+                        entry for entry in correctedAnnotations if (entry[0] != self.delete)]
+
                 # Rename annotations if enabled
                 correctedAnnotations = [self.__RenameAnnotation(
-                    entry) for entry in annotations]
+                    entry) for entry in correctedAnnotations]
+
                 # If annotaions were wrong then correct file
                 if (annotations != correctedAnnotations):
                     annotations = correctedAnnotations
