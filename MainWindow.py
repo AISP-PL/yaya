@@ -308,6 +308,7 @@ class MainWindowGui(Ui_MainWindow):
 
     def CallbackDetectAnnotations(self):
         ''' Detect annotations.'''
+        self.ui.toolSettingsStackedWidget.setCurrentWidget(self.ui.pageDetector)
         self.annoter.Process(forceDetector=True)
         self.Setup()
 

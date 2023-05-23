@@ -5,7 +5,6 @@ import logging
 import argparse
 import sys
 import engine.annote as annote
-from engine.gui import *
 from engine.annoter import *
 from helpers.files import *
 from helpers.textAnnotations import *
