@@ -8,7 +8,8 @@ import numpy as np
 import time
 
 
-def py_cpu_softnms(dets, sc, Nt=0.3, sigma=0.5, thresh=0.001, method=2):
+def py_cpu_softnms(dets : np.array, sc : np.array, 
+                   Nt : float =0.3, sigma : float=0.5, thresh : float=0.001, method=2):
     """
     py_cpu_softnms
     :param dets:   boexs 坐标矩阵 format [y1, x1, y2, x2]
@@ -103,7 +104,11 @@ def speed():
 
 def test():
     # boxes and scores
-    boxes = np.array([[200, 200, 400, 400], [220, 220, 420, 420], [200, 240, 400, 440], [240, 200, 440, 400], [1, 1, 2, 2]], dtype=np.float32)
+    boxes = np.array([[200, 200, 400, 400], 
+                      [220, 220, 420, 420], 
+                      [200, 240, 400, 440], 
+                      [240, 200, 440, 400], 
+                      [1, 1, 2, 2]], dtype=np.float32)
     boxscores = np.array([0.9, 0.8, 0.7, 0.6, 0.5], dtype=np.float32)
 
     index = py_cpu_softnms(boxes, boxscores, method=3)

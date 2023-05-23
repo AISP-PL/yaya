@@ -159,7 +159,8 @@ class Annoter():
         detAnnotes = self.detector.Detect(im,
                                           confidence=self.confidence,
                                           nms_thresh=self.nms,
-                                          boxRelative=True)
+                                          boxRelative=True,
+                                          nmsMethod=self.nmsMethod)
 
         # Save/Update detector annotations file
         SaveDetections(filepath, detAnnotes, extension='.detector')
@@ -576,9 +577,10 @@ class Annoter():
                 metrics = self.CalculateYoloMetrics(
                     txtAnnotations, detAnnotes)
                 # For view : Filter by IOU internal with same annotes and also with txt annotes.
-                detAnnotes = prefilters.FilterIOUbyConfidence(detAnnotes,
-                                                              detAnnotes + txtAnnotations,
-                                                              maxIOU=sqrt(self.nms))
+                if (len(txtAnnotations)):
+                    detAnnotes = prefilters.FilterIOUbyConfidence(detAnnotes,
+                                                                detAnnotes + txtAnnotations,
+                                                                maxIOU=sqrt(self.nms))
 
                 # Store metrics
                 fileEntry['Metrics'] = metrics

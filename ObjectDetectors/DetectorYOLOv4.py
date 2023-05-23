@@ -8,7 +8,7 @@ import logging
 import cv2
 import numpy as np
 from ObjectDetectors.yolov4 import darknet
-from ObjectDetectors.common.Detector import Detector
+from ObjectDetectors.common.Detector import Detector, NmsMethod
 from helpers.files import GetFilepath
 from math import ceil
 from helpers.images import GetFixedFitToBox
@@ -124,7 +124,13 @@ class DetectorYOLOv4(Detector):
         ''' Returns network image height.'''
         return self.netHeight
 
-    def Detect(self, frame, confidence=0.5, nms_thresh=0.45, boxRelative=False):
+    def Detect(self, 
+               frame, 
+               confidence=0.5, 
+               nms_thresh=0.45, 
+               boxRelative=False,
+               nmsMethod:NmsMethod=NmsMethod.Nms,
+               ):
         ''' Detect objects in given frame'''
         # Pre check
         if (frame is None):
@@ -164,7 +170,8 @@ class DetectorYOLOv4(Detector):
                                               self.imwidth,
                                               self.imheight,
                                               thresh=confidence,
-                                              nms=nms_thresh)
+                                              nms=nms_thresh,
+                                              nmsMethod=nmsMethod)
 
             # Change box coordinates to rectangle
             if (boxRelative is True):
@@ -218,7 +225,8 @@ class DetectorYOLOv4(Detector):
                                               boundaryWidth,
                                               boundaryHeight,
                                               thresh=confidence,
-                                              nms=nms_thresh)
+                                              nms=nms_thresh,
+                                              nmsMethod=nmsMethod)
 
             # Change box coordinates to rectangle
             if (boxRelative is True):

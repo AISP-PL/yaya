@@ -25,6 +25,11 @@ from ctypes import *
 import random
 import os
 
+import numpy as np
+from helpers.soft_nms import py_cpu_softnms
+
+from ObjectDetectors.common.Detector import NmsMethod
+
 
 class BOX(Structure):
     _fields_ = [('x', c_float),
@@ -73,16 +78,16 @@ def network_height(net):
     return lib.network_height(net)
 
 
-def bbox2points(bbox):
+def bbox2points(bbox: tuple) -> tuple:
     """
     From bounding box yolo format
     to corner points cv2 rectangle
     """
     x, y, w, h = bbox
-    xmin = int(round(x - (w / 2)))
-    xmax = int(round(x + (w / 2)))
-    ymin = int(round(y - (h / 2)))
-    ymax = int(round(y + (h / 2)))
+    xmin = round(x - (w / 2))
+    xmax = round(x + (w / 2))
+    ymin = round(y - (h / 2))
+    ymax = round(y + (h / 2))
     return xmin, ymin, xmax, ymax
 
 
@@ -169,25 +174,48 @@ def remove_negatives(detections, class_names, num):
     return predictions
 
 
-def postprocess_detections(detections, class_names, num):
+def postprocess_detections(detections,
+                           class_names: list,
+                           num: int,
+                           confidence: float = 0.5):
     """
     Remove all classes with 0% confidence within the detection
-    and changed format
+    and changed format.
     """
-    predictions = []
-    for det in detections[:num]:
-        for idx, name in enumerate(class_names):
-            # Add only confidence > 0%
-            if det.prob[idx] > 0:
-                confidence = round(det.prob[idx] * 100, 2)
-                bbox = (det.bbox.x, det.bbox.y, det.bbox.w, det.bbox.h)
-                predictions.append((str(name), confidence, bbox2points(bbox)))
+    # Number of classes
+    class_number = len(class_names)
 
-    return predictions
+    bboxes = []
+    confidences = []
+    class_ids = []
+    for det in detections[:num]:
+        # Check : objectness score
+        if (det.objectness <= confidence):
+            continue
+
+        # Classes confidences : To list
+        classConfidences = det.prob[0:class_number]
+
+        # Check : Best class score > confidence
+        max_conf = max(classConfidences)
+        if (max_conf <= confidence):
+            continue
+
+        # Detection : Found! Added to predictions
+        max_idx = classConfidences.index(max_conf)
+        bbox = (det.bbox.x, det.bbox.y, det.bbox.w, det.bbox.h)
+
+        # Detection : Append to lists
+        bboxes.append(bbox2points(bbox))
+        confidences.append(max_conf)
+        class_ids.append(max_idx)
+
+
+    return bboxes, class_ids, confidences
 
 
 def detect_image(network, class_names, image, imwidth=0, imheight=0,
-                 thresh=.5, hier_thresh=.5, nms=.45):
+                 thresh=.5, hier_thresh=.5, nms=.45, nmsMethod:NmsMethod=NmsMethod.Nms):
     """
         Returns a list with highest confidence class and their bbox
     """
@@ -198,12 +226,35 @@ def detect_image(network, class_names, image, imwidth=0, imheight=0,
                                    thresh, hier_thresh, None, 0, pnum, 0)
     num = pnum[0]
 
-    # Filter NMS
-    if nms:
+    # Nms : Default YOLONMS
+    if (nmsMethod == NmsMethod.Nms):
         do_nms_sort(detections, num, len(class_names), nms)
+
     # Postprocess : Filter 0% confidences and reformat
-    predictions = postprocess_detections(detections, class_names, num)
+    rects, classids, confidences = postprocess_detections(detections, 
+                                                          class_names, 
+                                                          num,
+                                                          confidence=0)
     free_detections(detections, num)
+
+    
+    if (nmsMethod == NmsMethod.SoftNms):
+        # Dets : Combined bboxes with classids 
+        dets = np.array( rects)
+        scores = np.array( confidences )
+        index = py_cpu_softnms(dets, scores, 
+                               Nt=nms,thresh=thresh)
+
+        # Detections : Filter by index
+        rects = [rects[i] for i in index]
+        classids = [classids[i] for i in index]
+        confidences = [confidences[i] for i in index]
+
+    # Create single list with detections from 3 lists.
+    predictions = [ (class_names[classid], 100*score, rect) 
+                     for rect, classid, score in zip (rects, classids, confidences)]
+
+
     return predictions
 
 

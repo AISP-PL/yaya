@@ -5,12 +5,23 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: bieżący plik",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
             "name": "YAYA",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/yolo-annotate.py",
             "console": "integratedTerminal",
-            "args": ["-i", "input/"],
+            "args": [
+                "-i",
+                "input/"
+            ],
             "justMyCode": true
         },
         {
@@ -19,9 +30,15 @@
             "request": "launch",
             "program": "${workspaceFolder}/yolo-distribution.py",
             "console": "integratedTerminal",
-            "args": ["-i", "/media/spasz/CrucialExt240gb/Datasets/CrowdHuman/yolov4_crowdhuman/data/crowdhuman-1280x704/", "-d", "0", "-r", "1:12"],
+            "args": [
+                "-i",
+                "/media/spasz/CrucialExt240gb/Datasets/CrowdHuman/yolov4_crowdhuman/data/crowdhuman-1280x704/",
+                "-d",
+                "0",
+                "-r",
+                "1:12"
+            ],
             "justMyCode": true
-
         }
     ]
 }
