@@ -2,7 +2,6 @@
 __author__ = 'ZFTurbo: https://kaggle.com/zfturbo'
 
 import numpy as np
-from numba import jit
 
 
 def prepare_boxes(boxes, scores, labels):
@@ -121,7 +120,6 @@ def cpu_soft_nms_float(dets, sc, Nt, sigma, thresh, method):
     return keep
 
 
-@jit(nopython=True)
 def nms_float_fast(dets, scores, thresh):
     """
     # It's different from original nms because we have float coordinates on range [0; 1]
