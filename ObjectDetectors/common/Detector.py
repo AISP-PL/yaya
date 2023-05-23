@@ -4,8 +4,14 @@ Created on 23 lis 2020
 @author: spasz
 '''
 
+from enum import Enum
 import logging
 from Gui.drawing import DrawDetections
+
+class NmsMethod(str, Enum):
+    ''' Different NMS methods.'''
+    Nms = 'Nms'
+    SoftNms = 'SoftNms'
 
 
 class Detector:

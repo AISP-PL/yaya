@@ -9,6 +9,7 @@ import os
 import time
 import cv2
 import logging
+from ObjectDetectors.common.Detector import NmsMethod
 import engine.annote as annote
 import helpers.prefilters as prefilters
 import helpers.transformations as transformations
@@ -67,6 +68,8 @@ class Annoter():
         self.confidence = 0.5
         # Detector : NMS Threshold value
         self.nms = 0.45
+        # Detector : NMS method
+        self.nmsMethod = NmsMethod.Nms
 
         # File entries list
         self.files = None

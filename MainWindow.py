@@ -7,6 +7,7 @@ import shutil
 import sys
 import os
 import logging
+from ObjectDetectors.common.Detector import NmsMethod
 from Ui_MainWindow import Ui_MainWindow
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTableWidgetItem,\
     QListWidgetItem, QButtonGroup, QMessageBox
@@ -92,10 +93,15 @@ class MainWindowGui(Ui_MainWindow):
         # Detector : Confidence and NMS sliders defaults (0.5 and 0.45)
         self.ui.detectorConfidenceSlider.setValue(50)
         self.ui.detectorNmsSlider.setValue(45)
+        self.ui.detectorNmsCombo.clear()
+        for method in NmsMethod:
+            self.ui.detectorNmsCombo.addItem(method.name)
         self.CallbackDetectorUpdate()
-        # Detector : Callbacks for sliders
+
+        # Detector : Callbacks for sliders, method
         self.ui.detectorConfidenceSlider.valueChanged.connect(self.CallbackDetectorUpdate)
         self.ui.detectorNmsSlider.valueChanged.connect(self.CallbackDetectorUpdate)
+        self.ui.detectorNmsCombo.currentTextChanged.connect(self.CallbackDetectorUpdate)
 
         # Paint size slider
         self.ui.paintSizeSlider.valueChanged.connect(
@@ -319,6 +325,7 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.toolSettingsStackedWidget.setCurrentWidget(self.ui.pageDetector)
         self.annoter.confidence = self.ui.detectorConfidenceSlider.value() / 100
         self.annoter.nms = self.ui.detectorNmsSlider.value() / 100
+        self.annoter.nmsMethod = NmsMethod(self.ui.detectorNmsCombo.currentText())
         self.annoter.Process(forceDetector=True)
         self.Setup()
 
