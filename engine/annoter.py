@@ -4,6 +4,7 @@ Created on 17 lis 2020
 @author: spasz
 '''
 from datetime import timedelta
+from math import sqrt
 import os
 import time
 import cv2
@@ -573,7 +574,8 @@ class Annoter():
                     txtAnnotations, detAnnotes)
                 # For view : Filter by IOU internal with same annotes and also with txt annotes.
                 detAnnotes = prefilters.FilterIOUbyConfidence(detAnnotes,
-                                                              detAnnotes + txtAnnotations)
+                                                              detAnnotes + txtAnnotations,
+                                                              maxIOU=sqrt(self.nms))
 
                 # Store metrics
                 fileEntry['Metrics'] = metrics

@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/yolo-annotate.py",
             "console": "integratedTerminal",
-            "args": ["-i /home/spasz/Dokumenty/git/aisp-imgdb/data/extgdkkia-verify/","-d 1","-f"],
+            "args": ["-i", "input/"],
             "justMyCode": true
         },
         {

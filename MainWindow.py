@@ -318,7 +318,7 @@ class MainWindowGui(Ui_MainWindow):
         ''' Detect annotations.'''
         self.ui.toolSettingsStackedWidget.setCurrentWidget(self.ui.pageDetector)
         self.annoter.confidence = self.ui.detectorConfidenceSlider.value() / 100
-        self.annnoter.nms = self.ui.detectorNmsSlider.value() / 100
+        self.annoter.nms = self.ui.detectorNmsSlider.value() / 100
         self.annoter.Process(forceDetector=True)
         self.Setup()
 
