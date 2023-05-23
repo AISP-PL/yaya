@@ -37,7 +37,7 @@ def prepare_boxes(boxes, scores, labels):
     return result_boxes, scores, labels
 
 
-def cpu_soft_nms_float(dets, sc, Nt, sigma, thresh, method):
+def cpu_soft_nms_float(dets, sc, Nt, sigma, thresh, method) -> tuple:
     """
     Based on: https://github.com/DocF/Soft-NMS/blob/master/soft_nms.py
     It's different from original soft-NMS because we have float coordinates on range [0; 1]
@@ -117,7 +117,7 @@ def cpu_soft_nms_float(dets, sc, Nt, sigma, thresh, method):
     # select the boxes and keep the corresponding indexes
     inds = dets[:, 4][scores > thresh]
     keep = inds.astype(int)
-    return keep
+    return keep, scores[scores > thresh]
 
 
 def nms_float_fast(dets, scores, thresh):
@@ -201,14 +201,16 @@ def nms_method(boxes, scores, labels, method=3, iou_thr=0.5, sigma=0.5, thresh=0
         labels_by_label = np.array([l] * len(boxes_by_label))
 
         if method != 3:
-            keep = cpu_soft_nms_float(boxes_by_label.copy(), scores_by_label.copy(), Nt=iou_thr, sigma=sigma, thresh=thresh, method=method)
+            keep, scores_keep = cpu_soft_nms_float(boxes_by_label.copy(), scores_by_label.copy(), Nt=iou_thr, sigma=sigma, thresh=thresh, method=method)
         else:
             # Use faster function
             keep = nms_float_fast(boxes_by_label, scores_by_label, thresh=iou_thr)
+            scores_keep = scores_by_label[keep]
 
         final_boxes.append(boxes_by_label[keep])
-        final_scores.append(scores_by_label[keep])
+        final_scores.append(scores_keep)
         final_labels.append(labels_by_label[keep])
+
     final_boxes = np.concatenate(final_boxes)
     final_scores = np.concatenate(final_scores)
     final_labels = np.concatenate(final_labels)
