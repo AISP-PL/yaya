@@ -164,7 +164,7 @@ class DetectorYOLOv4(Detector):
 
             # Detect objects
             darknet.copy_image_from_bytes(self.image, resized.tobytes())
-            detections = darknet.detect_image(self.net,
+            boxes, scores, classids = darknet.detect_image(self.net,
                                               self.classes,
                                               self.image,
                                               self.imwidth,
@@ -172,6 +172,12 @@ class DetectorYOLOv4(Detector):
                                               thresh=confidence,
                                               nms=nms_thresh,
                                               nmsMethod=nmsMethod)
+            # Ensemble detections
+            boxes, scores, classids = self.EnsembleBoxes(boxes, scores, classids, nmsMethod=nmsMethod,
+                                iou_thresh=nms_thresh, conf_thresh=confidence)
+            # Convert to detections
+            detections = self.ToDetections(boxes, scores, classids)
+
 
             # Change box coordinates to rectangle
             if (boxRelative is True):
@@ -227,6 +233,11 @@ class DetectorYOLOv4(Detector):
                                               thresh=confidence,
                                               nms=nms_thresh,
                                               nmsMethod=nmsMethod)
+            # Ensemble detections
+            boxes, scores, classids = self.EnsembleBoxes(boxes, scores, classids, nmsMethod=nmsMethod,
+                                iou_thresh=nms_thresh, conf_thresh=confidence)
+            # Convert to detections
+            detctions = self.ToDetections(boxes, scores, classids)
 
             # Change box coordinates to rectangle
             if (boxRelative is True):

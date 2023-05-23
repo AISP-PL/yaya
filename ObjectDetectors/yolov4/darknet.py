@@ -26,8 +26,6 @@ import random
 import os
 
 import numpy as np
-from helpers.soft_nms import py_cpu_softnms
-
 from ObjectDetectors.common.Detector import NmsMethod
 
 
@@ -226,36 +224,18 @@ def detect_image(network, class_names, image, imwidth=0, imheight=0,
                                    thresh, hier_thresh, None, 0, pnum, 0)
     num = pnum[0]
 
-    # Nms : Default YOLONMS
-    if (nmsMethod == NmsMethod.Nms):
-        do_nms_sort(detections, num, len(class_names), nms)
+    # # Nms : Default YOLONMS
+    # if (nmsMethod == NmsMethod.Nms):
+    #     do_nms_sort(detections, num, len(class_names), nms)
 
     # Postprocess : Filter 0% confidences and reformat
-    rects, classids, confidences = postprocess_detections(detections, 
+    rects, classids, scores = postprocess_detections(detections, 
                                                           class_names, 
                                                           num,
-                                                          confidence=0)
+                                                          confidence=0.1)
     free_detections(detections, num)
 
-    
-    if (nmsMethod == NmsMethod.SoftNms):
-        # Dets : Combined bboxes with classids 
-        dets = np.array( rects)
-        scores = np.array( confidences )
-        index = py_cpu_softnms(dets, scores, 
-                               Nt=nms,thresh=thresh)
-
-        # Detections : Filter by index
-        rects = [rects[i] for i in index]
-        classids = [classids[i] for i in index]
-        confidences = [confidences[i] for i in index]
-
-    # Create single list with detections from 3 lists.
-    predictions = [ (class_names[classid], 100*score, rect) 
-                     for rect, classid, score in zip (rects, classids, confidences)]
-
-
-    return predictions
+    return rects, scores, classids
 
 
 hasGPU = True

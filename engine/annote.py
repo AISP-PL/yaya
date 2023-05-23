@@ -237,7 +237,7 @@ class Annote():
                        pen=brushColor,
                        penThickness=thickness,
                        brushColor=brushColor,
-                       brushOpacity=0.1
+                       brushOpacity=0.25
                        )
 
         # Text

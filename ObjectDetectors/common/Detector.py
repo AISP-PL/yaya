@@ -7,11 +7,16 @@ Created on 23 lis 2020
 from enum import Enum
 import logging
 from Gui.drawing import DrawDetections
+from helpers.ensemble_boxes_nmw import non_maximum_weighted
+from helpers.ensemble_boxes_wbf import weighted_boxes_fusion
+from helpers.ensemble_boxes_nms import nms, soft_nms
 
 class NmsMethod(str, Enum):
     ''' Different NMS methods.'''
     Nms = 'Nms'
     SoftNms = 'SoftNms'
+    NmWeighted = 'NmWeighted'
+    WeightedBoxFusion = 'WeightedBoxFusion'
 
 
 class Detector:
@@ -55,6 +60,28 @@ class Detector:
         ''' Detect objects in given image'''
         return []
 
+    @staticmethod
+    def EnsembleBoxes(boxes, scores, classids, 
+                      nmsMethod:NmsMethod=NmsMethod.Nms,
+                      iou_thresh = 0.45,
+                      conf_thresh = 0.5,
+                      ) -> tuple:
+        ''' Ensbmle boxes using given method.'''
+        if (nmsMethod == NmsMethod.Nms):
+            return nms([boxes], [scores], [classids], iou_thr=iou_thresh)
+        elif (nmsMethod == NmsMethod.SoftNms):
+            return soft_nms([boxes], [scores], [classids], iou_thr=iou_thresh, thresh=conf_thresh)
+        elif (nmsMethod == NmsMethod.NmWeighted):
+            npboxes, npscores, npclassids = non_maximum_weighted([boxes], [scores], [classids], iou_thr=iou_thresh, skip_box_thr=conf_thresh)
+            return npboxes.tolist(), npscores.tolist(), npclassids.tolist()
+
+        elif (nmsMethod == NmsMethod.WeightedBoxFusion):
+            return weighted_boxes_fusion([boxes], [scores], [classids], iou_thr=iou_thresh, skip_box_thr=conf_thresh)
+
+    def ToDetections(self, boxes, scores, classids) -> list:
+        ''' Zip together to sinigle tuples list.'''
+        return [ (self.classes[int(classid)], 100*score, box) for box, score, classid in zip(boxes, scores, classids) ]
+
     def GetName(self):
         ''' Returns detector name.'''
         return self.name
@@ -93,3 +120,4 @@ class Detector:
             return -1
 
         return self.classes.index(label)
+
