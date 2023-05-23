@@ -436,9 +436,9 @@ class Ui_MainWindow(object):
         self.pageDetector.setObjectName("pageDetector")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.pageDetector)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
-        self.label_5 = QtWidgets.QLabel(self.pageDetector)
-        self.label_5.setObjectName("label_5")
-        self.verticalLayout_4.addWidget(self.label_5)
+        self.detectorConfidenceLabel = QtWidgets.QLabel(self.pageDetector)
+        self.detectorConfidenceLabel.setObjectName("detectorConfidenceLabel")
+        self.verticalLayout_4.addWidget(self.detectorConfidenceLabel)
         self.detectorConfidenceSlider = QtWidgets.QSlider(self.pageDetector)
         self.detectorConfidenceSlider.setMaximum(100)
         self.detectorConfidenceSlider.setOrientation(QtCore.Qt.Horizontal)
@@ -446,9 +446,9 @@ class Ui_MainWindow(object):
         self.detectorConfidenceSlider.setTickPosition(QtWidgets.QSlider.TicksBothSides)
         self.detectorConfidenceSlider.setObjectName("detectorConfidenceSlider")
         self.verticalLayout_4.addWidget(self.detectorConfidenceSlider)
-        self.label_6 = QtWidgets.QLabel(self.pageDetector)
-        self.label_6.setObjectName("label_6")
-        self.verticalLayout_4.addWidget(self.label_6)
+        self.detectorNmsLabel = QtWidgets.QLabel(self.pageDetector)
+        self.detectorNmsLabel.setObjectName("detectorNmsLabel")
+        self.verticalLayout_4.addWidget(self.detectorNmsLabel)
         self.detectorNmsSlider = QtWidgets.QSlider(self.pageDetector)
         self.detectorNmsSlider.setMaximum(100)
         self.detectorNmsSlider.setOrientation(QtCore.Qt.Horizontal)
@@ -537,7 +537,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuPomoc.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.toolSettingsStackedWidget.setCurrentIndex(0)
+        self.toolSettingsStackedWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -609,8 +609,8 @@ class Ui_MainWindow(object):
         self.button4.setShortcut(_translate("MainWindow", "4"))
         self.button6.setText(_translate("MainWindow", "6"))
         self.button6.setShortcut(_translate("MainWindow", "6"))
-        self.label_5.setText(_translate("MainWindow", "Confidence"))
-        self.label_6.setText(_translate("MainWindow", "NMS threshold"))
+        self.detectorConfidenceLabel.setText(_translate("MainWindow", "Confidence"))
+        self.detectorNmsLabel.setText(_translate("MainWindow", "NMS threshold"))
         self.paintLabel.setText(_translate("MainWindow", "Painting Size"))
         self.menuMenu.setTitle(_translate("MainWindow", "File"))
         self.menuPomoc.setTitle(_translate("MainWindow", "Help"))
@@ -637,6 +637,5 @@ class Ui_MainWindow(object):
         self.actionSave_screenshoot.setShortcut(_translate("MainWindow", "Shift+S"))
         self.actionSave_copy.setText(_translate("MainWindow", "Save copy"))
         self.actionSave_copy.setShortcut(_translate("MainWindow", "Shift+C"))
-
 from ViewerEditorImage import ViewerEditorImage
 import tango_rc

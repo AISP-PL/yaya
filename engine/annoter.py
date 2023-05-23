@@ -62,6 +62,10 @@ class Annoter():
         self.dirpath = filepath
         # Use of detector
         self.noDetector = noDetector
+        # Detector : Confidence value
+        self.confidence = 0.5
+        # Detector : NMS Threshold value
+        self.nms = 0.45
 
         # File entries list
         self.files = None
@@ -149,7 +153,8 @@ class Annoter():
 
         # Call detector manually!
         detAnnotes = self.detector.Detect(im,
-                                          confidence=0.5,
+                                          confidence=self.confidence,
+                                          nms_thresh=self.nms,
                                           boxRelative=True)
 
         # Save/Update detector annotations file
