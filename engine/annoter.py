@@ -425,6 +425,11 @@ class Annoter():
         ''' Returns current annotations.'''
         return self.annotations
 
+    @property
+    def annotations_count(self) -> int:
+        ''' Returns current annotations.'''
+        return len(self.annotations)
+
     @staticmethod
     def AnnotationsSelectClasses(annotations, classes):
         ''' Returns current annotations.'''

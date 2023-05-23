@@ -210,10 +210,7 @@ class MainWindowGui(Ui_MainWindow):
             'ID%u (%u/%u)' % (imageID, imageNumber, imageCount))
 
         # Setup file info
-        self.ui.fileLabel.setText('[%upx x %upx x %uB] %s' % (imageWidth,
-                                                              imageHeight,
-                                                              imageBytes,
-                                                              filename))
+        self.ui.fileLabel.setText(f"[{imageWidth}px x {imageHeight}x x {imageBytes}B] {imageID}/{filename} | Annotations: {self.annoter.annotations_count}")
 
         # Setup files selector table widget
         fileEntry = self.annoter.GetFile()
