@@ -8,9 +8,11 @@
             "name": "Python: bieżący plik",
             "type": "python",
             "request": "launch",
+            "cwd": "${workspaceFolder}",
             "program": "${file}",
             "console": "integratedTerminal",
-            "justMyCode": true
+            "justMyCode": true,
+            "env": {"PYTHONPATH": "${workspaceFolder}"}
         },
         {
             "name": "YAYA",

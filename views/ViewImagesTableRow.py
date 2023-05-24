@@ -120,3 +120,15 @@ class ViewImagesTableRow:
         item.setToolTip(str(fileEntry['ID']))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
+
+        # Confidence of matches
+        item = FloatTableWidgetItem(metrics.matches_confidence)
+        item.setToolTip(str(fileEntry['ID']))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1
+
+        # Detector worst case confidence
+        item = FloatTableWidgetItem(metrics.detections_confidence_min)
+        item.setToolTip(str(fileEntry['ID']))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1

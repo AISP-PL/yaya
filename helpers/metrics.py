@@ -29,9 +29,61 @@ class Metrics:
     FN: int = field(init=True, default=0)
     # Label true positive
     LTP: int = field(init=True, default=0)
+    # List of all detections
+    detections: list = field(init=True, default_factory=list)
+    # List of matched pairs (annotation, detection)
+    matches: list = field(init=True, default_factory=list)
 
     def __post_init__(self):
         ''' Post initiliatizaton.'''
+
+    @property
+    def detections_confidence(self) -> float:
+        ''' Returns confidence .'''
+        if (len(self.detections) == 0):
+            return 0
+
+        return sum([item.confidence for item in self.detections]) / len(self.detections)
+
+    @property
+    def detections_confidence_min(self) -> float:
+        ''' Returns list of confidence values.'''
+        if (len(self.detections) == 0):
+            return 0
+
+        return min([item.confidence for item in self.detections])
+
+    @property
+    def detections_confidence_max(self) -> float:
+        ''' Returns list of confidence values.'''
+        if (len(self.detections) == 0):
+            return 0
+
+        return max([item.confidence for item in self.detections])
+
+    @property
+    def matches_confidence(self) -> float:
+        ''' Returns confidence .'''
+        if (len(self.matches) == 0):
+            return 0
+
+        return sum([detection.confidence for annotation, detection in self.matches]) / len(self.matches)
+
+    @property
+    def matches_confidence_min(self) -> float:
+        ''' Returns list of confidence values.'''
+        if (len(self.matches) == 0):
+            return 0
+
+        return min([detection.confidence for annotation, detection in self.matches])
+
+    @property
+    def matches_confidence_max(self) -> float:
+        ''' Returns list of confidence values.'''
+        if (len(self.matches) == 0):
+            return 0
+
+        return max([detection.confidence for annotation, detection in self.matches])
 
     @property
     def AvgSize(self) -> float:
@@ -152,6 +204,9 @@ def EvaluateMetrics(annotations: list,
     if (detections is None) or (len(detections) == 0):
         return Metrics(All=len(annotations))
 
+    # 0. Detections copy
+    original_detections = detections.copy()
+
     # 1. Drop detections with (confidence < minConfidence)
     detections = [item for item in detections if (
         item.confidence > minConfidence)]
@@ -214,5 +269,7 @@ def EvaluateMetrics(annotations: list,
                    TP=TP,
                    FP=FP,
                    FN=FN,
-                   LTP=LTP
+                   LTP=LTP,
+                   detections=original_detections,
+                   matches=annotationsMatched,
                    )
