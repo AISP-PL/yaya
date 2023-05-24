@@ -20,7 +20,9 @@
             "console": "integratedTerminal",
             "args": [
                 "-i",
-                "input/"
+                "input/",
+                "-d",
+                "2",
             ],
             "justMyCode": true
         },
