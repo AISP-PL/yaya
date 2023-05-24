@@ -74,14 +74,15 @@ def test_benchmark_nms(count: int = 1000):
 
         # Ensemble boxes
         startTime = time.time()
-        EnsembleBoxes(*detections, nmsMethod=method)
+        boxes_result, scores_result, classids_result = EnsembleBoxes(
+            *detections, nmsMethod=method)
 
         # Results
         endTime = time.time()
         duration = endTime - startTime
         fps = count / duration
         print(
-            f'Method: {method}, Count: {count}, Duration: {duration:.3f} s, FPS: {fps:.1f}')
+            f'Method: {method}, Resulted bboxes: {len(scores_result)}, Duration: {duration:.3f} s, FPS: {fps:.1f}')
 
     print('Done.')
 
