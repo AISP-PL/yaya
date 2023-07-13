@@ -7,6 +7,8 @@ from dataclasses import asdict, dataclass, field
 import os
 import cv2
 import numpy as np
+import imagehash
+from PIL import Image
 
 from helpers.files import ChangeExtension
 from helpers.json import jsonRead, jsonWrite
@@ -27,6 +29,8 @@ class Visuals:
     saturation: float = 0
     # Brightness from 0 to 1.0
     brightness: float = 0
+    # Diffrential (perceptual) hash of image
+    dhash: str = 0
 
     def __post_init__(self):
         ''' Post initiliatizaton.'''
@@ -91,9 +95,16 @@ class Visuals:
         saturation = np.mean(image_hsv[:, :, 1])  # Średnia saturacja
         brightness = np.mean(image_hsv[:, :, 2])  # Średnia jasność
 
+        # Image hash : Calculate hash of image
+        image_pil = Image.fromarray(image)
+        dhash = imagehash.dhash(image_pil, hash_size=6)
+        dhash_normalized = int(str(dhash), 16) / (16**9)
+
         return Visuals(imagepath=imagepath,
                        width=width,
                        height=height,
                        hue=hue,
                        saturation=saturation,
-                       brightness=brightness)
+                       brightness=brightness,
+                       dhash=dhash_normalized
+                       )

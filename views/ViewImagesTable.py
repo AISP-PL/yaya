@@ -23,7 +23,7 @@ class ViewImagesTable:
         # Update GUI data
         table.clear()
         labels = _translate('ViewImagesTable',
-                            'Name;ImSize;Hue;Saturation;Brightness;' +
+                            'Name;ImSize;Hue;Saturation;Brightness;ImHash;' +
                             'IsAnnotated;Classes;Size;Correct;CorrectBbox;New [j];Precision;Recall;Errors;' +
                             'Match.Confidence;Det.WorstConfidence').split(';')
         table.setColumnCount(len(labels))

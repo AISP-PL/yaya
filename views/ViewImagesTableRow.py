@@ -59,6 +59,12 @@ class ViewImagesTableRow:
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 
+        # Image hash column
+        item = FloatTableWidgetItem(visuals.dhash, decimals=3)
+        item.setToolTip(str(fileEntry['ID']))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1
+
         # IsAnnotation column
         item = QTableWidgetItem()
         if (fileEntry['IsAnnotation']):
