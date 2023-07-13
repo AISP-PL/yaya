@@ -89,19 +89,22 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.labelsListWidget.setCurrentRow(0)
         self.ui.labelsListWidget.currentRowChanged.connect(
             self.CallbackLabelsRowChanged)
-        
+
         # Detector : Confidence and NMS sliders defaults (0.5 and 0.45)
-        self.ui.detectorConfidenceSlider.setValue(50)
-        self.ui.detectorNmsSlider.setValue(45)
+        self.ui.detectorConfidenceSlider.setValue(self.annoter.confidence*100)
+        self.ui.detectorNmsSlider.setValue(self.annoter.nms*100)
         self.ui.detectorNmsCombo.clear()
         for method in NmsMethod:
             self.ui.detectorNmsCombo.addItem(method.name)
         self.CallbackDetectorUpdate()
 
         # Detector : Callbacks for sliders, method
-        self.ui.detectorConfidenceSlider.valueChanged.connect(self.CallbackDetectorUpdate)
-        self.ui.detectorNmsSlider.valueChanged.connect(self.CallbackDetectorUpdate)
-        self.ui.detectorNmsCombo.currentTextChanged.connect(self.CallbackDetectorUpdate)
+        self.ui.detectorConfidenceSlider.valueChanged.connect(
+            self.CallbackDetectorUpdate)
+        self.ui.detectorNmsSlider.valueChanged.connect(
+            self.CallbackDetectorUpdate)
+        self.ui.detectorNmsCombo.currentTextChanged.connect(
+            self.CallbackDetectorUpdate)
 
         # Paint size slider
         self.ui.paintSizeSlider.valueChanged.connect(
@@ -210,7 +213,8 @@ class MainWindowGui(Ui_MainWindow):
             'ID%u (%u/%u)' % (imageID, imageNumber, imageCount))
 
         # Setup file info
-        self.ui.fileLabel.setText(f"[{imageWidth}px x {imageHeight}x x {imageBytes}B] {imageID}/{filename} | Annotations: {self.annoter.annotations_count}")
+        self.ui.fileLabel.setText(
+            f'[{imageWidth}px x {imageHeight}x x {imageBytes}B] {imageID}/{filename} | Annotations: {self.annoter.annotations_count}')
 
         # Setup files selector table widget
         fileEntry = self.annoter.GetFile()
@@ -319,18 +323,21 @@ class MainWindowGui(Ui_MainWindow):
 
     def CallbackDetectAnnotations(self):
         ''' Detect annotations.'''
-        self.ui.toolSettingsStackedWidget.setCurrentWidget(self.ui.pageDetector)
+        self.ui.toolSettingsStackedWidget.setCurrentWidget(
+            self.ui.pageDetector)
         self.annoter.confidence = self.ui.detectorConfidenceSlider.value() / 100
         self.annoter.nms = self.ui.detectorNmsSlider.value() / 100
-        self.annoter.nmsMethod = NmsMethod(self.ui.detectorNmsCombo.currentText())
+        self.annoter.nmsMethod = NmsMethod(
+            self.ui.detectorNmsCombo.currentText())
         self.annoter.Process(forceDetector=True)
         self.Setup()
 
     def CallbackDetectorUpdate(self):
         ''' Detector update.'''
-        self.ui.detectorConfidenceLabel.setText(f"Confidence: {self.ui.detectorConfidenceSlider.value()/100:02}%")
-        self.ui.detectorNmsLabel.setText(f"NMS: {self.ui.detectorNmsSlider.value()/100:02}%")
-
+        self.ui.detectorConfidenceLabel.setText(
+            f'Confidence: {self.ui.detectorConfidenceSlider.value()/100:02}%')
+        self.ui.detectorNmsLabel.setText(
+            f'NMS: {self.ui.detectorNmsSlider.value()/100:02}%')
 
     def CallbackAddAnnotationsButton(self):
         ''' Remove annotations.'''

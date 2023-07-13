@@ -20,6 +20,10 @@ def main():
                         required=True, help='Input path')
     parser.add_argument('-c', '--config', type=str,
                         required=False, help='Config path')
+    parser.add_argument('-detc', '--detectorConfidence', type=float, nargs='?', const=0.5, default=0.5,
+                        required=False, help='Detector default confidence')
+    parser.add_argument('-detnms', '--detectorNms', type=float, nargs='?', const=0.45, default=0.45,
+                        required=False, help='Detector default NMS threshold')
     parser.add_argument('-dc', '--drawConfidence', type=int, nargs='?', const=1, default=1,
                         required=False, help='Draw annotations confidence (=1). No drawing (=0).')
     parser.add_argument('-sb', '--sortBy', type=int, nargs='?', const=2, default=2,
@@ -100,7 +104,7 @@ def main():
         if (detector is None):
             logging.error('Wrong detector!')
             return
-            
+
         detector.Init()
         annote.Init(detector.GetClassNames())
     # CUDA not installed
@@ -118,7 +122,9 @@ def main():
                       isOnlyErrorFiles,
                       isOnlyDetectedClass,
                       isOnlySpecificClass,
-                      forceDetector
+                      forceDetector,
+                      detectorConfidence=args.detectorConfidence,
+                      detectorNms=args.detectorNms,
                       )
 
     # Start QtGui

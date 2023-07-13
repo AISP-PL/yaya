@@ -44,6 +44,8 @@ class Annoter():
                  isOnlyDetectedClass=None,
                  isOnlySpecificClass=None,
                  forceDetector=False,
+                 detectorConfidence: float = 0.5,
+                 detectorNms: float = 0.45,
                  ):
         '''
         Constructor
@@ -65,9 +67,9 @@ class Annoter():
         # Use of detector
         self.noDetector = noDetector
         # Detector : Confidence value
-        self.confidence = 0.5
+        self.confidence = detectorConfidence
         # Detector : NMS Threshold value
-        self.nms = 0.45
+        self.nms = detectorNms
         # Detector : NMS method
         self.nmsMethod = NmsMethod.Nms
 
@@ -584,8 +586,8 @@ class Annoter():
                 # For view : Filter by IOU internal with same annotes and also with txt annotes.
                 if (len(txtAnnotations)):
                     detAnnotes = prefilters.FilterIOUbyConfidence(detAnnotes,
-                                                                detAnnotes + txtAnnotations,
-                                                                maxIOU=sqrt(self.nms))
+                                                                  detAnnotes + txtAnnotations,
+                                                                  maxIOU=sqrt(self.nms))
 
                 # Store metrics
                 fileEntry['Metrics'] = metrics
