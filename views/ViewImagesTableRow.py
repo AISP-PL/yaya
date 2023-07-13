@@ -60,8 +60,11 @@ class ViewImagesTableRow:
         colIndex += 1
 
         # Image hash column
-        item = FloatTableWidgetItem(visuals.dhash, decimals=3)
+        item = FloatTableWidgetItem(visuals.dhash,
+                                    decimals=7)
         item.setToolTip(str(fileEntry['ID']))
+        if (visuals.isDuplicate):
+            item.setBackground(Qt.red)
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 

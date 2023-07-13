@@ -9,7 +9,6 @@ import cv2
 import numpy as np
 import imagehash
 from PIL import Image
-
 from helpers.files import ChangeExtension
 from helpers.json import jsonRead, jsonWrite
 
@@ -31,6 +30,8 @@ class Visuals:
     brightness: float = 0
     # Diffrential (perceptual) hash of image
     dhash: str = 0
+    # True if it's duplicate of other image
+    isDuplicate: bool = False
 
     def __post_init__(self):
         ''' Post initiliatizaton.'''
@@ -108,3 +109,38 @@ class Visuals:
                        brightness=brightness,
                        dhash=dhash_normalized
                        )
+
+
+@dataclass
+class VisualsDuplicates:
+    ''' Dataclass for visuals duplicates finder. '''
+    # Dictionary with hashes : visuals
+    visuals: dict = field(init=True, default_factory=dict)
+
+    def __post_init__(self):
+        ''' Post initiliatizaton.'''
+
+    def Add(self, visuals: Visuals):
+        ''' Add visuals to dictionary.'''
+        # Check : Invalid visuals
+        if (visuals is None):
+            return
+
+        # Add visuals to dictionary
+        self.visuals[visuals.dhash] = visuals
+
+    def IsDuplicate(self, visuals: Visuals) -> bool:
+        ''' Check if visuals is duplicate of other image.'''
+        # Check : Invalid visuals
+        if (visuals is None):
+            return False
+
+        # Check : Duplicate
+        if (visuals.dhash not in self.visuals):
+            return False
+
+        # Check : HSV
+        other = self.visuals[visuals.dhash]
+        return (visuals.hue == other.hue) and \
+               (visuals.saturation == other.saturation) and \
+               (visuals.brightness == other.brightness)

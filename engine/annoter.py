@@ -20,7 +20,7 @@ from helpers.textAnnotations import ReadAnnotations, SaveAnnotations, IsExistsAn
     DeleteAnnotations, SaveDetections, ReadDetections
 from helpers.metrics import Metrics,  EvaluateMetrics
 from engine.annote import AnnoteAuthorType
-from helpers.visuals import Visuals
+from helpers.visuals import Visuals, VisualsDuplicates
 
 
 class Annoter():
@@ -142,7 +142,7 @@ class Annoter():
                 '(Annoter) CV2 error when readings image `%s`!', filepath)
             return None
 
-    def ReadFileDetections(self, filepath):
+    def ReadFileDetections(self, filepath: str):
         ''' Read file annotations if possible.'''
         detAnnotes = []
         # If detector annotations not exists then call detector
@@ -194,8 +194,11 @@ class Annoter():
         filesToParse = [filename for filename in os.listdir(path)
                         if (filename not in excludes) and (IsImageFile(filename))]
 
-        # Processing all files
+        # VisualsDuplicates : Create to find duplicates
+        visualsDuplicates = VisualsDuplicates()
+        # Files : List of all files
         self.files = []
+        # Processing all files
         startTime = time.time()
         for index, filename in enumerate(filesToParse):
             # Check if annotations exists
@@ -224,6 +227,10 @@ class Annoter():
             # Calculate visuals
             visuals = Visuals.LoadCreate(path+filename,
                                          force=self.config['forceDetector'])
+            # Visuals : Check dhash is in duplicates
+            visuals.isDuplicate = visualsDuplicates.IsDuplicate(visuals)
+            # VisualsDuplicates : Update set of image hashes
+            visualsDuplicates.Add(visuals)
 
             # For view : Filter by IOU internal with same annotes and also with txt annotes.
             detections = prefilters.FilterIOUbyConfidence(detections,
