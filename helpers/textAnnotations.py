@@ -18,7 +18,7 @@ def GetImageFilepath(annotationPath):
     return None
 
 
-def IsExistsAnnotations(imagePath, extension='.txt'):
+def IsExistsAnnotations(imagePath: str, extension='.txt') -> bool:
     ''' True if exists annotations file.'''
     path = GetFilename(imagePath)+extension
     return os.path.isfile(path) and os.access(path, os.R_OK)

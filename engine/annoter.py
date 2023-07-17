@@ -528,28 +528,30 @@ class Annoter():
             tmppath = FixPath(self.dirpath) + 'tmp' + GetExtension(filename)
             # Save temporary image
             result = cv2.imwrite(tmppath, self.image)
-            # If saved then atomic move image to original image
-            if (result is True):
-                os.system('mv -fv "%s" "%s" ' % (tmppath, imgpath))
-            else:
+            if (result is False):
                 logging.error('(Annoter) Writing image "%s" failed!', imgpath)
+                return
+
+            # If saved then atomic move image to original image
+            os.system('mv -fv "%s" "%s" ' % (tmppath, imgpath))
 
         # Check other errors
         self.errors = self.__checkOfErrors()
-        if (len(self.errors) == 0):
-            # Save annotations
-            annotations = [annote.toTxtAnnote(el) for el in self.annotations]
-            annotations = SaveAnnotations(
-                self.dirpath+filename, annotations)
-            logging.debug('(Annoter) Saved annotations for %s!', filename)
-
-            # Process file again after save
-            self.Process()
-        else:
+        if (len(self.errors) != 0):
             logging.error('(Annoter) Errors exists in annotations!')
+            return
+
+        # Save annotations
+        annotations = [annote.toTxtAnnote(el) for el in self.annotations]
+        annotations = SaveAnnotations(
+            self.dirpath+filename, annotations)
+        logging.debug('(Annoter) Saved annotations for %s!', filename)
+
+        # Process file again after save
+        self.Process()
 
         # Update file entry
-        self.files[self.offset]['IsAnnotation'] = (len(self.annotations) != 0)
+        self.files[self.offset]['IsAnnotation'] = True
         self.files[self.offset]['Annotations'] = self.annotations
         self.files[self.offset]['AnnotationsClasses'] = ','.join(
             {f'{item.classNumber}' for item in self.annotations})
