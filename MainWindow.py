@@ -414,8 +414,13 @@ class MainWindowGui(Ui_MainWindow):
 
     def CallbackOpenLocation(self):
         ''' Open location callback.'''
-        filepath = str(QFileDialog.getExistingDirectory(
-            None, 'Select Directory'))
+        # Open file dialog
+        filepath = QFileDialog.getExistingDirectory(None, 'Select Directory')
+
+        # Check : Not None or empty 
+        if (filepath is None) or (len(filepath) == 0):
+            return
+
         self.annoter.OpenLocation(FixPath(filepath))
         self.SetupDefault()
         self.Setup()

@@ -181,6 +181,22 @@ class Annoter():
 
     def OpenLocation(self, path: str):
         ''' Open images/annotations location.'''
+        # Check : If path is valid
+        if (path is None) or (len(path) == 0):
+            logging.error('(Annoter) Path `%s` not exists!', path)
+            return
+    
+        # Check : If path exists
+        if (not os.path.exists(path)):
+            logging.error('(Annoter) Path `%s` not exists!', path)
+            return
+        
+        # Check : Path is same
+        if (self.dirpath == path):
+            logging.info('(Annoter) Path `%s` is same!', path)
+            return
+
+
         # Update dirpath
         self.dirpath = path
         # filter only images and not excludes

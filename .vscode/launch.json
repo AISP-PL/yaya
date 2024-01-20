@@ -23,7 +23,6 @@
             "args": [
                 "-i",
                 "input/",
-                "-nd"
             ],
             "justMyCode": true
         },
