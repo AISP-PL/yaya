@@ -7,8 +7,8 @@ import os
 import logging
 import cv2
 import numpy as np
-from ObjectDetectors.yolov4 import darknet
-from ObjectDetectors.common.Detector import Detector, NmsMethod
+from Detectors.yolov4 import darknet
+from Detectors.common.Detector import Detector, NmsMethod
 from helpers.files import GetFilepath
 from math import ceil
 from helpers.images import GetFixedFitToBox

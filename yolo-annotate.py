@@ -8,7 +8,7 @@ import engine.annote as annote
 from engine.annoter import *
 from helpers.files import *
 from helpers.textAnnotations import *
-from ObjectDetectors import IsCuda, IsDarknet, CreateDetector, GetDetectorLabels
+from Detectors import IsCuda, IsDarknet, CreateDetector, GetDetectorLabels
 from MainWindow import MainWindowGui
 
 

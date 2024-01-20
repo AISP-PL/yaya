@@ -9,7 +9,7 @@ import os
 import time
 import cv2
 import logging
-from ObjectDetectors.common.Detector import NmsMethod
+from Detectors.common.Detector import NmsMethod
 import engine.annote as annote
 import helpers.prefilters as prefilters
 import helpers.transformations as transformations

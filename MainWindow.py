@@ -7,7 +7,7 @@ import shutil
 import sys
 import os
 import logging
-from ObjectDetectors.common.Detector import NmsMethod
+from Detectors.common.Detector import NmsMethod
 from Ui_MainWindow import Ui_MainWindow
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTableWidgetItem,\
     QListWidgetItem, QButtonGroup, QMessageBox
@@ -91,8 +91,8 @@ class MainWindowGui(Ui_MainWindow):
             self.CallbackLabelsRowChanged)
 
         # Detector : Confidence and NMS sliders defaults (0.5 and 0.45)
-        self.ui.detectorConfidenceSlider.setValue(self.annoter.confidence*100)
-        self.ui.detectorNmsSlider.setValue(self.annoter.nms*100)
+        self.ui.detectorConfidenceSlider.setValue(round(self.annoter.confidence*100))
+        self.ui.detectorNmsSlider.setValue(round(self.annoter.nms*100))
         self.ui.detectorNmsCombo.clear()
         for method in NmsMethod:
             self.ui.detectorNmsCombo.addItem(method.name)

@@ -1,7 +1,7 @@
 import os
 import logging
 from helpers.files import GetFiles, GetFilename, FixPath
-from ObjectDetectors.DetectorYOLOv4 import DetectorYOLOv4
+from Detectors.DetectorYOLOv4 import DetectorYOLOv4
 from lib2to3.fixes.fix_paren import FixParen
 
 
@@ -26,9 +26,9 @@ def ListDetectors(path:str=None):
     
     # Handle path
     if (path is None):
-        path='ObjectDetectors/'
+        path='Detectors/'
     else:
-        path = f'{path}/ObjectDetectors/'
+        path = f'{path}/Detectors/'
 
     for filename in os.listdir(path):
         filepath = path + filename

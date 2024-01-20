@@ -26,7 +26,7 @@ import random
 import os
 
 import numpy as np
-from ObjectDetectors.common.Detector import NmsMethod
+from Detectors.common.Detector import NmsMethod
 
 
 class BOX(Structure):
