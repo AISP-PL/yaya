@@ -56,6 +56,7 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.setupUi(self.window)
 
         # Setup all
+        self.SetupCallbacks()
         self.SetupDefault()
         self.Setup()
 
@@ -73,30 +74,19 @@ class MainWindowGui(Ui_MainWindow):
 
         return foundIndex
 
-    def SetupDefault(self):
-        ''' Sets default for UI.'''
-        # Annoter - process first time.
-        self.annoter.Process()
-
+    def SetupCallbacks(self):
+        ''' Setup only once after init.'''
         # Image scaling
         self.ui.imageScalingComboBox.currentTextChanged.connect(
             self.CallbackImageScalingTextChanged)
-
+        
         # List of detector labels - Create
-        for className in GetClasses():
-            self.ui.labelsListWidget.addItem(
-                QListWidgetItem(className, self.ui.labelsListWidget))
-        self.ui.labelsListWidget.setCurrentRow(0)
         self.ui.labelsListWidget.currentRowChanged.connect(
             self.CallbackLabelsRowChanged)
-
-        # Detector : Confidence and NMS sliders defaults (0.5 and 0.45)
-        self.ui.detectorConfidenceSlider.setValue(round(self.annoter.confidence*100))
-        self.ui.detectorNmsSlider.setValue(round(self.annoter.nms*100))
-        self.ui.detectorNmsCombo.clear()
-        for method in NmsMethod:
-            self.ui.detectorNmsCombo.addItem(method.name)
-        self.CallbackDetectorUpdate()
+        
+        # Images table : Setup
+        self.ui.fileSelectorTableWidget.itemClicked.connect(
+            self.CallbackFileSelectorItemClicked)
 
         # Detector : Callbacks for sliders, method
         self.ui.detectorConfidenceSlider.valueChanged.connect(
@@ -110,16 +100,6 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.paintSizeSlider.valueChanged.connect(
             self.CallbackPaintSizeSlider)
 
-        # Images table : Setup
-        ViewImagesTable.View(
-            self.ui.fileSelectorTableWidget, self.annoter.GetFiles())
-        self.ui.fileSelectorTableWidget.itemClicked.connect(
-            self.CallbackFileSelectorItemClicked)
-
-        # Images summary : Setup
-        ViewImagesSummary.View(self.ui.fileSummaryLabel,
-                               self.annoter.GetFiles())
-
         # Menu handling
         self.ui.actionZamknijProgram.triggered.connect(self.CallbackClose)
         self.ui.actionZapisz.triggered.connect(
@@ -130,7 +110,7 @@ class MainWindowGui(Ui_MainWindow):
             self.CallbackScreenshot)
         self.ui.actionSave_copy.triggered.connect(
             self.CallbackSaveCopy)
-
+        
         # Buttons group - for mode buttons
         self.modeButtonGroup = QButtonGroup(self.window)
         self.modeButtonGroup.addButton(self.ui.addAnnotationsButton)
@@ -141,6 +121,7 @@ class MainWindowGui(Ui_MainWindow):
         # Buttons player
         self.ui.nextFileButton.clicked.connect(self.CallbackNextFile)
         self.ui.prevFileButton.clicked.connect(self.CallbackPrevFile)
+
         # Buttons Image
         self.ui.SaveFileAnnotationsButton.clicked.connect(
             self.CallbackSaveFileAnnotationsButton)
@@ -148,6 +129,7 @@ class MainWindowGui(Ui_MainWindow):
             self.CallbackDeleteImageAnnotationsButton)
         self.ui.DeleteNotAnnotatedFilesButton.clicked.connect(
             self.CallbackDeleteNotAnnotatedFilesButton)
+        
         # Buttons - Annotations
         self.ui.addAnnotationsButton.clicked.connect(
             self.CallbackAddAnnotationsButton)
@@ -163,9 +145,11 @@ class MainWindowGui(Ui_MainWindow):
             self.CallbackHideAnnotationsButton)
         self.ui.ClearAnnotationsButton.clicked.connect(
             self.CallbackClearAnnotationsButton)
+        
         # Buttons - Painting
         self.ui.paintCircleButton.clicked.connect(
             self.CallbackPaintCircleButton)
+        
         # Buttons - list of gui key codes
         self.ui.button1.clicked.connect(
             lambda: self.CallbackKeycodeButtonClicked(self.ui.button1))
@@ -193,6 +177,36 @@ class MainWindowGui(Ui_MainWindow):
             lambda: self.CallbackKeycodeButtonClicked(self.ui.button12))
         self.ui.buttonOffset.clicked.connect(
             self.CallbackKeycodeOffsetButtonClicked)
+
+    def SetupDefault(self):
+        ''' Sets default for UI.'''
+        # Annoter - process first time.
+        self.annoter.Process()
+
+        # List of detector labels - Create
+        self.ui.labelsListWidget.clear()
+        for index, className in enumerate(GetClasses()):
+            self.ui.labelsListWidget.addItem(QListWidgetItem(f"{index} : {className}", 
+                                                             self.ui.labelsListWidget))
+        self.ui.labelsListWidget.setCurrentRow(0)
+
+        # Detector : Confidence and NMS sliders defaults (0.5 and 0.45)
+        self.ui.detectorConfidenceSlider.setValue(round(self.annoter.confidence*100))
+        self.ui.detectorNmsSlider.setValue(round(self.annoter.nms*100))
+        self.ui.detectorNmsCombo.clear()
+        for method in NmsMethod:
+            self.ui.detectorNmsCombo.addItem(method.name)
+        self.CallbackDetectorUpdate()
+
+        # Images table : Setup
+        ViewImagesTable.View(
+            self.ui.fileSelectorTableWidget, self.annoter.GetFiles())
+
+        # Images summary : Setup
+        ViewImagesSummary.View(self.ui.fileSummaryLabel,
+                               self.annoter.GetFiles())
+
+
 
     def Setup(self):
         ''' Setup again UI.'''

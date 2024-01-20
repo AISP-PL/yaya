@@ -125,7 +125,7 @@ class ViewerEditorImage(QWidget):
 
         return None
 
-    def SetOption(self, name, value):
+    def SetOption(self, name : str, value : bool):
         ''' Set configuration option.'''
         if (name in self.config):
             self.config[name] = value
