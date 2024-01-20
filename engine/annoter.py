@@ -334,17 +334,21 @@ class Annoter():
 
     def GetFile(self):
         ''' Returns current filepath.'''
-        if (len(self.files)):
-            return self.files[self.offset]
+        if (self.files is None) or (len(self.files) == 0 ):
+            return None
 
-        return None
+        return self.files[self.offset]
+
 
     def GetFilename(self):
         ''' Returns current filepath.'''
-        if (len(self.files)):
-            return self.files[self.offset]['Name']
+        #  Check if files none or empty
+        if (self.files is None) or (len(self.files) == 0):
+            return 'Not exists!'
 
-        return 'Not exists!'
+
+        return self.files[self.offset]['Name']
+
 
     def GetFilepath(self):
         ''' Returns current filepath.'''
@@ -376,6 +380,10 @@ class Annoter():
 
     def GetFileID(self):
         ''' Returns current image ID.'''
+        # Check if files none or empty
+        if (self.files is None) or (len(self.files) == 0):
+            return 0
+
         if (self.offset < len(self.files)):
             return self.files[self.offset]['ID']
 
@@ -392,8 +400,13 @@ class Annoter():
 
         return len(self.files)
 
-    def GetFilesAnnotatedCount(self):
+    def GetFilesAnnotatedCount(self) -> int:
         ''' Returns count of processed images number.'''
+        # Check : Files exists
+        if (self.files is None) or (len(self.files) == 0):
+            return 0
+
+
         annotated = sum([int(fileEntry['IsAnnotation'])
                          for fileEntry in self.files])
         return annotated
