@@ -1,8 +1,7 @@
 '''
     View of images QTableWidget.
 '''
-from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QAbstractItemView
-from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QTableWidget
 from PyQt5 import QtCore
 
 from views.ViewImagesTableRow import ViewImagesTableRow

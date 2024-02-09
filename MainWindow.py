@@ -16,7 +16,6 @@ from engine.annote import GetClasses
 from ViewerEditorImage import ViewerEditorImage
 from helpers.files import ChangeExtension, FixPath
 from copy import copy
-from PyQt5.QtCore import Qt
 from datetime import datetime
 from views.ViewImagesSummary import ViewImagesSummary
 from views.ViewImagesTable import ViewImagesTable
