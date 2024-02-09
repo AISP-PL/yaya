@@ -131,8 +131,9 @@ dmypy.json
 .directory
 *.weights
 *.names
-ObjectDetectors/yolov*
+Detectors/yolov*
 env*/
 input/*.detector
 input/*.json
 input/*.txt
+icons/tango_rc.py

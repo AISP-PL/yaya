@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1591</width>
-    <height>834</height>
+    <height>853</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
     </sizepolicy>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="0">
+    <item row="0" column="0">
      <widget class="QSplitter" name="splitter_4">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -113,7 +113,7 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>100</width>
+            <width>800</width>
             <height>100</height>
            </size>
           </property>
@@ -127,29 +127,29 @@
          <enum>QLayout::SetMaximumSize</enum>
         </property>
         <item>
-         <widget class="QLabel" name="fileLabel">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>300</width>
-            <height>32</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Filename (number/all)</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <layout class="QHBoxLayout" name="sliderLayout">
+          <item>
+           <widget class="QLabel" name="fileLabel">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>300</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Filename (number/all)</string>
+            </property>
+           </widget>
+          </item>
           <item>
            <widget class="QLabel" name="fileNumberSliderLabel">
             <property name="text">
@@ -199,6 +199,47 @@
            </spacer>
           </item>
          </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="fileSummaryLabel">
+          <property name="text">
+           <string>TextLabel</string>
+          </property>
+          <property name="textFormat">
+           <enum>Qt::MarkdownText</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTableWidget" name="fileSelectorTableWidget">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>300</height>
+           </size>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOn</enum>
+          </property>
+          <property name="sizeAdjustPolicy">
+           <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SingleSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -264,50 +305,15 @@
          </layout>
         </item>
         <item>
-         <widget class="QLabel" name="fileSummaryLabel">
-          <property name="text">
-           <string>TextLabel</string>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::MarkdownText</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QTableWidget" name="fileSelectorTableWidget">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>200</height>
-           </size>
-          </property>
-          <property name="verticalScrollBarPolicy">
-           <enum>Qt::ScrollBarAlwaysOn</enum>
-          </property>
-          <property name="sizeAdjustPolicy">
-           <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
-          </property>
-          <property name="selectionMode">
-           <enum>QAbstractItemView::SingleSelection</enum>
-          </property>
-          <property name="selectionBehavior">
-           <enum>QAbstractItemView::SelectRows</enum>
-          </property>
-          <property name="sortingEnabled">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
            <widget class="QLabel" name="label">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="minimumSize">
              <size>
               <width>90</width>
@@ -494,7 +500,7 @@
         <item>
          <widget class="QStackedWidget" name="toolSettingsStackedWidget">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -509,9 +515,15 @@
            <number>1</number>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="pageAnnotations">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
              <widget class="QLabel" name="detectorClassesLabel">
@@ -531,7 +543,7 @@
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>250</height>
+                <height>80</height>
                </size>
               </property>
               <property name="defaultDropAction">
@@ -964,6 +976,12 @@
            </layout>
           </widget>
           <widget class="QWidget" name="pageDetector">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
              <widget class="QLabel" name="detectorConfidenceLabel">
@@ -1055,6 +1073,12 @@
            </layout>
           </widget>
           <widget class="QWidget" name="pageCircle">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <layout class="QVBoxLayout" name="verticalLayout">
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -1105,6 +1129,12 @@
            </layout>
           </widget>
           <widget class="QWidget" name="pageKeycodes">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <layout class="QVBoxLayout" name="verticalLayout_3"/>
           </widget>
          </widget>
@@ -1121,7 +1151,7 @@
      <x>0</x>
      <y>0</y>
      <width>1591</width>
-     <height>22</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMenu">
