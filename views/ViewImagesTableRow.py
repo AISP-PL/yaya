@@ -6,10 +6,12 @@ import logging
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
 
 from Gui.widgets.FloatTableWidgetItem import FloatTableWidgetItem
 from Gui.widgets.HueTableWidgetItem import HsvTableWidgetItem
+from Gui.widgets.ImageTableWidgetItem import ImageTableWidgetItem
 from Gui.widgets.PercentTableWidgetItem import PercentTableWidgetItem
 from Gui.widgets.RectTableWidgetItem import RectTableWidgetItem
 
@@ -35,6 +37,14 @@ class ViewImagesTableRow:
 
         # Filename column
         item = QTableWidgetItem(str(fileEntry["Name"]))
+        item = ImageTableWidgetItem(
+            imagePath=fileEntry["Path"],
+            text=fileEntry["Name"],
+            data=str(fileEntry["ID"]),
+            fontSize=14,
+            fontColor=QColor("#009970"),
+            fontUnderline=True,
+        )
         item.setToolTip(str(fileEntry["ID"]))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
