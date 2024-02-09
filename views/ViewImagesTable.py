@@ -24,8 +24,8 @@ class ViewImagesTable:
         table.clear()
         labels = _translate(
             "ViewImagesTable",
-            "Name;ImSize;Hue;Saturation;Brightness;ImHash;"
-            + "IsAnnotated;Classes;Size;Correct;CorrectBbox;New [j];Precision;Recall;Errors;"
+            "Name;ImSize;Annotated;Hue;Saturation;Brightness;ImHash;"
+            + "Classes;Size;Correct;CorrectBbox;New [j];Precision;Recall;Errors;"
             + "Match.Confidence;Det.WorstConfidence",
         ).split(";")
         table.setColumnCount(len(labels))

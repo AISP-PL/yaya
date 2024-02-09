@@ -9,9 +9,11 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
 
+from Gui.widgets.BoolTableWidgetItem import BoolTableWidgetItem
 from Gui.widgets.FloatTableWidgetItem import FloatTableWidgetItem
-from Gui.widgets.HueTableWidgetItem import HsvTableWidgetItem
+from Gui.widgets.HsvTableWidgetItem import HsvTableWidgetItem
 from Gui.widgets.ImageTableWidgetItem import ImageTableWidgetItem
+from Gui.widgets.ImhashTableWidgetItem import ImhashTableWidgetItem
 from Gui.widgets.PercentTableWidgetItem import PercentTableWidgetItem
 from Gui.widgets.RectTableWidgetItem import RectTableWidgetItem
 
@@ -55,6 +57,13 @@ class ViewImagesTableRow:
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 
+        # IsAnnotation column
+        item = BoolTableWidgetItem(fileEntry["IsAnnotation"])
+        # @TODO dedicated item with annotations number
+        item.setToolTip(str(fileEntry["ID"]))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1
+
         # Hue column
         item = HsvTableWidgetItem(hue=visuals.hue, value=visuals.hue)
         item.setToolTip(str(fileEntry["ID"]))
@@ -81,24 +90,10 @@ class ViewImagesTableRow:
         colIndex += 1
 
         # Image hash column
-        item = FloatTableWidgetItem(visuals.dhash, decimals=7)
+        item = ImhashTableWidgetItem(visuals.dhash)
         item.setToolTip(str(fileEntry["ID"]))
         if visuals.isDuplicate:
             item.setBackground(Qt.red)
-        table.setItem(rowIndex, colIndex, item)
-        colIndex += 1
-
-        # IsAnnotation column
-        item = QTableWidgetItem()
-        if fileEntry["IsAnnotation"]:
-            item.setBackground(Qt.green)
-            item.setText(
-                f"{fileEntry['IsAnnotation']} / {len(fileEntry['Annotations'])}"
-            )
-        else:
-            item.setBackground(Qt.red)
-            item.setText(f"{fileEntry['IsAnnotation']}")
-        item.setToolTip(str(fileEntry["ID"]))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 
