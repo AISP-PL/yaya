@@ -23,9 +23,10 @@ class ImhashTableWidgetItem(QtWidgets.QTableWidgetItem):
 
         # Set item data
         self.setData(QtCore.Qt.UserRole, self.value)
-        self.setText(f"{self.value:2.7f}")
 
-        # Text alignment
+        # Create hash from image similarity
+        image_hash_str = f"{int(image_similarity * (10**7))}"
+        self.setText(image_hash_str)
         self.setTextAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)
 
         # Coloring : Set color by hue
