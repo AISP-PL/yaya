@@ -63,14 +63,81 @@ class MainWindowGui(Ui_MainWindow):
 
         # UI - creation
         self.App = QApplication(sys.argv)
+        self.App.setApplicationName("YAYA")
+        self.App.setOrganizationName("AISP")
+        self.App.setOrganizationDomain("aisp.pl")
         self.ui = Ui_MainWindow()
         self.window = QMainWindow()
         self.ui.setupUi(self.window)
+
+        # System stored user settings (QSettings)
+        # --------------------------
+        self.system_settings = QtCore.QSettings(self.App)
 
         # Setup all
         self.SetupCallbacks()
         self.SetupDefault()
         self.Setup()
+
+        # Locations : Open
+        last_location = self.OpenedDirectoriesGet(amount=1)
+
+        # Locations : If stored, try to open last location.
+        if last_location is not None:
+            is_opened = self.LocationOpen(last_location[0])
+
+        # Locations: Open Examples if not stored or open failed.
+        if (last_location is None) or (not is_opened):
+            self.LocationOpen("input")
+
+    def OpenedDirectoriesStore(self, directory_path: str, limit: int = 64):
+        """
+        Store opened directory path in system settings.
+
+        Parameters
+        ----------
+        directory_path : str
+            Directory path to store.
+        limit : int
+            Limit of stored directories.
+        """
+        # Opened directories : Get
+        opened_directories = self.system_settings.value("opened_directories", [])
+
+        # Opened directories : Insert at first position (stack)
+        opened_directories.insert(0, directory_path)
+        if len(opened_directories) > limit:
+            opened_directories.pop()
+
+        # Filter existing
+        opened_directories = list(dict.fromkeys(opened_directories))
+
+        # Opened directories : Save
+        self.system_settings.setValue("opened_directories", opened_directories)
+
+    def OpenedDirectoriesGet(self, amount: int = 1) -> list:
+        """
+        Get last opened directory path from system settings.
+
+        Parameters
+        ----------
+        amount : int
+            Amount of directories to return.
+
+
+        Returns
+        -------
+        str
+        """
+        # Opened directories : Get
+        opened_directories = self.system_settings.value("opened_directories", [])
+
+        # Check : Empty
+        if len(opened_directories) == 0:
+            return None
+
+        # Opened directories : Return first
+        return opened_directories[0:amount]
 
     def ImageIDToRowNumber(self, imageID):
         """Image number to row index."""
@@ -449,13 +516,30 @@ class MainWindowGui(Ui_MainWindow):
         # Open file dialog
         filepath = QFileDialog.getExistingDirectory(None, "Select Directory")
 
+        # Open location
+        self.LocationOpen(filepath)
+
+    def LocationOpen(self, filepath: str) -> bool:
+        """
+        Open location and process files.
+
+        Parameters
+        ----------
+        filepath : str
+            Filepath to open.
+        """
+
         # Check : Not None or empty
         if (filepath is None) or (len(filepath) == 0):
-            return
+            return False
+
+        # System settings : Store filepaths
+        self.OpenedDirectoriesStore(filepath)
 
         self.annoter.OpenLocation(FixPath(filepath))
         self.SetupDefault()
         self.Setup()
+        return True
 
     def CallbackClose(self):
         """Close GUI callback."""

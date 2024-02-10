@@ -22,9 +22,6 @@ def main():
         "-i",
         "--input",
         type=str,
-        nargs="?",
-        const="input",
-        default="input",
         required=True,
         help="Input path",
     )
@@ -201,9 +198,13 @@ def main():
         noDetector = True
         annote.Init(GetDetectorLabels(args.detector))
 
+    # Check - input argument
+    if (args.input is not None) and (len(args.input) > 0):
+        args.input = FixPath(GetFileLocation(args.input))
+
     # Create annoter
     annoter = Annoter(
-        FixPath(GetFileLocation(args.input)),
+        None,
         detector,
         noDetector,
         args.sortBy,

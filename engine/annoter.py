@@ -101,7 +101,8 @@ class Annoter:
         # Set of all errors
         self.errors = set()
 
-        self.OpenLocation(filepath)
+        if (filepath is not None) and (len(filepath) != 0):
+            self.OpenLocation(filepath)
 
     def __del__(self):
         """Destructor."""
