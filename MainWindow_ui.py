@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1591, 853)
+        MainWindow.resize(1598, 897)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
@@ -46,14 +46,29 @@ class Ui_MainWindow(object):
         self.verticalLayoutLeft.setObjectName("verticalLayoutLeft")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.isSavedCheckBox = QtWidgets.QCheckBox(self.verticalLayoutWidget)
-        self.isSavedCheckBox.setCheckable(False)
-        self.isSavedCheckBox.setObjectName("isSavedCheckBox")
-        self.horizontalLayout.addWidget(self.isSavedCheckBox)
-        self.isErrorsCheckBox = QtWidgets.QCheckBox(self.verticalLayoutWidget)
-        self.isErrorsCheckBox.setCheckable(False)
-        self.isErrorsCheckBox.setObjectName("isErrorsCheckBox")
-        self.horizontalLayout.addWidget(self.isErrorsCheckBox)
+        self.prevFileButton = QtWidgets.QToolButton(self.verticalLayoutWidget)
+        icon = QtGui.QIcon()
+        icon.addPixmap(
+            QtGui.QPixmap(":/icons/16x16/media-skip-backward.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        self.prevFileButton.setIcon(icon)
+        self.prevFileButton.setObjectName("prevFileButton")
+        self.horizontalLayout.addWidget(self.prevFileButton)
+        self.fileNumberSliderLabel = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.fileNumberSliderLabel.setObjectName("fileNumberSliderLabel")
+        self.horizontalLayout.addWidget(self.fileNumberSliderLabel)
+        self.nextFileButton = QtWidgets.QToolButton(self.verticalLayoutWidget)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(
+            QtGui.QPixmap(":/icons/16x16/media-skip-forward.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        self.nextFileButton.setIcon(icon1)
+        self.nextFileButton.setObjectName("nextFileButton")
+        self.horizontalLayout.addWidget(self.nextFileButton)
         self.label_4 = QtWidgets.QLabel(self.verticalLayoutWidget)
         self.label_4.setObjectName("label_4")
         self.horizontalLayout.addWidget(self.label_4)
@@ -101,29 +116,6 @@ class Ui_MainWindow(object):
         self.fileLabel.setMinimumSize(QtCore.QSize(300, 32))
         self.fileLabel.setObjectName("fileLabel")
         self.sliderLayout.addWidget(self.fileLabel)
-        self.fileNumberSliderLabel = QtWidgets.QLabel(self.layoutWidget)
-        self.fileNumberSliderLabel.setObjectName("fileNumberSliderLabel")
-        self.sliderLayout.addWidget(self.fileNumberSliderLabel)
-        self.prevFileButton = QtWidgets.QToolButton(self.layoutWidget)
-        icon = QtGui.QIcon()
-        icon.addPixmap(
-            QtGui.QPixmap(":/icons/16x16/media-skip-backward.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
-        )
-        self.prevFileButton.setIcon(icon)
-        self.prevFileButton.setObjectName("prevFileButton")
-        self.sliderLayout.addWidget(self.prevFileButton)
-        self.nextFileButton = QtWidgets.QToolButton(self.layoutWidget)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(
-            QtGui.QPixmap(":/icons/16x16/media-skip-forward.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
-        )
-        self.nextFileButton.setIcon(icon1)
-        self.nextFileButton.setObjectName("nextFileButton")
-        self.sliderLayout.addWidget(self.nextFileButton)
         spacerItem = QtWidgets.QSpacerItem(
             40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
         )
@@ -166,6 +158,9 @@ class Ui_MainWindow(object):
         self.label_2.setObjectName("label_2")
         self.horizontalLayout_2.addWidget(self.label_2)
         self.SaveFileAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.SaveFileAnnotationsButton.setCursor(
+            QtGui.QCursor(QtCore.Qt.PointingHandCursor)
+        )
         icon2 = QtGui.QIcon()
         icon2.addPixmap(
             QtGui.QPixmap(":/icons/16x16/document-save-as.png"),
@@ -175,24 +170,41 @@ class Ui_MainWindow(object):
         self.SaveFileAnnotationsButton.setIcon(icon2)
         self.SaveFileAnnotationsButton.setObjectName("SaveFileAnnotationsButton")
         self.horizontalLayout_2.addWidget(self.SaveFileAnnotationsButton)
-        self.DeleteImageAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.CacheImageButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.CacheImageButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         icon3 = QtGui.QIcon()
         icon3.addPixmap(
+            QtGui.QPixmap(":/icons/32x32/document-save.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        self.CacheImageButton.setIcon(icon3)
+        self.CacheImageButton.setObjectName("CacheImageButton")
+        self.horizontalLayout_2.addWidget(self.CacheImageButton)
+        self.DeleteImageAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.DeleteImageAnnotationsButton.setCursor(
+            QtGui.QCursor(QtCore.Qt.PointingHandCursor)
+        )
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(
             QtGui.QPixmap(":/icons/16x16/process-stop.png"),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off,
         )
-        self.DeleteImageAnnotationsButton.setIcon(icon3)
+        self.DeleteImageAnnotationsButton.setIcon(icon4)
         self.DeleteImageAnnotationsButton.setObjectName("DeleteImageAnnotationsButton")
         self.horizontalLayout_2.addWidget(self.DeleteImageAnnotationsButton)
         self.DeleteNotAnnotatedFilesButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(
+        self.DeleteNotAnnotatedFilesButton.setCursor(
+            QtGui.QCursor(QtCore.Qt.PointingHandCursor)
+        )
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(
             QtGui.QPixmap(":/icons/32x32/process-stop.png"),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off,
         )
-        self.DeleteNotAnnotatedFilesButton.setIcon(icon4)
+        self.DeleteNotAnnotatedFilesButton.setIcon(icon5)
         self.DeleteNotAnnotatedFilesButton.setObjectName(
             "DeleteNotAnnotatedFilesButton"
         )
@@ -216,77 +228,77 @@ class Ui_MainWindow(object):
         self.label.setObjectName("label")
         self.horizontalLayout_3.addWidget(self.label)
         self.addAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(
             QtGui.QPixmap(":/icons/16x16/list-add.png"),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off,
         )
-        self.addAnnotationsButton.setIcon(icon5)
+        self.addAnnotationsButton.setIcon(icon6)
         self.addAnnotationsButton.setCheckable(True)
         self.addAnnotationsButton.setFlat(False)
         self.addAnnotationsButton.setObjectName("addAnnotationsButton")
         self.horizontalLayout_3.addWidget(self.addAnnotationsButton)
         self.renameAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(
             QtGui.QPixmap(":/icons/32x32/accessories-text-editor.png"),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off,
         )
-        self.renameAnnotationsButton.setIcon(icon6)
+        self.renameAnnotationsButton.setIcon(icon7)
         self.renameAnnotationsButton.setCheckable(True)
         self.renameAnnotationsButton.setObjectName("renameAnnotationsButton")
         self.horizontalLayout_3.addWidget(self.renameAnnotationsButton)
         self.removeAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(
             QtGui.QPixmap(":/icons/16x16/list-remove.png"),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off,
         )
-        self.removeAnnotationsButton.setIcon(icon7)
+        self.removeAnnotationsButton.setIcon(icon8)
         self.removeAnnotationsButton.setCheckable(True)
         self.removeAnnotationsButton.setObjectName("removeAnnotationsButton")
         self.horizontalLayout_3.addWidget(self.removeAnnotationsButton)
         self.ClearAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(
             QtGui.QPixmap(":/icons/16x16/edit-clear.png"),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off,
         )
-        self.ClearAnnotationsButton.setIcon(icon8)
+        self.ClearAnnotationsButton.setIcon(icon9)
         self.ClearAnnotationsButton.setObjectName("ClearAnnotationsButton")
         self.horizontalLayout_3.addWidget(self.ClearAnnotationsButton)
         self.hideLabelsButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(
             QtGui.QPixmap(":/icons/32x32/go-jump.png"),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off,
         )
-        self.hideLabelsButton.setIcon(icon9)
+        self.hideLabelsButton.setIcon(icon10)
         self.hideLabelsButton.setObjectName("hideLabelsButton")
         self.horizontalLayout_3.addWidget(self.hideLabelsButton)
         self.hideAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon10 = QtGui.QIcon()
-        icon10.addPixmap(
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(
             QtGui.QPixmap(":/icons/16x16/go-jump.png"),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off,
         )
-        self.hideAnnotationsButton.setIcon(icon10)
+        self.hideAnnotationsButton.setIcon(icon11)
         self.hideAnnotationsButton.setObjectName("hideAnnotationsButton")
         self.horizontalLayout_3.addWidget(self.hideAnnotationsButton)
         self.detectAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon11 = QtGui.QIcon()
-        icon11.addPixmap(
+        icon12 = QtGui.QIcon()
+        icon12.addPixmap(
             QtGui.QPixmap(":/icons/16x16/camera-photo.png"),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off,
         )
-        self.detectAnnotationsButton.setIcon(icon11)
+        self.detectAnnotationsButton.setIcon(icon12)
         self.detectAnnotationsButton.setObjectName("detectAnnotationsButton")
         self.horizontalLayout_3.addWidget(self.detectAnnotationsButton)
         spacerItem2 = QtWidgets.QSpacerItem(
@@ -301,13 +313,13 @@ class Ui_MainWindow(object):
         self.label_3.setObjectName("label_3")
         self.horizontalLayout_4.addWidget(self.label_3)
         self.paintCircleButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon12 = QtGui.QIcon()
-        icon12.addPixmap(
+        icon13 = QtGui.QIcon()
+        icon13.addPixmap(
             QtGui.QPixmap(":/icons/32x32/list-add.png"),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off,
         )
-        self.paintCircleButton.setIcon(icon12)
+        self.paintCircleButton.setIcon(icon13)
         self.paintCircleButton.setCheckable(True)
         self.paintCircleButton.setObjectName("paintCircleButton")
         self.horizontalLayout_4.addWidget(self.paintCircleButton)
@@ -664,7 +676,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.splitter_4, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1591, 30))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1598, 30))
         self.menubar.setObjectName("menubar")
         self.menuMenu = QtWidgets.QMenu(self.menubar)
         self.menuMenu.setObjectName("menuMenu")
@@ -718,8 +730,11 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "YAYA - YOLO annoter"))
-        self.isSavedCheckBox.setText(_translate("MainWindow", "Saved"))
-        self.isErrorsCheckBox.setText(_translate("MainWindow", "isErrors?"))
+        self.prevFileButton.setText(_translate("MainWindow", "..."))
+        self.prevFileButton.setShortcut(_translate("MainWindow", ","))
+        self.fileNumberSliderLabel.setText(_translate("MainWindow", "Slider label"))
+        self.nextFileButton.setText(_translate("MainWindow", "..."))
+        self.nextFileButton.setShortcut(_translate("MainWindow", "."))
         self.label_4.setText(_translate("MainWindow", "Image scaling:"))
         self.imageScalingComboBox.setItemText(0, _translate("MainWindow", "Resize"))
         self.imageScalingComboBox.setItemText(
@@ -730,16 +745,12 @@ class Ui_MainWindow(object):
         )
         self.progressBar.setFormat(_translate("MainWindow", "Annotated %p%"))
         self.fileLabel.setText(_translate("MainWindow", "Filename (number/all)"))
-        self.fileNumberSliderLabel.setText(_translate("MainWindow", "Slider label"))
-        self.prevFileButton.setText(_translate("MainWindow", "..."))
-        self.prevFileButton.setShortcut(_translate("MainWindow", ","))
-        self.nextFileButton.setText(_translate("MainWindow", "..."))
-        self.nextFileButton.setShortcut(_translate("MainWindow", "."))
         self.fileSummaryLabel.setText(_translate("MainWindow", "TextLabel"))
         self.fileSelectorTableWidget.setSortingEnabled(True)
         self.label_2.setText(_translate("MainWindow", "Image"))
         self.SaveFileAnnotationsButton.setText(_translate("MainWindow", "(S)ave"))
         self.SaveFileAnnotationsButton.setShortcut(_translate("MainWindow", "S"))
+        self.CacheImageButton.setText(_translate("MainWindow", "Cac(H)e"))
         self.DeleteImageAnnotationsButton.setText(_translate("MainWindow", "(X)Delete"))
         self.DeleteImageAnnotationsButton.setShortcut(_translate("MainWindow", "X"))
         self.DeleteNotAnnotatedFilesButton.setText(

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1591</width>
-    <height>853</height>
+    <width>1598</width>
+    <height>897</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,22 +40,37 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QCheckBox" name="isSavedCheckBox">
+           <widget class="QToolButton" name="prevFileButton">
             <property name="text">
-             <string>Saved</string>
+             <string>...</string>
             </property>
-            <property name="checkable">
-             <bool>false</bool>
+            <property name="icon">
+             <iconset resource="icons/tango.qrc">
+              <normaloff>:/icons/16x16/media-skip-backward.png</normaloff>:/icons/16x16/media-skip-backward.png</iconset>
+            </property>
+            <property name="shortcut">
+             <string>,</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="isErrorsCheckBox">
+           <widget class="QLabel" name="fileNumberSliderLabel">
             <property name="text">
-             <string>isErrors?</string>
+             <string>Slider label</string>
             </property>
-            <property name="checkable">
-             <bool>false</bool>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="nextFileButton">
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="icons/tango.qrc">
+              <normaloff>:/icons/16x16/media-skip-forward.png</normaloff>:/icons/16x16/media-skip-forward.png</iconset>
+            </property>
+            <property name="shortcut">
+             <string>.</string>
             </property>
            </widget>
           </item>
@@ -151,41 +166,6 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="fileNumberSliderLabel">
-            <property name="text">
-             <string>Slider label</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="prevFileButton">
-            <property name="text">
-             <string>...</string>
-            </property>
-            <property name="icon">
-             <iconset resource="icons/tango.qrc">
-              <normaloff>:/icons/16x16/media-skip-backward.png</normaloff>:/icons/16x16/media-skip-backward.png</iconset>
-            </property>
-            <property name="shortcut">
-             <string>,</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="nextFileButton">
-            <property name="text">
-             <string>...</string>
-            </property>
-            <property name="icon">
-             <iconset resource="icons/tango.qrc">
-              <normaloff>:/icons/16x16/media-skip-forward.png</normaloff>:/icons/16x16/media-skip-forward.png</iconset>
-            </property>
-            <property name="shortcut">
-             <string>.</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <spacer name="horizontalSpacer_4">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -252,6 +232,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="SaveFileAnnotationsButton">
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
             <property name="text">
              <string>(S)ave</string>
             </property>
@@ -265,7 +248,24 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="CacheImageButton">
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+            <property name="text">
+             <string>Cac(H)e</string>
+            </property>
+            <property name="icon">
+             <iconset resource="icons/tango.qrc">
+              <normaloff>:/icons/32x32/document-save.png</normaloff>:/icons/32x32/document-save.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="DeleteImageAnnotationsButton">
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
             <property name="text">
              <string>(X)Delete</string>
             </property>
@@ -280,6 +280,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="DeleteNotAnnotatedFilesButton">
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
             <property name="text">
              <string>Delete not annotated</string>
             </property>
@@ -1150,7 +1153,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1591</width>
+     <width>1598</width>
      <height>30</height>
     </rect>
    </property>

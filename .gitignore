@@ -137,3 +137,4 @@ input/*.detector
 input/*.json
 input/*.txt
 icons/tango_rc.py
+temp/session_*

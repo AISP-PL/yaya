@@ -23,6 +23,7 @@ from PyQt5.QtWidgets import (
 
 from Detectors.common.Detector import NmsMethod
 from engine.annote import GetClasses
+from engine.session import Session
 from helpers.files import ChangeExtension, FixPath
 from MainWindow_ui import Ui_MainWindow
 from ViewerEditorImage import ViewerEditorImage
@@ -45,6 +46,8 @@ class MainWindowGui(Ui_MainWindow):
         """
         Constructor
         """
+        # Session : Start
+        self.session = Session()
         # Config
         self.info = {"Callbacks": True}
         # Store initial arguments
@@ -137,6 +140,9 @@ class MainWindowGui(Ui_MainWindow):
         )
         self.ui.DeleteNotAnnotatedFilesButton.clicked.connect(
             self.CallbackDeleteNotAnnotatedFilesButton
+        )
+        self.ui.CacheImageButton.clicked.connect(
+            lambda _x: self.session.fileentry_store(self.annoter.GetFile())
         )
 
         # Buttons - Annotations
@@ -237,6 +243,9 @@ class MainWindowGui(Ui_MainWindow):
         # Setup progress bar
         self.ui.progressBar.setMinimum(0)
         self.ui.progressBar.setMaximum(imageCount)
+        self.ui.progressBar.setFormat(
+            f"Completed {imageAnnotatedCount}/{imageCount} %p%"
+        )
         self.ui.progressBar.setValue(imageAnnotatedCount)
 
         # Setup horizontal file slider
@@ -276,18 +285,9 @@ class MainWindowGui(Ui_MainWindow):
         # Paint size slider
         self.ui.paintLabel.setText("Paint size %u" % self.ui.paintSizeSlider.value())
 
-        # Setup isSaved tick
-        if self.annoter.IsSynchronized():
-            self.ui.isSavedCheckBox.setChecked(True)
-        else:
-            self.ui.isSavedCheckBox.setChecked(False)
-
         # Setup errors tick
         errors = self.annoter.GetErrors()
-        if len(errors) != 0:
-            self.ui.isErrorsCheckBox.setChecked(True)
-        else:
-            self.ui.isErrorsCheckBox.setChecked(False)
+        # @TODO
 
         # Setup viewer/editor
         self.ui.viewerEditor.SetAnnoter(self.annoter)
