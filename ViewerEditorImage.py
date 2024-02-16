@@ -1,37 +1,50 @@
-'''
+"""
 Created on 30 gru 2020
 
 @author: spasz
-'''
+"""
+
+import logging
 import os
 import subprocess
+from datetime import datetime
+
 import cv2
 import numpy as np
-from datetime import datetime
-from helpers.QtDrawing import QDrawPolygon, QDrawPolyline, QDrawJoints,\
-    QDrawCrosshair, QDrawText, QDrawArrow, CvBGRColorToQColor, QDrawRectangle,\
-    CvImage2QtImage, CvRGBColorToQColor, QDrawElipse
-from helpers.boxes import PointToRelative, PointToAbsolute, PointsToRect,\
-    IsInside
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtGui import QPainter, QBrush, QFont, QPixmap
 from PyQt5.Qt import QPoint, QTimer
-from PyQt5.QtCore import Qt, pyqtSignal, QRect, QPointF
+from PyQt5.QtCore import QPointF, QRect, Qt, pyqtSignal
+from PyQt5.QtGui import QBrush, QFont, QPainter, QPixmap
+from PyQt5.QtWidgets import QWidget
+
 import helpers.boxes as boxes
-import logging
-from helpers.images import GetFixedFitToBox
 from engine.annote import AnnoteAuthorType
+from helpers.boxes import IsInside, PointsToRect, PointToAbsolute, PointToRelative
+from helpers.images import GetFixedFitToBox
+from helpers.QtDrawing import (
+    CvBGRColorToQColor,
+    CvImage2QtImage,
+    CvRGBColorToQColor,
+    QDrawArrow,
+    QDrawCrosshair,
+    QDrawElipse,
+    QDrawJoints,
+    QDrawPolygon,
+    QDrawPolyline,
+    QDrawRectangle,
+    QDrawText,
+)
 
 
 class ViewerEditorImage(QWidget):
-    ''' States of editor.'''
+    """States of editor."""
+
     # Editor mode
     ModeNone = 0
     ModeAddAnnotation = 1
     ModeRenameAnnotation = 2
     ModeRemoveAnnotation = 3
     ModePaintCircle = 4
-    
+
     # Miniature position
     MiniatureLeft = 0
     MiniatureRight = 1
@@ -40,14 +53,13 @@ class ViewerEditorImage(QWidget):
     ImageScalingResize = 0
     ImageScalingResizeAspectRatio = 1
     ImageScalingOriginalSize = 2
-    
+
     # Image scaling algorithm
     ImageScalingLinear = 0
     ImageScalingNearest = 1
-    
 
     # Define signals
-    signalEditorFinished = pyqtSignal(int, name='EditorFinished')
+    signalEditorFinished = pyqtSignal(int, name="EditorFinished")
 
     def __init__(self, parent):
         # QWidget constructor call
@@ -56,9 +68,9 @@ class ViewerEditorImage(QWidget):
         # ----- Viewed data ------
         # Configuration
         self.config = {
-            'isConfidence': True,
-            'isAnnotationsHidden': False,
-            'isLabelsHidden': False,
+            "isConfidence": True,
+            "isAnnotationsHidden": False,
+            "isLabelsHidden": False,
         }
         # Background image loaded
         self.imageBg = None
@@ -90,66 +102,65 @@ class ViewerEditorImage(QWidget):
         self.show()
 
     def TrajectoryToAbsoluteQTrajectory(self, trajectory, width, height):
-        '''Recalculate trajectory to Q absolute trajectory.'''
+        """Recalculate trajectory to Q absolute trajectory."""
         qtrajectory = []
         for element in trajectory:
-            x, y = PointToAbsolute((element[0], element[1]),
-                                   width, height)
+            x, y = PointToAbsolute((element[0], element[1]), width, height)
             qtrajectory.append(QPointF(x, y))
 
         return qtrajectory
 
     def AbsoluteQTrajectoryToTrajectory(self, qtrajectory, width, height):
-        '''Recalculate trajectory to Q absolute trajectory.'''
+        """Recalculate trajectory to Q absolute trajectory."""
         trajectory = []
         for qpoint in qtrajectory:
             x, y = qpoint.x(), qpoint.y()
-            x, y = PointToRelative((x, y),
-                                   width, height)
+            x, y = PointToRelative((x, y), width, height)
             trajectory.append((x, y))
 
         return trajectory
 
     def ItemQTrajectoryUpdate(self, item, width, height):
-        ''' Update absolute Q trajectory in item.'''
-        item['QViewTrajectory'] = self.TrajectoryToAbsoluteQTrajectory(
-            item['trajectory'], width, height)
-        item['QViewWidth'] = width
-        item['QViewHeight'] = height
+        """Update absolute Q trajectory in item."""
+        item["QViewTrajectory"] = self.TrajectoryToAbsoluteQTrajectory(
+            item["trajectory"], width, height
+        )
+        item["QViewWidth"] = width
+        item["QViewHeight"] = height
         return item
 
     def GetOption(self, name):
-        ''' Set configuration option.'''
-        if (name in self.config):
+        """Set configuration option."""
+        if name in self.config:
             return self.config[name]
 
         return None
 
-    def SetOption(self, name : str, value : bool):
-        ''' Set configuration option.'''
-        if (name in self.config):
+    def SetOption(self, name: str, value: bool):
+        """Set configuration option."""
+        if name in self.config:
             self.config[name] = value
             self.update()
         else:
-            logging.error('(ViewerEditorImage) Unknown configuration option!')
+            logging.error("(ViewerEditorImage) Unknown configuration option!")
 
     def SetClassNumber(self, index):
-        ''' Set class number. '''
+        """Set class number."""
         self.classNumber = index
 
     def SetEditorMode(self, mode, argument=None):
-        ''' Sets editor mode.'''
+        """Sets editor mode."""
         self.__resetEditorMode()
         self.editorMode = mode
         self.editorModeArgument = argument
         return True
 
     def SetEditorModeArgument(self, argument):
-        ''' Set/update editor mode argument.'''
+        """Set/update editor mode argument."""
         self.editorModeArgument = argument
 
     def __resetEditorMode(self, defaultMode=ModeNone):
-        ''' Resets editor mode.'''
+        """Resets editor mode."""
         self.mousePosition = None
         self.mouseTrajectory = None
         self.mouseClicks = []
@@ -157,43 +168,43 @@ class ViewerEditorImage(QWidget):
         self.editorMode = defaultMode
 
     def SetAnnoter(self, annoter):
-        ''' Set annoter handle.'''
-        if (annoter is not None):
+        """Set annoter handle."""
+        if annoter is not None:
             self.annoter = annoter
             self.update()
 
     def SetImage(self, image):
-        ''' Set imagePath to show.'''
-        if (image is not None):
+        """Set imagePath to show."""
+        if image is not None:
             self.imageBg = image
             self.update()
 
     def SetImageScaling(self, scalingMode):
-        ''' Sets image scaling mode.'''
+        """Sets image scaling mode."""
         self.imageScaling = scalingMode
 
     def GetImageSize(self):
-        ''' Returns .'''
-        if (self.imageBg is not None):
+        """Returns ."""
+        if self.imageBg is not None:
             height, width = self.imageBg.shape[0:2]
             return width, height
 
         return 0, 0
 
     def GetViewSize(self):
-        ''' Returns .'''
+        """Returns ."""
         width, height = self.rect().getRect()[2:]
         return width, height
 
     def GetHoveredAnnotation(self, point):
-        ''' Finds currently hovered annotation.'''
+        """Finds currently hovered annotation."""
         founded = None
         for element in self.annoter.GetAnnotations():
-            if (element.IsInside(point) == True):
-                if (founded is not None):
+            if element.IsInside(point) == True:
+                if founded is not None:
                     area1 = boxes.GetArea(element.GetBox())
                     area2 = boxes.GetArea(founded.GetBox())
-                    if (area1 < area2):
+                    if area1 < area2:
                         founded = element
                 else:
                     founded = element
@@ -201,128 +212,131 @@ class ViewerEditorImage(QWidget):
         return founded
 
     def SaveScreenshot(self, filepath):
-        ''' Returns screenshot.'''
+        """Returns screenshot."""
         pixmap = QPixmap((self.size()))
         self.render(pixmap)
         pixmap.save(filepath)
 
     def ScreenshotToFile(self, path) -> bool:
-        '''Public method which renders widget to file.'''
+        """Public method which renders widget to file."""
         # Render to pixmap of same width and height
         pixmap = self.grab(self.rect())
         # Save to filepath (return bool)
         return pixmap.save(path)
 
     def mouseMoveEvent(self, event):
-        ''' Handle mouse move event.'''
+        """Handle mouse move event."""
         self.mousePosition = event.pos()
-        if (self.mouseTrajectory is not None):
+        if self.mouseTrajectory is not None:
             self.mouseTrajectory.append(event.pos())
 
         self.update()
 
     def mousePressEvent(self, event):
-        ''' Handle mouse event.'''
+        """Handle mouse event."""
         # Mode Add Annotation
-        if (self.editorMode == self.ModeAddAnnotation):
+        if self.editorMode == self.ModeAddAnnotation:
             # LPM adds point
-            if (event.buttons() == Qt.LeftButton):
+            if event.buttons() == Qt.LeftButton:
                 self.mouseClicks.append(event.pos())
                 # If stored 2 points the call finish.
-                if (len(self.mouseClicks) >= 2):
+                if len(self.mouseClicks) >= 2:
                     self.CallbackEditorFinished()
 
         # Mode Rename Annotation
-        elif (self.editorMode == self.ModeRenameAnnotation):
+        elif self.editorMode == self.ModeRenameAnnotation:
             # LPM finds annotation
-            if (event.buttons() == Qt.LeftButton):
+            if event.buttons() == Qt.LeftButton:
                 x, y = event.pos().x(), event.pos().y()
                 viewWidth, viewHeight = self.GetViewSize()
-                toDelete = self.GetHoveredAnnotation(boxes.PointToRelative((x, y),
-                                                                           viewWidth, viewHeight))
+                toDelete = self.GetHoveredAnnotation(
+                    boxes.PointToRelative((x, y), viewWidth, viewHeight)
+                )
                 # If clicked on annotation the return
-                if (toDelete is not None):
+                if toDelete is not None:
                     self.editorModeArgument = toDelete
                     self.CallbackEditorFinished()
 
         # Mode Remove Annotation
-        elif (self.editorMode == self.ModeRemoveAnnotation):
+        elif self.editorMode == self.ModeRemoveAnnotation:
             # LPM finds annotation
-            if (event.buttons() == Qt.LeftButton):
+            if event.buttons() == Qt.LeftButton:
                 x, y = event.pos().x(), event.pos().y()
                 viewWidth, viewHeight = self.GetViewSize()
-                toDelete = self.GetHoveredAnnotation(boxes.PointToRelative((x, y),
-                                                                           viewWidth, viewHeight))
+                toDelete = self.GetHoveredAnnotation(
+                    boxes.PointToRelative((x, y), viewWidth, viewHeight)
+                )
                 # If clicked on annotation the return
-                if (toDelete is not None):
+                if toDelete is not None:
                     self.editorModeArgument = toDelete
                     self.CallbackEditorFinished()
 
         # Mode Paint circle
-        elif (self.editorMode == self.ModePaintCircle):
+        elif self.editorMode == self.ModePaintCircle:
             # LPM finds annotation
-            if (event.buttons() == Qt.LeftButton):
+            if event.buttons() == Qt.LeftButton:
                 # Enabled mouse trajectory storing
                 self.mouseTrajectory = [event.pos()]
 
     def mouseReleaseEvent(self, event):
-        ''' Handle mouse event.'''
+        """Handle mouse event."""
         # Mode Paint circle
-        if (self.editorMode == self.ModePaintCircle):
+        if self.editorMode == self.ModePaintCircle:
             self.CallbackEditorFinished()
 
     def CallbackEditorFinished(self):
-        ''' Finished editor mode.'''
+        """Finished editor mode."""
         # Get Preview info width & height
         widgetWidth, widgetHeight = self.GetViewSize()
         # Get image width & height
         imWidth, imHeight = self.GetImageSize()
         # ---------- Select scaling mode -----------
         # Resize
-        if (self.imageScaling == self.ImageScalingResize):
+        if self.imageScaling == self.ImageScalingResize:
             viewportWidth, viewportHeight = widgetWidth, widgetHeight
 
         # Resize with aspect ratio
-        elif (self.imageScaling == self.ImageScalingResizeAspectRatio):
+        elif self.imageScaling == self.ImageScalingResizeAspectRatio:
             viewportWidth, viewportHeight = GetFixedFitToBox(
-                imWidth, imHeight, widgetWidth, widgetHeight)
+                imWidth, imHeight, widgetWidth, widgetHeight
+            )
 
         # Original size
-        elif (self.imageScaling == self.ImageScalingOriginalSize):
+        elif self.imageScaling == self.ImageScalingOriginalSize:
             viewportWidth, viewportHeight = imWidth, imHeight
 
         # Mouse clicks to relative
         clicksRel = self.AbsoluteQTrajectoryToTrajectory(
-            self.mouseClicks, viewportWidth, viewportHeight)
+            self.mouseClicks, viewportWidth, viewportHeight
+        )
         # Mouse trajectory relative
-        if (self.mouseTrajectory is not None):
+        trajectoryRel = []
+        if self.mouseTrajectory is not None:
             trajectoryRel = self.AbsoluteQTrajectoryToTrajectory(
-                self.mouseTrajectory, viewportWidth, viewportHeight)
+                self.mouseTrajectory, viewportWidth, viewportHeight
+            )
 
         # Mode Add Annotation
-        if (self.editorMode == self.ModeAddAnnotation):
+        if self.editorMode == self.ModeAddAnnotation:
             box = PointsToRect(clicksRel[0], clicksRel[1])
-            self.annoter.AddAnnotation(box,
-                                       self.classNumber)
+            self.annoter.AddAnnotation(box, self.classNumber)
         # Mode Rename Annotation
-        elif (self.editorMode == self.ModeRenameAnnotation):
+        elif self.editorMode == self.ModeRenameAnnotation:
             annote = self.editorModeArgument
             annote.SetClassNumber(self.classNumber)
             annote.SetAuthorType(AnnoteAuthorType.byHand)
 
         # Mode Remove Annotation
-        elif (self.editorMode == self.ModeRemoveAnnotation):
+        elif self.editorMode == self.ModeRemoveAnnotation:
             self.annoter.RemoveAnnotation(self.editorModeArgument)
 
         # Mode Paint circle
-        elif (self.editorMode == self.ModePaintCircle):
+        elif self.editorMode == self.ModePaintCircle:
             imWidth, imHeight = self.GetImageSize()
             for relPoint in trajectoryRel:
                 imPoint = PointToAbsolute(relPoint, imWidth, imHeight)
                 # Add drawing to original image
-                self.annoter.PaintCircles([imPoint],
-                                          self.editorModeArgument,
-                                          (0, 0, 0))
+                self.annoter.PaintCircles([imPoint], self.editorModeArgument, (0, 0, 0))
 
         previousMode = self.editorMode
         self.__resetEditorMode(previousMode)
@@ -331,34 +345,37 @@ class ViewerEditorImage(QWidget):
         # Emit signal
         self.signalEditorFinished.emit(previousMode)
 
-    def paintMiniature(self,
-                       painter: QPainter,
-                       image: np.array,
-                       miniWidth: int = 128,
-                       miniHeight: int = 128) -> None:
-        ''' Painting miniature of image in painter.'''
+    def paintMiniature(
+        self,
+        painter: QPainter,
+        image: np.array,
+        miniWidth: int = 128,
+        miniHeight: int = 128,
+    ) -> None:
+        """Painting miniature of image in painter."""
         # Get Preview info width & height
         widgetWidth, widgetHeight = self.GetViewSize()
         # Get image dimensions
         imHeight, imWidth = image.shape[0:2]
         # Get fitted image dimensions
         miniWidth, miniHeight = GetFixedFitToBox(
-            imWidth, imHeight, miniWidth, miniHeight)
+            imWidth, imHeight, miniWidth, miniHeight
+        )
         # Change cv2 image to pixmap
         pixmap = CvImage2QtImage(cv2.resize(image, (miniWidth, miniHeight)))
         # Create position Qrect
-        if (self.miniaturePosition == ViewerEditorImage.MiniatureLeft):
+        if self.miniaturePosition == ViewerEditorImage.MiniatureLeft:
             miniaturePosition = QPointF(0, 0)
         else:
-            miniaturePosition = QPointF(widgetWidth-miniWidth, 0)
+            miniaturePosition = QPointF(widgetWidth - miniWidth, 0)
 
         # Check if mouse over miniature
-        if (self.mousePosition is not None):
+        if self.mousePosition is not None:
             point = (self.mousePosition.x(), self.mousePosition.y())
             mx, my = miniaturePosition.x(), miniaturePosition.y()
-            if (IsInside(point, (mx, my, mx+miniWidth, my+miniHeight))):
+            if IsInside(point, (mx, my, mx + miniWidth, my + miniHeight)):
                 # Miniature position : Switch
-                if (self.miniaturePosition == ViewerEditorImage.MiniatureLeft):
+                if self.miniaturePosition == ViewerEditorImage.MiniatureLeft:
                     self.miniaturePosition = ViewerEditorImage.MiniatureRight
                 else:
                     self.miniaturePosition = ViewerEditorImage.MiniatureLeft
@@ -367,7 +384,7 @@ class ViewerEditorImage(QWidget):
         painter.drawPixmap(miniaturePosition, pixmap)
 
     def paintEvent(self, event):
-        ''' Draw on every paint event.'''
+        """Draw on every paint event."""
         # Get Preview info width & height
         widgetWidth, widgetHeight = self.GetViewSize()
         # Create painter
@@ -375,7 +392,7 @@ class ViewerEditorImage(QWidget):
         widgetPainter.begin(self)
 
         # If image is loaded?
-        if (self.imageBg is not None):
+        if self.imageBg is not None:
             # Setup image width & height
             imHeight, imWidth = self.imageBg.shape[0:2]
             image = self.imageBg
@@ -387,34 +404,39 @@ class ViewerEditorImage(QWidget):
 
         # ---------- Select scaling mode -----------
         # Resize
-        if (self.imageScaling == self.ImageScalingResize):
+        if self.imageScaling == self.ImageScalingResize:
             viewportWidth, viewportHeight = widgetWidth, widgetHeight
 
         # Resize with aspect ratio
-        elif (self.imageScaling == self.ImageScalingResizeAspectRatio):
+        elif self.imageScaling == self.ImageScalingResizeAspectRatio:
             viewportWidth, viewportHeight = GetFixedFitToBox(
-                imWidth, imHeight, widgetWidth, widgetHeight)
+                imWidth, imHeight, widgetWidth, widgetHeight
+            )
             widgetPainter.setViewport(0, 0, viewportWidth, viewportHeight)
 
         # Original size
-        elif (self.imageScaling == self.ImageScalingOriginalSize):
+        elif self.imageScaling == self.ImageScalingOriginalSize:
             widgetPainter.setViewport(0, 0, imWidth, imHeight)
             viewportWidth, viewportHeight = imWidth, imHeight
 
         # Recalculate mouse position to viewport
         mousePosition = None
-        if (self.mousePosition is not None):
-            mx, my = boxes.PointToRelative((self.mousePosition.x(), self.mousePosition.y()),
-                                           viewportWidth, viewportHeight)
-            mousePosition = QPointF(mx*widgetWidth, my*widgetHeight)
+        if self.mousePosition is not None:
+            mx, my = boxes.PointToRelative(
+                (self.mousePosition.x(), self.mousePosition.y()),
+                viewportWidth,
+                viewportHeight,
+            )
+            mousePosition = QPointF(mx * widgetWidth, my * widgetHeight)
 
         # Recalculate mouse clicks to viewport
         mouseClicks = []
-        if (len(self.mouseClicks)):
+        if len(self.mouseClicks):
             for mouseClick in self.mouseClicks:
-                mx, my = boxes.PointToRelative((mouseClick.x(), mouseClick.y()),
-                                               viewportWidth, viewportHeight)
-                mouseClicks.append(QPointF(mx*widgetWidth, my*widgetHeight))
+                mx, my = boxes.PointToRelative(
+                    (mouseClick.x(), mouseClick.y()), viewportWidth, viewportHeight
+                )
+                mouseClicks.append(QPointF(mx * widgetWidth, my * widgetHeight))
 
         # Draw current OpenCV image as pixmap
         pixmap = CvImage2QtImage(image)
@@ -424,47 +446,57 @@ class ViewerEditorImage(QWidget):
         self.paintMiniature(widgetPainter, image)
 
         # Draw all annotations
-        if (not self.config['isAnnotationsHidden']):
+        if not self.config["isAnnotationsHidden"]:
             for annotate in self.annoter.GetAnnotations():
-                annotate.QtDraw(widgetPainter,
-                                isConfidence=True,
-                                isLabel=not self.config['isLabelsHidden'])
+                annotate.QtDraw(
+                    widgetPainter,
+                    isConfidence=True,
+                    isLabel=not self.config["isLabelsHidden"],
+                )
 
             # Draw hovered annotation
-            if (mousePosition is not None):
+            if mousePosition is not None:
                 # Get hovered annotation
                 annote = self.GetHoveredAnnotation(
-                    boxes.PointToRelative((self.mousePosition.x(), self.mousePosition.y()),
-                                          viewportWidth, viewportHeight))
-                if (annote is not None):
-                    annote.QtDraw(widgetPainter,
-                                  highlight=True,
-                                  isConfidence=True,
-                                  isLabel=True)
+                    boxes.PointToRelative(
+                        (self.mousePosition.x(), self.mousePosition.y()),
+                        viewportWidth,
+                        viewportHeight,
+                    )
+                )
+                if annote is not None:
+                    annote.QtDraw(
+                        widgetPainter, highlight=True, isConfidence=True, isLabel=True
+                    )
 
         # -------- Mode Annotation Draw -------
-        if (self.editorMode == self.ModeAddAnnotation):
+        if self.editorMode == self.ModeAddAnnotation:
             if (len(mouseClicks) != 0) and (mousePosition is not None):
                 # Draw rectangle box
-                QDrawRectangle(widgetPainter,
-                               [mouseClicks[0], mousePosition],
-                               pen=Qt.green,
-                               brushColor=Qt.green,
-                               brushOpacity=0.1
-                               )
+                QDrawRectangle(
+                    widgetPainter,
+                    [mouseClicks[0], mousePosition],
+                    pen=Qt.green,
+                    brushColor=Qt.green,
+                    brushOpacity=0.1,
+                )
 
         # -------- Mode Paint Draw -------
-        if (self.editorMode == self.ModePaintCircle):
-            if (mousePosition is not None):
+        if self.editorMode == self.ModePaintCircle:
+            if mousePosition is not None:
                 imWidth, imHeight = self.GetImageSize()
-                radius = round((self.editorModeArgument/imWidth)*viewportWidth)
-                QDrawElipse(widgetPainter,
-                            mousePosition,
-                            radius)
+                radius = round((self.editorModeArgument / imWidth) * viewportWidth)
+                QDrawElipse(widgetPainter, mousePosition, radius)
 
         # Draw crosshair
-        if (mousePosition is not None):
-            QDrawCrosshair(widgetPainter, mousePosition.x(), mousePosition.y(),
-                           widgetWidth, widgetHeight, Qt.red)
+        if mousePosition is not None:
+            QDrawCrosshair(
+                widgetPainter,
+                mousePosition.x(),
+                mousePosition.y(),
+                widgetWidth,
+                widgetHeight,
+                Qt.red,
+            )
 
         widgetPainter.end()
