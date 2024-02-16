@@ -750,7 +750,8 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "Image"))
         self.SaveFileAnnotationsButton.setText(_translate("MainWindow", "(S)ave"))
         self.SaveFileAnnotationsButton.setShortcut(_translate("MainWindow", "S"))
-        self.CacheImageButton.setText(_translate("MainWindow", "Cac(H)e"))
+        self.CacheImageButton.setText(_translate("MainWindow", "Cache(Y)"))
+        self.CacheImageButton.setShortcut(_translate("MainWindow", "Y"))
         self.DeleteImageAnnotationsButton.setText(_translate("MainWindow", "(X)Delete"))
         self.DeleteImageAnnotationsButton.setShortcut(_translate("MainWindow", "X"))
         self.DeleteNotAnnotatedFilesButton.setText(

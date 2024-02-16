@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 6.0.2, 2024-02-10T00:32:14. -->
+<!-- Written by QtCreator 6.0.2, 2024-02-10T17:40:43. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -137,6 +137,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">/home/spasz/python/aisp-tools/yaya/Ui_MainWindow.py</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/spasz/python/aisp-tools/yaya/Ui_MainWindow.py</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/spasz/python/aisp-tools/yaya/Ui_MainWindow.py</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Interpreter">{332be509-c858-4722-8f31-d9d5fa9f6b30}</value>
     <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/spasz/python/aisp-tools/yaya/Ui_MainWindow.py</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
