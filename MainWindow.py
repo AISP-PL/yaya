@@ -139,7 +139,7 @@ class MainWindowGui(Ui_MainWindow):
         # Opened directories : Return first
         return opened_directories[0:amount]
 
-    def ImageIDToRowNumber(self, imageID):
+    def ImageIDToRowNumber(self, imageID: int):
         """Image number to row index."""
         # Found index
         foundIndex = None
@@ -152,6 +152,24 @@ class MainWindowGui(Ui_MainWindow):
                 break
 
         return foundIndex
+
+    def RowNumberToImageID(self, rowIndex: int):
+        """Row index to image number."""
+        # Check : Return 0 if rows == 0
+        if self.ui.fileSelectorTableWidget.rowCount() == 0:
+            return 0
+
+        # Find rowIndex of imageNumber
+        item = self.ui.fileSelectorTableWidget.item(rowIndex, 0)
+        if item is not None:
+            return int(item.toolTip())
+
+        # Otherwise : Return row zero image number
+        item = self.ui.fileSelectorTableWidget.item(0, 0)
+        if item is not None:
+            return int(item.toolTip())
+
+        return 0
 
     def SetupCallbacks(self):
         """Setup only once after init."""
@@ -334,20 +352,9 @@ class MainWindowGui(Ui_MainWindow):
         if fileEntry is not None:
             self.ui.fileSelectorTableWidget.setSortingEnabled(False)
             ViewImagesTableRow.View(
-                self.ui.fileSelectorTableWidget, rowIndex, fileEntry
+                self.ui.fileSelectorTableWidget, rowIndex, fileEntry, isSelected=True
             )
             self.ui.fileSelectorTableWidget.setSortingEnabled(True)
-
-        #         # Setup files selector table widget
-        #         self.ui.fileSelectorTableWidget.clearSelection()
-        #         if (imageCount != 0):
-        #             # Select whole row with image
-        #             for i in range(self.ui.fileSelectorTableWidget.columnCount()):
-        #                 item = self.ui.fileSelectorTableWidget.item(rowIndex, i)
-        #                 item.setSelected(True)
-
-        # #             Move verticall scroll bar also
-        # #             self.ui.fileSelectorTableWidget.verticalScrollBar().setValue(rowIndex)
 
         # Paint size slider
         self.ui.paintLabel.setText("Paint size %u" % self.ui.paintSizeSlider.value())
@@ -503,12 +510,28 @@ class MainWindowGui(Ui_MainWindow):
 
     def CallbackNextFile(self):
         """Callback"""
-        self.annoter.ProcessNext()
+        image_id = self.annoter.GetFileID()
+        # Next table row : From image_id
+        table_row = self.ImageIDToRowNumber(image_id) + 1
+        if table_row >= self.ui.fileSelectorTableWidget.rowCount():
+            table_row = 0
+        # Next image_id : From table row
+        next_image_id = self.RowNumberToImageID(table_row)
+
+        self.annoter.SetImageID(next_image_id)
         self.Setup()
 
     def CallbackPrevFile(self):
         """Callback"""
-        self.annoter.ProcessPrev()
+        image_id = self.annoter.GetFileID()
+        # Previous table row : From image_id
+        table_row = self.ImageIDToRowNumber(image_id) - 1
+        if table_row < 0:
+            table_row = self.ui.fileSelectorTableWidget.rowCount() - 1
+        # Previous image_id : From table row
+        prev_image_id = self.RowNumberToImageID(table_row)
+
+        self.annoter.SetImageID(prev_image_id)
         self.Setup()
 
     def CallbackOpenLocation(self):

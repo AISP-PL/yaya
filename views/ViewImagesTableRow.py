@@ -21,7 +21,12 @@ from Gui.widgets.RectTableWidgetItem import RectTableWidgetItem
 class ViewImagesTableRow:
 
     @staticmethod
-    def View(table: QTableWidget, rowIndex: int, fileEntry: dict):
+    def View(
+        table: QTableWidget,
+        rowIndex: int,
+        fileEntry: dict,
+        isSelected: bool = False,
+    ):
         """View images in table."""
         # Get translations
         _translate = QtCore.QCoreApplication.translate
@@ -157,3 +162,7 @@ class ViewImagesTableRow:
         item.setToolTip(str(fileEntry["ID"]))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
+
+        # Selection : Set row as selected
+        if isSelected:
+            table.selectRow(rowIndex)

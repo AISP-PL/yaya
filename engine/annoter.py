@@ -18,23 +18,12 @@ import helpers.prefilters as prefilters
 import helpers.transformations as transformations
 from Detectors.common.Detector import NmsMethod
 from engine.annote import AnnoteAuthorType
-from helpers.files import (
-    DeleteFile,
-    FixPath,
-    GetExtension,
-    GetFilename,
-    GetNotExistingSha1Filepath,
-    IsImageFile,
-)
+from helpers.files import (DeleteFile, FixPath, GetExtension, GetFilename,
+                           GetNotExistingSha1Filepath, IsImageFile)
 from helpers.metrics import EvaluateMetrics, Metrics
-from helpers.textAnnotations import (
-    DeleteAnnotations,
-    IsExistsAnnotations,
-    ReadAnnotations,
-    ReadDetections,
-    SaveAnnotations,
-    SaveDetections,
-)
+from helpers.textAnnotations import (DeleteAnnotations, IsExistsAnnotations,
+                                     ReadAnnotations, ReadDetections,
+                                     SaveAnnotations, SaveDetections)
 from helpers.visuals import Visuals, VisualsDuplicates
 
 
@@ -432,7 +421,7 @@ class Annoter:
         annotated = sum([int(fileEntry["IsAnnotation"]) for fileEntry in self.files])
         return annotated
 
-    def SetImageID(self, fileID):
+    def SetImageID(self, fileID: int):
         """Sets current image number."""
         # index of ID file
         foundIndex = None
@@ -617,7 +606,7 @@ class Annoter:
 
         return errors
 
-    def Process(self, processImage=True, forceDetector=False):
+    def Process(self, processImage: bool = True, forceDetector: bool = False):
         """process file."""
         if (self.offset >= 0) and (self.offset < self.GetFilesCount()):
             fileEntry = self.GetFile()
@@ -658,7 +647,7 @@ class Annoter:
 
         return False
 
-    def ProcessNext(self):
+    def ProcessNext(self) -> bool:
         """Process next image."""
         if self.offset < (self.GetFilesCount() - 1):
             self.offset += 1
@@ -667,7 +656,7 @@ class Annoter:
 
         return False
 
-    def ProcessPrev(self):
+    def ProcessPrev(self) -> bool:
         """Process next image."""
         if self.offset > 0:
             self.offset -= 1
