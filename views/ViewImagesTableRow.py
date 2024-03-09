@@ -115,20 +115,20 @@ class ViewImagesTableRow:
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 
+        # New detections [j]
+        item = FloatTableWidgetItem(metrics.new_detections, decimals=0)
+        item.setToolTip(str(fileEntry["ID"]))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1
+
         # Correct [%]
-        item = PercentTableWidgetItem(metrics.correct)
+        item = PercentTableWidgetItem(metrics.correct, is_color=True)
         item.setToolTip(str(fileEntry["ID"]))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 
         # Correct boxes [%]
         item = PercentTableWidgetItem(metrics.correct_bboxes)
-        item.setToolTip(str(fileEntry["ID"]))
-        table.setItem(rowIndex, colIndex, item)
-        colIndex += 1
-
-        # New detections [j]
-        item = QTableWidgetItem(f"{metrics.new_detections}")
         item.setToolTip(str(fileEntry["ID"]))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
@@ -146,19 +146,19 @@ class ViewImagesTableRow:
         colIndex += 1
 
         # Errors column
-        item = QTableWidgetItem(str(fileEntry["Errors"]))
+        item = FloatTableWidgetItem(fileEntry["Errors"], decimals=0)
         item.setToolTip(str(fileEntry["ID"]))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 
         # Confidence of matches
-        item = FloatTableWidgetItem(metrics.matches_confidence)
+        item = PercentTableWidgetItem(metrics.matches_confidence, is_color=True)
         item.setToolTip(str(fileEntry["ID"]))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 
         # Detector worst case confidence
-        item = FloatTableWidgetItem(metrics.detections_confidence_min)
+        item = PercentTableWidgetItem(metrics.detections_confidence_min, is_color=True)
         item.setToolTip(str(fileEntry["ID"]))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
