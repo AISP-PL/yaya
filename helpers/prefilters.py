@@ -37,11 +37,7 @@ def FilterIOUbyConfidence(annotations1, annotations2, maxIOU=0.70):
                     break
 
         if isFiltered == True:
-            logging.info(
-                "Filtered out (%s, %2.2f).",
-                annote.GetClassName(),
-                annote.GetConfidence(),
-            )
+            """Do nothing"""
         else:
             passed.append(annote)
 

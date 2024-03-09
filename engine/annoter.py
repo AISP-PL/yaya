@@ -11,6 +11,7 @@ from datetime import timedelta
 from math import sqrt
 
 import cv2
+from tqdm import tqdm
 
 import engine.annote as annote
 import helpers.boxes as boxes
@@ -141,7 +142,6 @@ class Annoter:
         if IsExistsAnnotations(filepath):
             txtAnnotes = ReadAnnotations(filepath)
             txtAnnotes = [annote.fromTxtAnnote(el) for el in txtAnnotes]
-            logging.debug("(Annoter) Loaded annotations from %s!", filepath)
 
             # Post-check of errors
             self.errors = self.__checkOfErrors()
@@ -242,7 +242,9 @@ class Annoter:
         self.files = []
         # Processing all files
         startTime = time.time()
-        for index, filename in enumerate(filesToParse):
+        for index, filename in enumerate(
+            tqdm(filesToParse, desc="Processing files", unit="files")
+        ):
             # Check if annotations exists
             isAnnotation = IsExistsAnnotations(path + filename)
 
@@ -295,23 +297,6 @@ class Annoter:
                     "Metrics": metrics,
                     "Visuals": visuals,
                 }
-            )
-
-            # Logging progress
-            logging.info(
-                "(Annoter) Progress: %2.2f%% [%u/%u].",
-                100 * index / len(filesToParse),
-                index,
-                len(filesToParse),
-            )
-            # Logging files per second
-            duration = time.time() - startTime
-            filesPerSecond = index / duration
-            secondsLeft = (len(filesToParse) - index) / (filesPerSecond + 0.01)
-            logging.info(
-                "(Annoter) FPS: %2.2f. Estimated time left: %s.",
-                filesPerSecond,
-                str(timedelta(seconds=secondsLeft)),
             )
 
         # ------- Sorting ------------

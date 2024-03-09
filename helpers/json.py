@@ -1,22 +1,23 @@
-'''
+"""
 Created on 3 sty 2020
 @author: spasz
-'''
-import json
-import os
-import logging
-from json.decoder import JSONDecodeError
+"""
+
 import dataclasses
+import json
+import logging
+import os
 from datetime import date, datetime, timedelta
+from json.decoder import JSONDecodeError
 
 
 class EnhancedJSONEncoder(json.JSONEncoder):
-    '''Enhanced JSON encoder with dataclasses support.'''
+    """Enhanced JSON encoder with dataclasses support."""
 
     def default(self, o):
-        ''' Method to default dataclass.'''
+        """Method to default dataclass."""
         # Set : Json
-        if (isinstance(o, (set))):
+        if isinstance(o, (set)):
             return list(o)
 
         # Dataclass : Json.
@@ -24,55 +25,52 @@ class EnhancedJSONEncoder(json.JSONEncoder):
             return dataclasses.asdict(o)
 
         # Datetime : Json
-        if (isinstance(o, (datetime, date))):
+        if isinstance(o, (datetime, date)):
             return o.isoformat()
 
         # Timedelta : Json
-        if (isinstance(o, timedelta)):
+        if isinstance(o, timedelta):
             return str(o.total_seconds())
 
         return super().default(o)
 
 
 def jsonRead(filename: str) -> dict:
-    ''' Reads json as dict.'''
+    """Reads json as dict."""
     # File not exists
-    if (not os.path.isfile(filename)):
-        logging.fatal('(Json) File %s not exists!', filename)
+    if not os.path.isfile(filename):
+        logging.fatal("(Json) File %s not exists!", filename)
         return {}
 
-    with open(filename, 'r') as f:
+    with open(filename, "r") as f:
         try:
             data = json.load(f)
-            logging.debug('(Json) Readed %s.\n', (filename))
             return data
         except JSONDecodeError:
-            logging.error('(Json) Invalid JSON file content!')
+            logging.error("(Json) Invalid JSON file content!")
             return {}
 
 
 def jsonWrite(filename: str, data: dict) -> None:
-    ''' Write data dict as json.'''
-    with open(filename, 'w') as f:
-        json.dump(data, f,
-                  indent=4,
-                  sort_keys=False,
-                  cls=EnhancedJSONEncoder)
+    """Write data dict as json."""
+    with open(filename, "w") as f:
+        json.dump(data, f, indent=4, sort_keys=False, cls=EnhancedJSONEncoder)
 
-    logging.debug('(Json) Written %s.\n', filename)
+    logging.debug("(Json) Written %s.\n", filename)
 
 
 def jsonShow(data: dict):
-    ''' Show json data.'''
-    logging.info('\n%s\n', json.dumps(
-        data, indent=4, sort_keys=False,  cls=EnhancedJSONEncoder))
+    """Show json data."""
+    logging.info(
+        "\n%s\n", json.dumps(data, indent=4, sort_keys=False, cls=EnhancedJSONEncoder)
+    )
 
 
 def jsonToStr(data: dict):
-    ''' Returns string json data.'''
-    return json.dumps(data, indent=4, sort_keys=False,  cls=EnhancedJSONEncoder)
+    """Returns string json data."""
+    return json.dumps(data, indent=4, sort_keys=False, cls=EnhancedJSONEncoder)
 
 
 def jsonFromStr(data: str) -> dict:
-    ''' Returns string json data.'''
+    """Returns string json data."""
     return json.loads(data)

@@ -3,3 +3,4 @@ ImageHash==4.3.1
 opencv-python-headless>=4.2.0.34
 PyQt5==5.15.7
 pytest==7.2.0
+tqdm==4.66.2
