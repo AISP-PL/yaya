@@ -17,13 +17,25 @@ import helpers.boxes as boxes
 import helpers.prefilters as prefilters
 import helpers.transformations as transformations
 from Detectors.common.Detector import NmsMethod
+from Detectors.common.image_strategy import ImageStrategy
 from engine.annote import AnnoteAuthorType
-from helpers.files import (DeleteFile, FixPath, GetExtension, GetFilename,
-                           GetNotExistingSha1Filepath, IsImageFile)
+from helpers.files import (
+    DeleteFile,
+    FixPath,
+    GetExtension,
+    GetFilename,
+    GetNotExistingSha1Filepath,
+    IsImageFile,
+)
 from helpers.metrics import EvaluateMetrics, Metrics
-from helpers.textAnnotations import (DeleteAnnotations, IsExistsAnnotations,
-                                     ReadAnnotations, ReadDetections,
-                                     SaveAnnotations, SaveDetections)
+from helpers.textAnnotations import (
+    DeleteAnnotations,
+    IsExistsAnnotations,
+    ReadAnnotations,
+    ReadDetections,
+    SaveAnnotations,
+    SaveDetections,
+)
 from helpers.visuals import Visuals, VisualsDuplicates
 
 
@@ -74,6 +86,8 @@ class Annoter:
         self.noDetector = noDetector
         # Detector : Confidence value
         self.confidence = detectorConfidence
+        # Detector : Image fitting strategy
+        self.imageStrategy = ImageStrategy.Rescale
         # Detector : NMS Threshold value
         self.nms = detectorNms
         # Detector : NMS method
@@ -171,6 +185,7 @@ class Annoter:
             nms_thresh=self.nms,
             boxRelative=True,
             nmsMethod=self.nmsMethod,
+            image_strategy=self.imageStrategy,
         )
 
         # Save/Update detector annotations file

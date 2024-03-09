@@ -14,4 +14,9 @@
     "mypy-type-checker.reportingScope": "workspace",
     "mypy-type-checker.cwd": "${workspaceFolder}",
     "cSpell.enabled": false,
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
 }

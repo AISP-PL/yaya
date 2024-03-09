@@ -593,9 +593,20 @@ class Ui_MainWindow(object):
         self.pageDetector.setObjectName("pageDetector")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.pageDetector)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_9.setObjectName("horizontalLayout_9")
         self.detectorConfidenceLabel = QtWidgets.QLabel(self.pageDetector)
         self.detectorConfidenceLabel.setObjectName("detectorConfidenceLabel")
-        self.verticalLayout_4.addWidget(self.detectorConfidenceLabel)
+        self.horizontalLayout_9.addWidget(self.detectorConfidenceLabel)
+        self.imageStrategyCombo = QtWidgets.QComboBox(self.pageDetector)
+        self.imageStrategyCombo.setObjectName("imageStrategyCombo")
+        self.imageStrategyCombo.addItem("")
+        self.horizontalLayout_9.addWidget(self.imageStrategyCombo)
+        spacerItem5 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
+        self.horizontalLayout_9.addItem(spacerItem5)
+        self.verticalLayout_4.addLayout(self.horizontalLayout_9)
         self.detectorConfidenceSlider = QtWidgets.QSlider(self.pageDetector)
         self.detectorConfidenceSlider.setMaximum(100)
         self.detectorConfidenceSlider.setOrientation(QtCore.Qt.Horizontal)
@@ -613,10 +624,10 @@ class Ui_MainWindow(object):
         self.detectorNmsCombo.addItem("")
         self.detectorNmsCombo.addItem("")
         self.horizontalLayout_8.addWidget(self.detectorNmsCombo)
-        spacerItem5 = QtWidgets.QSpacerItem(
+        spacerItem6 = QtWidgets.QSpacerItem(
             40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
         )
-        self.horizontalLayout_8.addItem(spacerItem5)
+        self.horizontalLayout_8.addItem(spacerItem6)
         self.verticalLayout_4.addLayout(self.horizontalLayout_8)
         self.detectorNmsSlider = QtWidgets.QSlider(self.pageDetector)
         self.detectorNmsSlider.setMaximum(100)
@@ -624,10 +635,10 @@ class Ui_MainWindow(object):
         self.detectorNmsSlider.setTickPosition(QtWidgets.QSlider.TicksBothSides)
         self.detectorNmsSlider.setObjectName("detectorNmsSlider")
         self.verticalLayout_4.addWidget(self.detectorNmsSlider)
-        spacerItem6 = QtWidgets.QSpacerItem(
+        spacerItem7 = QtWidgets.QSpacerItem(
             20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
         )
-        self.verticalLayout_4.addItem(spacerItem6)
+        self.verticalLayout_4.addItem(spacerItem7)
         self.toolSettingsStackedWidget.addWidget(self.pageDetector)
         self.pageCircle = QtWidgets.QWidget()
         sizePolicy = QtWidgets.QSizePolicy(
@@ -655,10 +666,10 @@ class Ui_MainWindow(object):
         self.paintSizeSlider.setObjectName("paintSizeSlider")
         self.horizontalLayout_5.addWidget(self.paintSizeSlider)
         self.verticalLayout.addLayout(self.horizontalLayout_5)
-        spacerItem7 = QtWidgets.QSpacerItem(
+        spacerItem8 = QtWidgets.QSpacerItem(
             20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
         )
-        self.verticalLayout.addItem(spacerItem7)
+        self.verticalLayout.addItem(spacerItem8)
         self.toolSettingsStackedWidget.addWidget(self.pageCircle)
         self.pageKeycodes = QtWidgets.QWidget()
         sizePolicy = QtWidgets.QSizePolicy(
@@ -724,7 +735,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuPomoc.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.toolSettingsStackedWidget.setCurrentIndex(0)
+        self.toolSettingsStackedWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -805,6 +816,9 @@ class Ui_MainWindow(object):
         self.button6.setText(_translate("MainWindow", "6"))
         self.button6.setShortcut(_translate("MainWindow", "6"))
         self.detectorConfidenceLabel.setText(_translate("MainWindow", "Confidence"))
+        self.imageStrategyCombo.setItemText(
+            0, _translate("MainWindow", "ImageStrategy")
+        )
         self.detectorNmsLabel.setText(_translate("MainWindow", "NMS threshold"))
         self.detectorNmsCombo.setItemText(0, _translate("MainWindow", "NMS"))
         self.detectorNmsCombo.setItemText(1, _translate("MainWindow", "SoftNMS"))

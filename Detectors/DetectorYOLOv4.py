@@ -12,6 +12,7 @@ import cv2
 import numpy as np
 
 from Detectors.common.Detector import Detector, NmsMethod
+from Detectors.common.image_strategy import ImageStrategy
 from Detectors.yolov4 import darknet
 from helpers.boxes import ToRelative
 from helpers.files import GetFilepath
@@ -22,10 +23,6 @@ class DetectorYOLOv4(Detector):
     """
     classdocs
     """
-
-    # Image fitting strategies
-    StrategyRescale = 0
-    StrategyLetterBox = 1
 
     def __init__(
         self,
@@ -135,11 +132,12 @@ class DetectorYOLOv4(Detector):
 
     def Detect(
         self,
-        frame,
-        confidence=0.5,
-        nms_thresh=0.45,
-        boxRelative=False,
+        frame: np.array,
+        confidence: float = 0.5,
+        nms_thresh: float = 0.45,
+        boxRelative: bool = False,
         nmsMethod: NmsMethod = NmsMethod.Nms,
+        image_strategy: ImageStrategy = ImageStrategy.Rescale,
     ):
         """Detect objects in given frame"""
         # Pre check
@@ -161,7 +159,7 @@ class DetectorYOLOv4(Detector):
         # ------------ Strategies choose
         # 1. Strategy rescale.
         # Rescale input image to network image dimensions.
-        if self.imageStrategy == self.StrategyRescale:
+        if image_strategy == ImageStrategy.Rescale:
             # If image input is diffrent.
             if (self.imwidth != self.netWidth) or (self.imheight != self.netHeight):
                 resized = cv2.resize(
@@ -214,7 +212,7 @@ class DetectorYOLOv4(Detector):
 
         # 2. Strategy letter box.
         # Rescale input image to network image dimensions.
-        elif self.imageStrategy == self.StrategyLetterBox:
+        elif image_strategy == ImageStrategy.LetterBox:
             # If frame image has diffrent size than network image.
             if (frame.shape[1] != self.netWidth) or (frame.shape[0] != self.netHeight):
                 # Recalculate new width/height of frame with fixed aspect ratio

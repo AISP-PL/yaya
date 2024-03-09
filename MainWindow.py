@@ -22,6 +22,7 @@ from PyQt5.QtWidgets import (
 )
 
 from Detectors.common.Detector import NmsMethod
+from Detectors.common.image_strategy import ImageStrategy
 from engine.annote import GetClasses
 from engine.session import Session
 from helpers.files import ChangeExtension, FixPath
@@ -310,6 +311,11 @@ class MainWindowGui(Ui_MainWindow):
             self.ui.detectorNmsCombo.addItem(method.name)
         self.CallbackDetectorUpdate()
 
+        # Detctor : Image Strategy combobox
+        self.ui.imageStrategyCombo.clear()
+        for strategy in ImageStrategy:
+            self.ui.imageStrategyCombo.addItem(strategy.value)
+
         # Images table : Setup
         ViewImagesTable.View(self.ui.fileSelectorTableWidget, self.annoter.GetFiles())
 
@@ -434,6 +440,9 @@ class MainWindowGui(Ui_MainWindow):
         self.annoter.confidence = self.ui.detectorConfidenceSlider.value() / 100
         self.annoter.nms = self.ui.detectorNmsSlider.value() / 100
         self.annoter.nmsMethod = NmsMethod(self.ui.detectorNmsCombo.currentText())
+        self.annoter.image_strategy = ImageStrategy(
+            self.ui.imageStrategyCombo.currentText()
+        )
         self.annoter.Process(forceDetector=True)
         self.Setup()
 
