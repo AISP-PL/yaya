@@ -26,7 +26,8 @@ class ImageTableWidgetItem(QtWidgets.QTableWidgetItem):
         # QIcon : Load if possible
         qicon = None
         if (imagePath is not None) and (os.path.exists(imagePath)):
-            qicon = QIcon(imagePath)
+            # qicon = QIcon(imagePath)
+            """Removed"""
 
         # Constructor variant with QIcon
         if qicon is not None:

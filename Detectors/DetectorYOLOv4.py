@@ -255,12 +255,6 @@ class DetectorYOLOv4(Detector):
         nmsMethod: NmsMethod = NmsMethod.Nms,
     ):
         """Detect objects in given image using rescale strategy."""
-        # Check : Frame shape < 2x network dimensions, fallback to rescale
-        if (frame.shape[1] < 2 * self.netWidth) or (
-            frame.shape[0] < 2 * self.netHeight
-        ):
-            return self.detect_rescale(frame, confidence, nms_thresh, nmsMethod)
-
         # Frame : Rescale to 2x network dimensions
         scale_x = frame.shape[1] / (2 * self.netWidth)
         scale_y = frame.shape[0] / (2 * self.netHeight)
