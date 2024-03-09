@@ -10,4 +10,5 @@ class ImageStrategy(Enum):
 
     Rescale = "ImageRescale"
     LetterBox = "ImageLetterBox"
+    Tiling2x2 = "ImageTiling2x2"
     Tiling = "ImageTiling"

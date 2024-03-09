@@ -7,6 +7,7 @@ Created on 22 sie 2020
 import logging
 import os
 from math import ceil
+from typing import NamedTuple
 
 import cv2
 import numpy as np
@@ -17,6 +18,14 @@ from Detectors.yolov4 import darknet
 from helpers.boxes import ToRelative
 from helpers.files import GetFilepath
 from helpers.images import GetFixedFitToBox
+
+
+class ImageTile(NamedTuple):
+    """Image tile object."""
+
+    image: np.array
+    offset_x: int
+    offset_y: int
 
 
 class DetectorYOLOv4(Detector):
@@ -237,6 +246,105 @@ class DetectorYOLOv4(Detector):
 
         return detections, self.imheight, self.imwidth
 
+    def detect_tiling_2x2(
+        self,
+        frame: np.array,
+        confidence: float = 0.5,
+        nms_thresh: float = 0.45,
+        nmsMethod: NmsMethod = NmsMethod.Nms,
+    ):
+        """Detect objects in given image using rescale strategy."""
+        # Check : Frame shape < 2x network dimensions, fallback to rescale
+        if (frame.shape[1] < 2 * self.netWidth) or (
+            frame.shape[0] < 2 * self.netHeight
+        ):
+            return self.detect_rescale(frame, confidence, nms_thresh, nmsMethod)
+
+        # Frame : Rescale to 2x network dimensions
+        scale_x = frame.shape[1] / (2 * self.netWidth)
+        scale_y = frame.shape[0] / (2 * self.netHeight)
+        rescaled_to_2x2 = cv2.resize(
+            frame,
+            (2 * self.netWidth, 2 * self.netHeight),
+            interpolation=cv2.INTER_LINEAR,
+        )
+
+        # Image : Divide into 4 tiles
+        tiles = []
+        for row in range(2):
+            for col in range(2):
+                x1 = col * self.netWidth
+                x2 = x1 + self.netWidth
+                y1 = row * self.netHeight
+                y2 = y1 + self.netHeight
+                tiles.append(
+                    ImageTile(
+                        image=rescaled_to_2x2[y1:y2, x1:x2], offset_x=x1, offset_y=y1
+                    )
+                )
+
+        # Detections : Detect 4 tiles
+        tiles_detections = []
+        for tile in tiles:
+            # Detector : Detect tile image
+            darknet.copy_image_from_bytes(self.image, tile.image.tobytes())
+            boxes, scores, classids = darknet.detect_image(
+                self.net,
+                self.classes,
+                self.image,
+                self.netWidth,
+                self.netHeight,
+                thresh=confidence,
+                nms=nms_thresh,
+                nmsMethod=nmsMethod,
+            )
+
+            # Ensemble detections
+            boxes, scores, classids = self.EnsembleBoxes(
+                boxes,
+                scores,
+                classids,
+                nmsMethod=nmsMethod,
+                iou_thresh=nms_thresh,
+                conf_thresh=confidence,
+            )
+
+            # Boxes : Add offset to boxes
+            boxes = [
+                (
+                    x + tile.offset_x,
+                    y + tile.offset_y,
+                    x2 + tile.offset_x,
+                    y2 + tile.offset_y,
+                )
+                for x, y, x2, y2 in boxes
+            ]
+
+            # Boxes : Rescale to original image dimensions
+            boxes = [
+                (
+                    round(x * scale_x),
+                    round(y * scale_y),
+                    round(x2 * scale_x),
+                    round(y2 * scale_y),
+                )
+                for x, y, x2, y2 in boxes
+            ]
+
+            # Convert to detections
+            detections = self.ToDetections(boxes, scores, classids)
+
+            tiles_detections.append(detections)
+
+        # Tiles detections : Merge all possible detections.(simple)
+        detections = [
+            detection
+            for tile_detections in tiles_detections
+            for detection in tile_detections
+        ]
+
+        return (detections, self.imheight, self.imwidth)
+
     def detect_tiling(
         self,
         frame: np.array,
@@ -245,48 +353,10 @@ class DetectorYOLOv4(Detector):
         nmsMethod: NmsMethod = NmsMethod.Nms,
     ):
         """Detect objects in given image using rescale strategy."""
+        detections = []
+        # @TODO: Implement tiling strategy
 
-        # If image input is diffrent.
-        if (self.imwidth != self.netWidth) or (self.imheight != self.netHeight):
-            resized = cv2.resize(
-                frame,
-                (self.netWidth, self.netHeight),
-                interpolation=cv2.INTER_LINEAR,
-            )
-        # If image match network dimensions then use it directly
-        else:
-            resized = frame
-
-        # Boundary width and height
-        boundaryWidth = self.netWidth
-        boundaryHeight = self.netHeight
-
-        # Detect objects
-        darknet.copy_image_from_bytes(self.image, resized.tobytes())
-        boxes, scores, classids = darknet.detect_image(
-            self.net,
-            self.classes,
-            self.image,
-            self.imwidth,
-            self.imheight,
-            thresh=confidence,
-            nms=nms_thresh,
-            nmsMethod=nmsMethod,
-        )
-        # Ensemble detections
-        boxes, scores, classids = self.EnsembleBoxes(
-            boxes,
-            scores,
-            classids,
-            nmsMethod=nmsMethod,
-            iou_thresh=nms_thresh,
-            conf_thresh=confidence,
-        )
-
-        # Convert to detections
-        detections = self.ToDetections(boxes, scores, classids)
-
-        return (detections, boundaryHeight, boundaryWidth)
+        return (detections, self.imheight, self.imwidth)
 
     def Detect(
         self,
@@ -314,21 +384,27 @@ class DetectorYOLOv4(Detector):
         # Detections list
         detections = []
 
-        # 1. Strategy rescale.
+        # Image strategy : Select strategy to use
         if image_strategy == ImageStrategy.Rescale:
             detections, boundaryHeight, boundaryWidth = self.detect_rescale(
                 frame, confidence, nms_thresh, nmsMethod
             )
-
-        # 2. Strategy letter box.
         elif image_strategy == ImageStrategy.LetterBox:
             detections, boundaryHeight, boundaryWidth = self.detect_letterbox(
+                frame, confidence, nms_thresh, nmsMethod
+            )
+        elif image_strategy == ImageStrategy.Tiling2x2:
+            detections, boundaryHeight, boundaryWidth = self.detect_tiling_2x2(
+                frame, confidence, nms_thresh, nmsMethod
+            )
+        elif image_strategy == ImageStrategy.Tiling:
+            detections, boundaryHeight, boundaryWidth = self.detect_tiling(
                 frame, confidence, nms_thresh, nmsMethod
             )
 
         # Change box coordinates to rectangle
         if boxRelative is True:
-d            h, w = boundaryHeight, boundaryWidth
+            h, w = boundaryHeight, boundaryWidth
             for i, d in enumerate(detections):
                 className, confidence, box = d
                 # Correct (-x, -y) value to fit inside box
