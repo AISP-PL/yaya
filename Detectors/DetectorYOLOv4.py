@@ -16,6 +16,7 @@ from Detectors.common.Detector import Detector, NmsMethod
 from Detectors.common.image_strategy import ImageStrategy
 from Detectors.yolov4 import darknet
 from helpers.boxes import ToRelative
+from helpers.detections import tiles_detections_merge
 from helpers.files import GetFilepath
 from helpers.images import GetFixedFitToBox
 
@@ -337,11 +338,7 @@ class DetectorYOLOv4(Detector):
             tiles_detections.append(detections)
 
         # Tiles detections : Merge all possible detections.(simple)
-        detections = [
-            detection
-            for tile_detections in tiles_detections
-            for detection in tile_detections
-        ]
+        detections = tiles_detections_merge(tiles_detections)
 
         return (detections, self.imheight, self.imwidth)
 
