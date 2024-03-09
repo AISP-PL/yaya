@@ -440,7 +440,7 @@ class MainWindowGui(Ui_MainWindow):
         self.annoter.confidence = self.ui.detectorConfidenceSlider.value() / 100
         self.annoter.nms = self.ui.detectorNmsSlider.value() / 100
         self.annoter.nmsMethod = NmsMethod(self.ui.detectorNmsCombo.currentText())
-        self.annoter.image_strategy = ImageStrategy(
+        self.annoter.imageStrategy = ImageStrategy(
             self.ui.imageStrategyCombo.currentText()
         )
         self.annoter.Process(forceDetector=True)

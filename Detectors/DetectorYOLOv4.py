@@ -130,6 +130,164 @@ class DetectorYOLOv4(Detector):
         """Returns network image height."""
         return self.netHeight
 
+    def detect_rescale(
+        self,
+        frame: np.array,
+        confidence: float = 0.5,
+        nms_thresh: float = 0.45,
+        nmsMethod: NmsMethod = NmsMethod.Nms,
+    ):
+        """Detect objects in given image using rescale strategy."""
+
+        # If image input is diffrent.
+        if (self.imwidth != self.netWidth) or (self.imheight != self.netHeight):
+            resized = cv2.resize(
+                frame,
+                (self.netWidth, self.netHeight),
+                interpolation=cv2.INTER_LINEAR,
+            )
+        # If image match network dimensions then use it directly
+        else:
+            resized = frame
+
+        # Detect objects
+        darknet.copy_image_from_bytes(self.image, resized.tobytes())
+        boxes, scores, classids = darknet.detect_image(
+            self.net,
+            self.classes,
+            self.image,
+            self.imwidth,
+            self.imheight,
+            thresh=confidence,
+            nms=nms_thresh,
+            nmsMethod=nmsMethod,
+        )
+        # Ensemble detections
+        boxes, scores, classids = self.EnsembleBoxes(
+            boxes,
+            scores,
+            classids,
+            nmsMethod=nmsMethod,
+            iou_thresh=nms_thresh,
+            conf_thresh=confidence,
+        )
+
+        # Convert to detections
+        detections = self.ToDetections(boxes, scores, classids)
+
+        return (detections, self.imheight, self.imwidth)
+
+    def detect_letterbox(
+        self,
+        frame: np.array,
+        confidence: float = 0.5,
+        nms_thresh: float = 0.45,
+        nmsMethod: NmsMethod = NmsMethod.Nms,
+    ):
+        """Detect objects in given image using strategy."""
+        # If frame image has diffrent size than network image.
+        if (frame.shape[1] != self.netWidth) or (frame.shape[0] != self.netHeight):
+            # Recalculate new width/height of frame with fixed aspect ratio
+            newWidth, newHeight = GetFixedFitToBox(
+                frame.shape[1], frame.shape[0], self.netWidth, self.netHeight
+            )
+            # Resize image as newImage with padded zeroes
+            newImage = np.zeros([self.netHeight, self.netWidth, 3], dtype=np.uint8)
+            newImage[0:newHeight, 0:newWidth] = cv2.resize(
+                frame, (newWidth, newHeight), interpolation=cv2.INTER_NEAREST
+            )
+
+            # Recalculate frame image dimensions to letter box image
+            boundaryWidth = round((self.netWidth * frame.shape[1]) / newWidth)
+            boundaryHeight = round((self.netHeight * frame.shape[0]) / newHeight)
+
+        # If (image dimensions == network dimensions) then use it directly.
+        else:
+            newImage = frame
+            newHeight = frame.shape[0]
+            newWidth = frame.shape[1]
+            boundaryHeight = frame.shape[0]
+            boundaryWidth = frame.shape[1]
+
+        # Detect objects
+        darknet.copy_image_from_bytes(self.image, newImage.tobytes())
+        boxes, scores, classids = darknet.detect_image(
+            self.net,
+            self.classes,
+            self.image,
+            boundaryWidth,
+            boundaryHeight,
+            thresh=confidence,
+            nms=nms_thresh,
+            nmsMethod=nmsMethod,
+        )
+
+        # Ensemble detections
+        boxes, scores, classids = self.EnsembleBoxes(
+            boxes,
+            scores,
+            classids,
+            nmsMethod=nmsMethod,
+            iou_thresh=nms_thresh,
+            conf_thresh=confidence,
+        )
+
+        # Convert to detections
+        detections = self.ToDetections(boxes, scores, classids)
+
+        return detections, self.imheight, self.imwidth
+
+    def detect_tiling(
+        self,
+        frame: np.array,
+        confidence: float = 0.5,
+        nms_thresh: float = 0.45,
+        nmsMethod: NmsMethod = NmsMethod.Nms,
+    ):
+        """Detect objects in given image using rescale strategy."""
+
+        # If image input is diffrent.
+        if (self.imwidth != self.netWidth) or (self.imheight != self.netHeight):
+            resized = cv2.resize(
+                frame,
+                (self.netWidth, self.netHeight),
+                interpolation=cv2.INTER_LINEAR,
+            )
+        # If image match network dimensions then use it directly
+        else:
+            resized = frame
+
+        # Boundary width and height
+        boundaryWidth = self.netWidth
+        boundaryHeight = self.netHeight
+
+        # Detect objects
+        darknet.copy_image_from_bytes(self.image, resized.tobytes())
+        boxes, scores, classids = darknet.detect_image(
+            self.net,
+            self.classes,
+            self.image,
+            self.imwidth,
+            self.imheight,
+            thresh=confidence,
+            nms=nms_thresh,
+            nmsMethod=nmsMethod,
+        )
+        # Ensemble detections
+        boxes, scores, classids = self.EnsembleBoxes(
+            boxes,
+            scores,
+            classids,
+            nmsMethod=nmsMethod,
+            iou_thresh=nms_thresh,
+            conf_thresh=confidence,
+        )
+
+        # Convert to detections
+        detections = self.ToDetections(boxes, scores, classids)
+
+        return (detections, boundaryHeight, boundaryWidth)
+
     def Detect(
         self,
         frame: np.array,
@@ -156,124 +314,31 @@ class DetectorYOLOv4(Detector):
         # Detections list
         detections = []
 
-        # ------------ Strategies choose
         # 1. Strategy rescale.
-        # Rescale input image to network image dimensions.
         if image_strategy == ImageStrategy.Rescale:
-            # If image input is diffrent.
-            if (self.imwidth != self.netWidth) or (self.imheight != self.netHeight):
-                resized = cv2.resize(
-                    frame,
-                    (self.netWidth, self.netHeight),
-                    interpolation=cv2.INTER_LINEAR,
-                )
-            # If image match network dimensions then use it directly
-            else:
-                resized = frame
-
-            # Detect objects
-            darknet.copy_image_from_bytes(self.image, resized.tobytes())
-            boxes, scores, classids = darknet.detect_image(
-                self.net,
-                self.classes,
-                self.image,
-                self.imwidth,
-                self.imheight,
-                thresh=confidence,
-                nms=nms_thresh,
-                nmsMethod=nmsMethod,
+            detections, boundaryHeight, boundaryWidth = self.detect_rescale(
+                frame, confidence, nms_thresh, nmsMethod
             )
-            # Ensemble detections
-            boxes, scores, classids = self.EnsembleBoxes(
-                boxes,
-                scores,
-                classids,
-                nmsMethod=nmsMethod,
-                iou_thresh=nms_thresh,
-                conf_thresh=confidence,
-            )
-            # Convert to detections
-            detections = self.ToDetections(boxes, scores, classids)
-
-            # Change box coordinates to rectangle
-            if boxRelative is True:
-                h, w = self.imheight, self.imwidth
-                for i, d in enumerate(detections):
-                    className, confidence, box = d
-                    # Correct (-x, -y) value to fit inside box
-                    x1, y1, x2, y2 = box
-                    x1 = max(0, min(x1, w))
-                    x2 = max(0, min(x2, w))
-                    y1 = max(0, min(y1, h))
-                    y2 = max(0, min(y2, h))
-                    box = x1, y1, x2, y2
-                    # Change to relative
-                    detections[i] = (className, confidence, ToRelative(box, w, h))
 
         # 2. Strategy letter box.
-        # Rescale input image to network image dimensions.
         elif image_strategy == ImageStrategy.LetterBox:
-            # If frame image has diffrent size than network image.
-            if (frame.shape[1] != self.netWidth) or (frame.shape[0] != self.netHeight):
-                # Recalculate new width/height of frame with fixed aspect ratio
-                newWidth, newHeight = GetFixedFitToBox(
-                    frame.shape[1], frame.shape[0], self.netWidth, self.netHeight
-                )
-                # Resize image as newImage with padded zeroes
-                newImage = np.zeros([self.netHeight, self.netWidth, 3], dtype=np.uint8)
-                newImage[0:newHeight, 0:newWidth] = cv2.resize(
-                    frame, (newWidth, newHeight), interpolation=cv2.INTER_NEAREST
-                )
-
-                # Recalculate frame image dimensions to letter box image
-                boundaryWidth = round((self.netWidth * frame.shape[1]) / newWidth)
-                boundaryHeight = round((self.netHeight * frame.shape[0]) / newHeight)
-
-            # If (image dimensions == network dimensions) then use it directly.
-            else:
-                newImage = frame
-                newHeight = frame.shape[0]
-                newWidth = frame.shape[1]
-                boundaryHeight = frame.shape[0]
-                boundaryWidth = frame.shape[1]
-
-            # Detect objects
-            darknet.copy_image_from_bytes(self.image, newImage.tobytes())
-            detections = darknet.detect_image(
-                self.net,
-                self.classes,
-                self.image,
-                boundaryWidth,
-                boundaryHeight,
-                thresh=confidence,
-                nms=nms_thresh,
-                nmsMethod=nmsMethod,
+            detections, boundaryHeight, boundaryWidth = self.detect_letterbox(
+                frame, confidence, nms_thresh, nmsMethod
             )
-            # Ensemble detections
-            boxes, scores, classids = self.EnsembleBoxes(
-                boxes,
-                scores,
-                classids,
-                nmsMethod=nmsMethod,
-                iou_thresh=nms_thresh,
-                conf_thresh=confidence,
-            )
-            # Convert to detections
-            detctions = self.ToDetections(boxes, scores, classids)
 
-            # Change box coordinates to rectangle
-            if boxRelative is True:
-                h, w = boundaryWidth, boundaryWidth
-                for i, d in enumerate(detections):
-                    className, confidence, box = d
-                    # Correct (-x, -y) value to fit inside box
-                    x1, y1, x2, y2 = box
-                    x1 = max(0, min(x1, w))
-                    x2 = max(0, min(x2, w))
-                    y1 = max(0, min(y1, h))
-                    y2 = max(0, min(y2, h))
-                    box = x1, y1, x2, y2
-                    # Change to relative
-                    detections[i] = (className, confidence, ToRelative(box, w, h))
+        # Change box coordinates to rectangle
+        if boxRelative is True:
+d            h, w = boundaryHeight, boundaryWidth
+            for i, d in enumerate(detections):
+                className, confidence, box = d
+                # Correct (-x, -y) value to fit inside box
+                x1, y1, x2, y2 = box
+                x1 = max(0, min(x1, w))
+                x2 = max(0, min(x2, w))
+                y1 = max(0, min(y1, h))
+                y2 = max(0, min(y2, h))
+                box = x1, y1, x2, y2
+                # Change to relative
+                detections[i] = (className, confidence, ToRelative(box, w, h))
 
         return detections
