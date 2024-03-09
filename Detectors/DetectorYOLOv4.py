@@ -350,8 +350,72 @@ class DetectorYOLOv4(Detector):
         nmsMethod: NmsMethod = NmsMethod.Nms,
     ):
         """Detect objects in given image using rescale strategy."""
-        detections = []
-        # @TODO: Implement tiling strategy
+        # Check : Frame shape < 2x network dimensions, fallback to rescale
+        if (frame.shape[1] < 2 * self.netWidth) or (
+            frame.shape[0] < 2 * self.netHeight
+        ):
+            return self.detect_rescale(frame, confidence, nms_thresh, nmsMethod)
+
+        # Tiles : Calculate number of tiles
+        tiles_cols = ceil(frame.shape[1] / self.netWidth)
+        tiles_rows = ceil(frame.shape[0] / self.netHeight)
+
+        # Image : Divide into 4 tiles
+        tiles = []
+        for row in range(tiles_rows):
+            for col in range(tiles_cols):
+                x1 = col * self.netWidth
+                x2 = x1 + self.netWidth
+                y1 = row * self.netHeight
+                y2 = y1 + self.netHeight
+                tiles.append(
+                    ImageTile(image=frame[y1:y2, x1:x2], offset_x=x1, offset_y=y1)
+                )
+
+        # Detections : Detect tiles
+        tiles_detections = []
+        for tile in tiles:
+            # Detector : Detect tile image
+            darknet.copy_image_from_bytes(self.image, tile.image.tobytes())
+            boxes, scores, classids = darknet.detect_image(
+                self.net,
+                self.classes,
+                self.image,
+                self.netWidth,
+                self.netHeight,
+                thresh=confidence,
+                nms=nms_thresh,
+                nmsMethod=nmsMethod,
+            )
+
+            # Ensemble detections
+            boxes, scores, classids = self.EnsembleBoxes(
+                boxes,
+                scores,
+                classids,
+                nmsMethod=nmsMethod,
+                iou_thresh=nms_thresh,
+                conf_thresh=confidence,
+            )
+
+            # Boxes : Add offset to boxes
+            boxes = [
+                (
+                    x + tile.offset_x,
+                    y + tile.offset_y,
+                    x2 + tile.offset_x,
+                    y2 + tile.offset_y,
+                )
+                for x, y, x2, y2 in boxes
+            ]
+
+            # Convert to detections
+            detections = self.ToDetections(boxes, scores, classids)
+
+            tiles_detections.append(detections)
+
+        # Tiles detections : Merge all possible detections.(simple)
+        detections = tiles_detections_merge(tiles_detections)
 
         return (detections, self.imheight, self.imwidth)
 
