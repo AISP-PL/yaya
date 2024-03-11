@@ -29,6 +29,7 @@ class ViewFilters:
         layoutHandle: QGridLayout,
         button_ids: list[str],
         button_labels: list[str],
+        button_callback: callable,
         rowStart: int = 0,
         itemsPerRow: int = 6,
         default_checked: bool = True,
@@ -72,11 +73,9 @@ class ViewFilters:
             button.setChecked(default_checked)
 
             # # Button : Clicked callback
-            # button.clicked.connect(
-            #     lambda clicked, paint_name=button_id, paint_group_name=rowName, paint_group_label=qlabel: ViewErrataPaint.PaintSelected(
-            #         editor, editor_mode, paint_name, paint_group_name, paint_group_label
-            #     )
-            # )
+            button.clicked.connect(
+                lambda clicked, button_id=button_id: button_callback(button_id)
+            )
 
             # Row and column index : Calculate
             rowIndex = rowStart + int(button_index / itemsPerRow)

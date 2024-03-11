@@ -41,7 +41,7 @@ class ViewImagesTable:
         # Rows : View each row in a loop
         for rowIndex, fileEntry in enumerate(tqdm(files, desc="Table view creation")):
             # Filter : Classes of annotations
-            if (filter_classes is not None) or (len(filter_classes) > 0):
+            if (filter_classes is not None) and (len(filter_classes) > 0):
                 if not any(
                     annotation.className in filter_classes
                     for annotation in fileEntry["Annotations"]

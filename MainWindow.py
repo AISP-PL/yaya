@@ -334,6 +334,7 @@ class MainWindowGui(Ui_MainWindow):
             self.ui.filtersGrid,
             button_ids=labels,
             button_labels=labels,
+            button_callback=self.CallbackFilterClassesClicked,
         )
 
         # Images table : Setup
@@ -346,7 +347,7 @@ class MainWindowGui(Ui_MainWindow):
         # Images summary : Setup
         ViewImagesSummary.View(self.ui.fileSummaryLabel, self.annoter.GetFiles())
 
-    def Setup(self):
+    def Setup(self, table_refresh: bool = False):
         """Setup again UI."""
         filename = self.annoter.GetFilename()
         imageWidth, imageHeight, imageBytes = self.annoter.GetImageSize()
@@ -397,14 +398,17 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.viewerEditor.SetAnnoter(self.annoter)
         self.ui.viewerEditor.SetImage(self.annoter.GetImage())
 
-        # Pages  : Setup based on current page
-        if self.ui.toolSettingsStackedWidget.currentWidget == self.ui.pageFilters:
-            labels = GetClasses()
-            ViewFilters.ViewClasses(
-                self.ui.filtersGrid,
-                button_ids=labels,
-                button_labels=labels,
+        # Table : Refresh
+        if table_refresh:
+            # Images table : Setup
+            ViewImagesTable.View(
+                self.ui.fileSelectorTableWidget,
+                self.annoter.GetFiles(),
+                filter_classes=self.FilterClassesGet(),
             )
+
+            # Images summary : Setup
+            ViewImagesSummary.View(self.ui.fileSummaryLabel, self.annoter.GetFiles())
 
     def Run(self):
         """Run gui window thread and return exit code."""
@@ -423,6 +427,10 @@ class MainWindowGui(Ui_MainWindow):
         ]
 
         return checked
+
+    def CallbackFilterClassesClicked(self, label: str):
+        """Callback for filter classes button clicked."""
+        self.Setup(table_refresh=True)
 
     def CallbackImageScalingTextChanged(self, text):
         """Callback when image scaling text changed."""
