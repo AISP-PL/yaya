@@ -19,7 +19,12 @@ from views.ViewImagesTableRow import ViewImagesTableRow
 
 
 class ViewFilters:
+    """View of filters QTableWidget."""
 
+    # Filter classes group : Static handle
+    filter_classes_group: QButtonGroup = None
+
+    @staticmethod
     def ViewClasses(
         layoutHandle: QGridLayout,
         button_ids: list[str],
@@ -43,8 +48,9 @@ class ViewFilters:
 
             del child
 
-        # ButtonGroup : Create
-        button_group = QButtonGroup()
+        # ButtonGroup : Create group with multiple selection
+        ViewFilters.filter_classes_group = QButtonGroup()
+        ViewFilters.filter_classes_group.setExclusive(False)
 
         # Buttons : Create
         for button_index, button_id in enumerate(button_ids):
@@ -52,14 +58,18 @@ class ViewFilters:
             button_label = abbrev(button_labels[button_index], label_max_length)
 
             # Button : Create
-            button = QPushButton()
-            button.setText(button_label)
-            button.setToolTip(button_label)
+            button = QPushButton(button_label)
+            button.setToolTip(button_id)
             button.setCursor(QtCore.Qt.PointingHandCursor)
             button.setCheckable(True)
-            button.setChecked(default_checked)
             button.setMinimumWidth(96)
             button.setMaximumWidth(128)
+
+            # ButtonGroup : Add button
+            ViewFilters.filter_classes_group.addButton(button)
+
+            # Button : Set default checked
+            button.setChecked(default_checked)
 
             # # Button : Clicked callback
             # button.clicked.connect(
@@ -71,9 +81,6 @@ class ViewFilters:
             # Row and column index : Calculate
             rowIndex = rowStart + int(button_index / itemsPerRow)
             colIndex = 1 + button_index % itemsPerRow
-
-            # ButtonGroup : Add button
-            button_group.addButton(button)
 
             # Insert QButton into grid layout
             layoutHandle.addWidget(button, rowIndex, colIndex)

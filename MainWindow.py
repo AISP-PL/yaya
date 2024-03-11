@@ -328,6 +328,14 @@ class MainWindowGui(Ui_MainWindow):
         for strategy in ImageStrategy:
             self.ui.imageStrategyCombo.addItem(strategy.value)
 
+        # Filters classes : Setup
+        labels = GetClasses()
+        ViewFilters.ViewClasses(
+            self.ui.filtersGrid,
+            button_ids=labels,
+            button_labels=labels,
+        )
+
         # Images table : Setup
         ViewImagesTable.View(
             self.ui.fileSelectorTableWidget,
@@ -337,14 +345,6 @@ class MainWindowGui(Ui_MainWindow):
 
         # Images summary : Setup
         ViewImagesSummary.View(self.ui.fileSummaryLabel, self.annoter.GetFiles())
-
-        # Filters classes : Setup
-        labels = GetClasses()
-        ViewFilters.ViewClasses(
-            self.ui.filtersGrid,
-            button_ids=labels,
-            button_labels=labels,
-        )
 
     def Setup(self):
         """Setup again UI."""
@@ -415,10 +415,13 @@ class MainWindowGui(Ui_MainWindow):
         """Get classes filter from every button from
         self.ui.filtersGrid
         """
-        # Get all buttons from grid
-        buttons = self.ui.filtersGrid.findChildren(QPushButton)
         # Get all checked buttons
-        checked = [button.text() for button in buttons if button.isChecked()]
+        checked = [
+            button.text()
+            for button in ViewFilters.filter_classes_group.buttons()
+            if button.isChecked()
+        ]
+
         return checked
 
     def CallbackImageScalingTextChanged(self, text):
