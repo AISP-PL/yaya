@@ -288,8 +288,8 @@ class Annoter:
                     "ID": index,
                     "IsAnnotation": isAnnotation,
                     "Annotations": txtAnnotations,
-                    "AnnotationsClasses": ",".join(
-                        {f"{item.classNumber}" for item in txtAnnotations}
+                    "AnnotationsClasses": ", ".join(
+                        {f"{item.class_abbrev}" for item in txtAnnotations}
                     ),
                     "Datetime": os.lstat(path + filename).st_mtime,
                     "Errors": len(self.errors),

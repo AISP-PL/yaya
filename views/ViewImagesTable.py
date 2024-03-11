@@ -4,6 +4,7 @@
 
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QTableWidget
+from tqdm import tqdm
 
 from views.ViewImagesTableRow import ViewImagesTableRow
 
@@ -34,7 +35,7 @@ class ViewImagesTable:
         table.setColumnCount(len(labels))
 
         # Rows : View each row in a loop
-        for rowIndex, fileEntry in enumerate(files):
+        for rowIndex, fileEntry in enumerate(tqdm(files, desc="Table view creation")):
             ViewImagesTableRow.View(table, rowIndex, fileEntry)
 
         # GUI - Enable sorting again
