@@ -337,15 +337,14 @@ class MainWindowGui(Ui_MainWindow):
             button_callback=self.CallbackFilterClassesClicked,
         )
 
+        # Files : Get
+        files = self.annoter.GetFiles(filter_classnames=self.FilterClassesGet())
+
         # Images table : Setup
-        ViewImagesTable.View(
-            self.ui.fileSelectorTableWidget,
-            self.annoter.GetFiles(),
-            filter_classes=self.FilterClassesGet(),
-        )
+        ViewImagesTable.View(self.ui.fileSelectorTableWidget, files)
 
         # Images summary : Setup
-        ViewImagesSummary.View(self.ui.fileSummaryLabel, self.annoter.GetFiles())
+        ViewImagesSummary.View(self.ui.fileSummaryLabel, files)
 
     def Setup(self, table_refresh: bool = False):
         """Setup again UI."""
@@ -400,15 +399,13 @@ class MainWindowGui(Ui_MainWindow):
 
         # Table : Refresh
         if table_refresh:
+            files = self.annoter.GetFiles(filter_classnames=self.FilterClassesGet())
+
             # Images table : Setup
-            ViewImagesTable.View(
-                self.ui.fileSelectorTableWidget,
-                self.annoter.GetFiles(),
-                filter_classes=self.FilterClassesGet(),
-            )
+            ViewImagesTable.View(self.ui.fileSelectorTableWidget, files)
 
             # Images summary : Setup
-            ViewImagesSummary.View(self.ui.fileSummaryLabel, self.annoter.GetFiles())
+            ViewImagesSummary.View(self.ui.fileSummaryLabel, files)
 
     def Run(self):
         """Run gui window thread and return exit code."""

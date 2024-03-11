@@ -32,7 +32,7 @@ class ViewFilters:
         button_callback: callable,
         rowStart: int = 0,
         itemsPerRow: int = 6,
-        default_checked: bool = True,
+        default_checked: bool = False,
         label_max_length: int = 12,
     ):
         """

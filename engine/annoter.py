@@ -386,9 +386,26 @@ class Annoter:
         """Returns annotations list"""
         return [GetFilename(f["Name"]) + ".txt" for f in self.files]
 
-    def GetFiles(self):
+    def GetFiles(self, filter_classnames: list[str] = None):
         """Returns images list"""
-        return self.files
+        # Check : Empty or none
+        if (self.files is None) or (len(self.files) == 0):
+            return None
+
+        # Filter : Iterating over all files
+        files = []
+        for fileEntry in self.files:
+            # Filter : Classes of annotations
+            if (filter_classnames is not None) and (len(filter_classnames) > 0):
+                if not any(
+                    annotation.className in filter_classnames
+                    for annotation in fileEntry["Annotations"]
+                ):
+                    continue
+
+            files.append(fileEntry)
+
+        return files
 
     def GetFileID(self):
         """Returns current image ID."""
