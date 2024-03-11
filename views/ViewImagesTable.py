@@ -12,7 +12,11 @@ from views.ViewImagesTableRow import ViewImagesTableRow
 class ViewImagesTable:
 
     @staticmethod
-    def View(table: QTableWidget, files: list):
+    def View(
+        table: QTableWidget,
+        files: list,
+        filter_classes: list[str] = None,
+    ):
         """View images in table."""
         # Check : Invalid files list
         if (files is None) or (len(files) == 0):
@@ -36,6 +40,14 @@ class ViewImagesTable:
 
         # Rows : View each row in a loop
         for rowIndex, fileEntry in enumerate(tqdm(files, desc="Table view creation")):
+            # Filter : Classes of annotations
+            if filter_classes is not None:
+                if not any(
+                    annotation.className in filter_classes
+                    for annotation in fileEntry["Annotations"]
+                ):
+                    continue
+
             ViewImagesTableRow.View(table, rowIndex, fileEntry)
 
         # GUI - Enable sorting again

@@ -19,6 +19,7 @@ from PyQt5.QtWidgets import (
     QListWidgetItem,
     QMainWindow,
     QMessageBox,
+    QPushButton,
 )
 
 from Detectors.common.Detector import NmsMethod
@@ -28,6 +29,7 @@ from engine.session import Session
 from helpers.files import ChangeExtension, FixPath
 from MainWindow_ui import Ui_MainWindow
 from ViewerEditorImage import ViewerEditorImage
+from views.ViewFilters import ViewFilters
 from views.ViewImagesSummary import ViewImagesSummary
 from views.ViewImagesTable import ViewImagesTable
 from views.ViewImagesTableRow import ViewImagesTableRow
@@ -145,9 +147,16 @@ class MainWindowGui(Ui_MainWindow):
         # Found index
         foundIndex = None
 
+        # Check : Row count == 0
+        if self.ui.fileSelectorTableWidget.rowCount() == 0:
+            return None
+
         # Find rowIndex of imageNumber
         for rowIndex in range(self.ui.fileSelectorTableWidget.rowCount()):
             item = self.ui.fileSelectorTableWidget.item(rowIndex, 0)
+            if item is None:
+                continue
+
             if int(item.toolTip()) == imageID:
                 foundIndex = rowIndex
                 break
@@ -251,6 +260,9 @@ class MainWindowGui(Ui_MainWindow):
         # Buttons - Painting
         self.ui.paintCircleButton.clicked.connect(self.CallbackPaintCircleButton)
 
+        # Buttons : Filters
+        self.ui.filtersClassesButton.clicked.connect(self.CallbackClassFiltersButton)
+
         # Buttons - list of gui key codes
         self.ui.button1.clicked.connect(
             lambda: self.CallbackKeycodeButtonClicked(self.ui.button1)
@@ -317,10 +329,22 @@ class MainWindowGui(Ui_MainWindow):
             self.ui.imageStrategyCombo.addItem(strategy.value)
 
         # Images table : Setup
-        ViewImagesTable.View(self.ui.fileSelectorTableWidget, self.annoter.GetFiles())
+        ViewImagesTable.View(
+            self.ui.fileSelectorTableWidget,
+            self.annoter.GetFiles(),
+            filter_classes=self.FilterClassesGet(),
+        )
 
         # Images summary : Setup
         ViewImagesSummary.View(self.ui.fileSummaryLabel, self.annoter.GetFiles())
+
+        # Filters classes : Setup
+        labels = GetClasses()
+        ViewFilters.ViewClasses(
+            self.ui.filtersGrid,
+            button_ids=labels,
+            button_labels=labels,
+        )
 
     def Setup(self):
         """Setup again UI."""
@@ -355,7 +379,7 @@ class MainWindowGui(Ui_MainWindow):
         # Find rowIndex of imageNumber
         rowIndex = self.ImageIDToRowNumber(imageID)
 
-        if fileEntry is not None:
+        if (fileEntry is not None) and (rowIndex is not None):
             self.ui.fileSelectorTableWidget.setSortingEnabled(False)
             ViewImagesTableRow.View(
                 self.ui.fileSelectorTableWidget, rowIndex, fileEntry, isSelected=True
@@ -373,10 +397,29 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.viewerEditor.SetAnnoter(self.annoter)
         self.ui.viewerEditor.SetImage(self.annoter.GetImage())
 
+        # Pages  : Setup based on current page
+        if self.ui.toolSettingsStackedWidget.currentWidget == self.ui.pageFilters:
+            labels = GetClasses()
+            ViewFilters.ViewClasses(
+                self.ui.filtersGrid,
+                button_ids=labels,
+                button_labels=labels,
+            )
+
     def Run(self):
         """Run gui window thread and return exit code."""
         self.window.show()
         return self.App.exec_()
+
+    def FilterClassesGet(self) -> list[str]:
+        """Get classes filter from every button from
+        self.ui.filtersGrid
+        """
+        # Get all buttons from grid
+        buttons = self.ui.filtersGrid.findChildren(QPushButton)
+        # Get all checked buttons
+        checked = [button.text() for button in buttons if button.isChecked()]
+        return checked
 
     def CallbackImageScalingTextChanged(self, text):
         """Callback when image scaling text changed."""
@@ -492,6 +535,11 @@ class MainWindowGui(Ui_MainWindow):
         """Callback"""
         self.annoter.ClearAnnotations()
         self.Setup()
+
+    def CallbackClassFiltersButton(self):
+        """Remove annotations."""
+        self.ui.toolSettingsStackedWidget.setCurrentWidget(self.ui.pageFilters)
+        # self.ui.viewerEditor.SetEditorMode(ViewerEditorImage.ModeRenameAnnotation)
 
     def CallbackDeleteImageAnnotationsButton(self):
         """Callback"""
