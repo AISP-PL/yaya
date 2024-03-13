@@ -18,6 +18,7 @@ from Detectors.yolov4 import darknet
 from helpers.boxes import ToRelative
 from helpers.detections import tiles_detections_merge
 from helpers.files import GetFilepath
+from helpers.gpu import CudaDeviceLowestMemory
 from helpers.images import GetFixedFitToBox
 
 
@@ -111,8 +112,13 @@ class DetectorYOLOv4(Detector):
 
     def Init(self):
         """Init call with other arguments."""
-        # Choose GPU to use for YOLO
-        darknet.set_gpu(self.gpuid)
+        # GPU : Set lowest usage GPU, fallback to default
+        gpu_id_lowest = CudaDeviceLowestMemory()
+        if gpu_id_lowest is None:
+            gpu_id_lowest = self.gpuid
+
+        darknet.set_gpu(gpu_id_lowest)
+
         # YOLO net, labels, cfg
         self.net, self.classes, self.colors = darknet.load_network(
             self.config["Config"], self.config["Names"], self.config["Weights"]
