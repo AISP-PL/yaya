@@ -3,11 +3,8 @@ import argparse
 import logging
 import sys
 
-import cv2
-import numpy as np
-
 import engine.annote as annote
-from Detectors import CreateDetector, GetDetectorLabels, IsCuda, IsDarknet
+from Detectors import CreateDetector, GetDetectorLabels, IsDarknet
 from engine.annoter import *
 from helpers.files import *
 from helpers.textAnnotations import *
