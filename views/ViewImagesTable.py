@@ -17,9 +17,9 @@ class ViewImagesTable:
         files: list,
     ):
         """View images in table."""
-        # Check : Invalid files list
-        if (files is None) or (len(files) == 0):
-            return
+        # Check : Files, correct None
+        if files is None:
+            files = []
 
         # Get translations
         _translate = QtCore.QCoreApplication.translate

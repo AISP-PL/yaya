@@ -334,20 +334,27 @@ class MainWindowGui(Ui_MainWindow):
         labels = GetClasses()
         ViewFilters.ViewClasses(
             self.ui.annotationsFilterGrid,
+            layout_title="Filter of annotations",
             button_ids=labels,
             button_labels=labels,
             button_callback=self.CallbackFilterClassesClicked,
+            buttons_group=ViewFilters.filter_classes_group,
         )
         # Filters detections : Setup
         ViewFilters.ViewClasses(
             self.ui.detectionsFilterGrid,
+            layout_title="Filter of detections",
             button_ids=labels,
             button_labels=labels,
             button_callback=self.CallbackFilterClassesClicked,
+            buttons_group=ViewFilters.filter_detections_group,
         )
 
         # Files : Get
-        files = self.annoter.GetFiles(filter_classnames=self.FilterClassesGet())
+        files = self.annoter.GetFiles(
+            filter_annotations_classnames=self.FilterClassesGet(),
+            filter_detections_classnames=self.FilterDetectionClassesGet(),
+        )
 
         # Images table : Setup
         ViewImagesTable.View(self.ui.fileSelectorTableWidget, files)
@@ -410,8 +417,8 @@ class MainWindowGui(Ui_MainWindow):
         # Table : Refresh
         if table_refresh:
             files = self.annoter.GetFiles(
-                filter_classnames=self.FilterClassesGet(),
-                filter_detection_classnames=self.FilterDetectionClassesGet(),
+                filter_annotations_classnames=self.FilterClassesGet(),
+                filter_detections_classnames=self.FilterDetectionClassesGet(),
             )
 
             # Images table : Setup
@@ -429,6 +436,9 @@ class MainWindowGui(Ui_MainWindow):
         """Get classes filter from every button from
         self.ui.filtersGrid
         """
+        if ViewFilters.filter_classes_group is None:
+            return []
+
         # Get all checked buttons
         checked = [
             button.text()
@@ -442,10 +452,13 @@ class MainWindowGui(Ui_MainWindow):
         """Get classes filter from every button from
         self.ui.filtersGrid
         """
+        if ViewFilters.filter_detections_group is None:
+            return []
+
         # Get all checked buttons
         checked = [
             button.text()
-            for button in ViewFilters.filter_detection_classes_group.buttons()
+            for button in ViewFilters.filter_detections_group.buttons()
             if button.isChecked()
         ]
 

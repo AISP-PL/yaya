@@ -387,7 +387,7 @@ class Annoter:
 
     def GetFiles(
         self,
-        filter_classnames: list[str] = None,
+        filter_annotations_classnames: list[str] = None,
         filter_detections_classnames: list[str] = None,
     ):
         """Returns images list"""
@@ -399,10 +399,12 @@ class Annoter:
         files = []
         for fileEntry in self.files:
             # Filter : Classes of annotations
-            if (filter_classnames is not None) and (len(filter_classnames) > 0):
+            if (filter_annotations_classnames is not None) and (
+                len(filter_annotations_classnames) > 0
+            ):
                 annotations = fileEntry["Annotations"]
                 if not any(
-                    annotation.className in filter_classnames
+                    annotation.className in filter_annotations_classnames
                     for annotation in annotations
                 ):
                     continue

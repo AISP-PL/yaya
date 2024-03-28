@@ -4,7 +4,7 @@
 
 from PyQt5 import QtCore
 from PyQt5.Qt import QSizePolicy, QSpacerItem
-from PyQt5.QtWidgets import QButtonGroup, QGridLayout, QPushButton
+from PyQt5.QtWidgets import QButtonGroup, QGridLayout, QLabel, QPushButton
 
 from helpers.texts import abbrev
 
@@ -13,14 +13,18 @@ class ViewFilters:
     """View of filters QTableWidget."""
 
     # Filter classes group : Static handle
-    filter_classes_group: QButtonGroup = None
+    filter_classes_group: QButtonGroup = QButtonGroup()
+    # Filter detections group : Static handle
+    filter_detections_group: QButtonGroup = QButtonGroup()
 
     @staticmethod
     def ViewClasses(
         layoutHandle: QGridLayout,
+        layout_title: str,
         button_ids: list[str],
         button_labels: list[str],
         button_callback: callable,
+        buttons_group: QButtonGroup,
         rowStart: int = 0,
         itemsPerRow: int = 6,
         default_checked: bool = False,
@@ -40,9 +44,12 @@ class ViewFilters:
 
             del child
 
+        # Label : Add title
+        layoutHandle.addWidget(QLabel(layout_title), rowStart, 0)
+        rowStart += 1
+
         # ButtonGroup : Create group with multiple selection
-        ViewFilters.filter_classes_group = QButtonGroup()
-        ViewFilters.filter_classes_group.setExclusive(False)
+        buttons_group.setExclusive(False)
 
         # Buttons : Create
         for button_index, button_id in enumerate(button_ids):
@@ -58,7 +65,7 @@ class ViewFilters:
             button.setMaximumWidth(128)
 
             # ButtonGroup : Add button
-            ViewFilters.filter_classes_group.addButton(button)
+            buttons_group.addButton(button)
 
             # Button : Set default checked
             button.setChecked(default_checked)
