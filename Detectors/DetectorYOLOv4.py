@@ -93,6 +93,15 @@ class DetectorYOLOv4(Detector):
         if self.net is not None:
             darknet.free_network_ptr(self.net)
 
+    @property
+    def config_dirname(self) -> str:
+        """Returns directory name of config file."""
+        return os.path.basename(os.path.dirname(self.config["Config"]))
+
+    @property
+    def details_str(self) -> str:
+        return f"{self.__class__.__name__} / {self.config_dirname} {self.netWidth}x{self.netHeight} / C{len(self.classes)}"
+
     def __validateLabels(self):
         """Validated loaded labels."""
         # Check if last label is empty (could be because of \n)

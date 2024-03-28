@@ -47,6 +47,10 @@ class Detector:
 
         logging.debug("(Detector) Created %u.%s!", self.id, self.name)
 
+    @property
+    def details_str(self) -> str:
+        return f"{self.__class__.__name__}"
+
     def Init(self):
         """Init call with other arguments."""
         # Default implementation

@@ -527,6 +527,7 @@ class MainWindowGui(Ui_MainWindow):
     def CallbackDetectAnnotations(self):
         """Detect annotations."""
         self.ui.toolSettingsStackedWidget.setCurrentWidget(self.ui.pageDetector)
+
         self.annoter.confidence = self.ui.detectorConfidenceSlider.value() / 100
         self.annoter.nms = self.ui.detectorNmsSlider.value() / 100
         self.annoter.nmsMethod = NmsMethod(self.ui.detectorNmsCombo.currentText())
@@ -538,6 +539,8 @@ class MainWindowGui(Ui_MainWindow):
 
     def CallbackDetectorUpdate(self):
         """Detector update."""
+
+        self.ui.detectorDetails.setText(self.annoter.detector.details_str)
         self.ui.detectorConfidenceLabel.setText(
             f"Confidence: {self.ui.detectorConfidenceSlider.value()/100:02}%"
         )

@@ -456,6 +456,10 @@ class Ui_MainWindow(object):
         self.pageDetector.setObjectName("pageDetector")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.pageDetector)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.detectorDetails = QtWidgets.QLabel(self.pageDetector)
+        self.detectorDetails.setTextFormat(QtCore.Qt.MarkdownText)
+        self.detectorDetails.setObjectName("detectorDetails")
+        self.verticalLayout_4.addWidget(self.detectorDetails)
         self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_9.setObjectName("horizontalLayout_9")
         self.detectorConfidenceLabel = QtWidgets.QLabel(self.pageDetector)
@@ -612,7 +616,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuPomoc.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.toolSettingsStackedWidget.setCurrentIndex(4)
+        self.toolSettingsStackedWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -685,6 +689,7 @@ class Ui_MainWindow(object):
         self.button4.setShortcut(_translate("MainWindow", "4"))
         self.button6.setText(_translate("MainWindow", "6"))
         self.button6.setShortcut(_translate("MainWindow", "6"))
+        self.detectorDetails.setText(_translate("MainWindow", "Detector details"))
         self.detectorConfidenceLabel.setText(_translate("MainWindow", "Confidence"))
         self.imageStrategyCombo.setItemText(0, _translate("MainWindow", "ImageStrategy"))
         self.detectorNmsLabel.setText(_translate("MainWindow", "NMS threshold"))
