@@ -56,8 +56,6 @@ def jsonWrite(filename: str, data: dict) -> None:
     with open(filename, "w") as f:
         json.dump(data, f, indent=4, sort_keys=False, cls=EnhancedJSONEncoder)
 
-    logging.debug("(Json) Written %s.\n", filename)
-
 
 def jsonShow(data: dict):
     """Show json data."""

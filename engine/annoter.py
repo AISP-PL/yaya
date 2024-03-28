@@ -262,6 +262,10 @@ class Annoter:
 
             # For calculation : Filter detections with itself for multiple detections catches.
             detections = prefilters.FilterIOUbyConfidence(detections, detections)
+            # For view : Filter by IOU internal with same annotes and also with txt annotes.
+            detections_filtered = prefilters.FilterIOUbyConfidence(
+                detections, detections + txtAnnotations
+            )
 
             # Calculate metrics
             metrics = self.CalculateYoloMetrics(txtAnnotations, detections)
@@ -273,11 +277,6 @@ class Annoter:
             visuals.isDuplicate = visualsDuplicates.IsDuplicate(visuals)
             # VisualsDuplicates : Update set of image hashes
             visualsDuplicates.Add(visuals)
-
-            # For view : Filter by IOU internal with same annotes and also with txt annotes.
-            detections = prefilters.FilterIOUbyConfidence(
-                detections, detections + txtAnnotations
-            )
 
             # Add file entry
             self.files.append(
@@ -292,7 +291,8 @@ class Annoter:
                     ),
                     "Datetime": os.lstat(path + filename).st_mtime,
                     "Errors": len(self.errors),
-                    "Detections": detections,
+                    "Detections": detections_filtered,
+                    "Detections_original": detections,
                     "Metrics": metrics,
                     "Visuals": visuals,
                 }
@@ -413,7 +413,7 @@ class Annoter:
             if (filter_detections_classnames is not None) and (
                 len(filter_detections_classnames) > 0
             ):
-                detections = fileEntry["Detections"]
+                detections = fileEntry["Detections_original"]
                 if not any(
                     annotation.className in filter_detections_classnames
                     for annotation in detections
