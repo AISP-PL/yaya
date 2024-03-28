@@ -6,8 +6,6 @@ Created on 17 lis 2020
 
 import logging
 import os
-import time
-from datetime import timedelta
 from math import sqrt
 
 import cv2
@@ -19,7 +17,6 @@ import helpers.prefilters as prefilters
 import helpers.transformations as transformations
 from Detectors.common.Detector import NmsMethod
 from Detectors.common.image_strategy import ImageStrategy
-from engine.annote import AnnoteAuthorType
 from helpers.files import (
     DeleteFile,
     FixPath,
@@ -119,7 +116,7 @@ class Annoter:
 
         # Get only images with annotations
         filenamesAnnotated = [
-            f for f in filenames if (IsExistsAnnotations(self.dirpath + f) == True)
+            f for f in filenames if (IsExistsAnnotations(self.dirpath + f) is True)
         ]
 
         # Save results
@@ -159,8 +156,10 @@ class Annoter:
         try:
             image = cv2.imread(filepath)
             return image
-        except:
-            logging.fatal("(Annoter) CV2 error when readings image `%s`!", filepath)
+        except Exception as e:
+            logging.fatal(
+                "(Annoter) CV2 error when readings image `%s`! %s", filepath, e
+            )
             return None
 
     def ReadFileDetections(self, filepath: str):
@@ -241,7 +240,7 @@ class Annoter:
         # Files : List of all files
         self.files = []
         # Processing all files
-        startTime = time.time()
+        # startTime = time.time()
         for index, filename in enumerate(
             tqdm(filesToParse, desc="Processing files", unit="files")
         ):
@@ -254,7 +253,7 @@ class Annoter:
             # Force detector if needed
             detections = []
             # Force detector to process every image
-            if self.config["forceDetector"] == True:
+            if self.config["forceDetector"] is True:
                 im = self.GetFileImage(path + filename)
                 detections = self.ProcessFileDetections(im, path + filename)
             # Read historical detections
@@ -320,7 +319,7 @@ class Annoter:
             self.files = newFiles
 
         # Use only files with errors
-        if self.config["isOnlyErrorFiles"] == True:
+        if self.config["isOnlyErrorFiles"] is True:
             filesWithErrors = []
             for index, fileEntry in enumerate(self.files):
                 if fileEntry["Errors"] != 0:
@@ -386,7 +385,11 @@ class Annoter:
         """Returns annotations list"""
         return [GetFilename(f["Name"]) + ".txt" for f in self.files]
 
-    def GetFiles(self, filter_classnames: list[str] = None):
+    def GetFiles(
+        self,
+        filter_classnames: list[str] = None,
+        filter_detections_classnames: list[str] = None,
+    ):
         """Returns images list"""
         # Check : Empty or none
         if (self.files is None) or (len(self.files) == 0):
@@ -397,9 +400,21 @@ class Annoter:
         for fileEntry in self.files:
             # Filter : Classes of annotations
             if (filter_classnames is not None) and (len(filter_classnames) > 0):
+                annotations = fileEntry["Annotations"]
                 if not any(
                     annotation.className in filter_classnames
-                    for annotation in fileEntry["Annotations"]
+                    for annotation in annotations
+                ):
+                    continue
+
+            # Filter : Classes of detections
+            if (filter_detections_classnames is not None) and (
+                len(filter_detections_classnames) > 0
+            ):
+                detections = fileEntry["Detections"]
+                if not any(
+                    annotation.className in filter_detections_classnames
+                    for annotation in detections
                 ):
                     continue
 
@@ -574,7 +589,7 @@ class Annoter:
         filename = self.GetFilename()
 
         # If image was modified, then save it also
-        if self.__isClearImageSynchronized() == False:
+        if self.__isClearImageSynchronized() is False:
             # Create temporary and original paths
             imgpath = FixPath(self.dirpath) + filename
             tmppath = FixPath(self.dirpath) + "tmp" + GetExtension(filename)

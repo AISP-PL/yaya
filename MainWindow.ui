@@ -312,21 +312,7 @@
         </item>
         <item>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="7">
-           <widget class="QPushButton" name="hideAnnotationsButton">
-            <property name="text">
-             <string>(H)ide</string>
-            </property>
-            <property name="icon">
-             <iconset resource="icons/tango.qrc">
-              <normaloff>:/icons/16x16/go-jump.png</normaloff>:/icons/16x16/go-jump.png</iconset>
-            </property>
-            <property name="shortcut">
-             <string>H</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
+          <item row="0" column="3">
            <widget class="QPushButton" name="renameAnnotationsButton">
             <property name="text">
              <string>Re(N)ame</string>
@@ -343,37 +329,7 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="3">
-           <widget class="QPushButton" name="removeAnnotationsButton">
-            <property name="text">
-             <string>(R)emove</string>
-            </property>
-            <property name="icon">
-             <iconset resource="icons/tango.qrc">
-              <normaloff>:/icons/16x16/list-remove.png</normaloff>:/icons/16x16/list-remove.png</iconset>
-            </property>
-            <property name="shortcut">
-             <string>R</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="9">
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="0" column="1">
+          <item row="0" column="2">
            <widget class="QPushButton" name="addAnnotationsButton">
             <property name="text">
              <string>(A)dd </string>
@@ -392,6 +348,19 @@
              <bool>false</bool>
             </property>
            </widget>
+          </item>
+          <item row="0" column="10">
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
           <item row="0" column="0">
            <widget class="QLabel" name="label">
@@ -412,21 +381,7 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="6">
-           <widget class="QPushButton" name="hideLabelsButton">
-            <property name="text">
-             <string>(L)abels hide</string>
-            </property>
-            <property name="icon">
-             <iconset resource="icons/tango.qrc">
-              <normaloff>:/icons/32x32/go-jump.png</normaloff>:/icons/32x32/go-jump.png</iconset>
-            </property>
-            <property name="shortcut">
-             <string>L</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="4">
+          <item row="0" column="5">
            <widget class="QPushButton" name="ClearAnnotationsButton">
             <property name="text">
              <string>(C)lear</string>
@@ -440,7 +395,52 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="5">
+          <item row="0" column="7">
+           <widget class="QPushButton" name="hideLabelsButton">
+            <property name="text">
+             <string>(L)abels hide</string>
+            </property>
+            <property name="icon">
+             <iconset resource="icons/tango.qrc">
+              <normaloff>:/icons/32x32/go-jump.png</normaloff>:/icons/32x32/go-jump.png</iconset>
+            </property>
+            <property name="shortcut">
+             <string>L</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="8">
+           <widget class="QPushButton" name="hideAnnotationsButton">
+            <property name="text">
+             <string>(H)ide</string>
+            </property>
+            <property name="icon">
+             <iconset resource="icons/tango.qrc">
+              <normaloff>:/icons/16x16/go-jump.png</normaloff>:/icons/16x16/go-jump.png</iconset>
+            </property>
+            <property name="shortcut">
+             <string>H</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4">
+           <widget class="QPushButton" name="removeAnnotationsButton">
+            <property name="text">
+             <string>(R)emove</string>
+            </property>
+            <property name="icon">
+             <iconset resource="icons/tango.qrc">
+              <normaloff>:/icons/16x16/list-remove.png</normaloff>:/icons/16x16/list-remove.png</iconset>
+            </property>
+            <property name="shortcut">
+             <string>R</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="6">
            <widget class="QPushButton" name="paintCircleButton">
             <property name="text">
              <string>Circl(e)</string>
@@ -454,6 +454,20 @@
             </property>
             <property name="checkable">
              <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QPushButton" name="annotationFilterButton">
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+            <property name="text">
+             <string>Adn. Filter</string>
+            </property>
+            <property name="icon">
+             <iconset resource="icons/tango.qrc">
+              <normaloff>:/icons/32x32/edit-find.png</normaloff>:/icons/32x32/edit-find.png</iconset>
             </property>
            </widget>
           </item>
@@ -471,13 +485,13 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QPushButton" name="filtersClassesButton">
+          <item row="1" column="4">
+           <widget class="QPushButton" name="detFilterButton">
             <property name="cursor">
              <cursorShape>PointingHandCursor</cursorShape>
             </property>
             <property name="text">
-             <string>Filters</string>
+             <string>Det. Filter</string>
             </property>
             <property name="icon">
              <iconset resource="icons/tango.qrc">
@@ -1153,14 +1167,14 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_3"/>
           </widget>
-          <widget class="QWidget" name="pageFilters">
+          <widget class="QWidget" name="pageAnnFilter">
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
-             <layout class="QGridLayout" name="filtersGrid">
+             <layout class="QGridLayout" name="annotationsFilterGrid">
               <item row="0" column="0">
                <widget class="QLabel" name="label_3">
                 <property name="text">
-                 <string>Class filters</string>
+                 <string>Annotations filter</string>
                 </property>
                </widget>
               </item>
@@ -1168,6 +1182,34 @@
             </item>
             <item>
              <spacer name="verticalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>289</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="pageDetFilter">
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <item>
+             <layout class="QGridLayout" name="detectionsFilterGrid">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_5">
+                <property name="text">
+                 <string>Detections filter</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_5">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>

@@ -113,11 +113,11 @@ class Annote:
         self.confidence = confidence
         self.authorType = authorType
         self.evalution = AnnoteEvaluation.noEvaluation
-        assert (className != None) or (classNumber != None)
-        if classNumber == None:
+        assert (className is not None) or (classNumber is not None)
+        if classNumber is None:
             self.className = className
             self.classNumber = GetClassNumber(self.className)
-        elif className == None:
+        elif className is None:
             self.classNumber = classNumber
             self.className = GetClassName(self.classNumber)
         else:

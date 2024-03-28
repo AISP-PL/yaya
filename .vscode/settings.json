@@ -10,6 +10,9 @@
     "[markdown]": {
         "files.trimTrailingWhitespace": false
     },
+    "flake8.args": [
+        "--max-line-length=120"
+    ],
     "mypy-type-checker.importStrategy": "fromEnvironment",
     "mypy-type-checker.reportingScope": "workspace",
     "mypy-type-checker.cwd": "${workspaceFolder}",

@@ -11,7 +11,7 @@ import sys
 from copy import copy
 from datetime import datetime
 
-from PyQt5 import QtCore, QtGui
+from PyQt5 import QtCore
 from PyQt5.QtWidgets import (
     QApplication,
     QButtonGroup,
@@ -19,7 +19,6 @@ from PyQt5.QtWidgets import (
     QListWidgetItem,
     QMainWindow,
     QMessageBox,
-    QPushButton,
 )
 
 from Detectors.common.Detector import NmsMethod
@@ -261,7 +260,10 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.paintCircleButton.clicked.connect(self.CallbackPaintCircleButton)
 
         # Buttons : Filters
-        self.ui.filtersClassesButton.clicked.connect(self.CallbackClassFiltersButton)
+        self.ui.annotationFilterButton.clicked.connect(
+            self.CallbackAnnotationsFilterButton
+        )
+        self.ui.detFilterButton.clicked.connect(self.CallbackDetectionsFilterButton)
 
         # Buttons - list of gui key codes
         self.ui.button1.clicked.connect(
@@ -331,7 +333,14 @@ class MainWindowGui(Ui_MainWindow):
         # Filters classes : Setup
         labels = GetClasses()
         ViewFilters.ViewClasses(
-            self.ui.filtersGrid,
+            self.ui.annotationsFilterGrid,
+            button_ids=labels,
+            button_labels=labels,
+            button_callback=self.CallbackFilterClassesClicked,
+        )
+        # Filters detections : Setup
+        ViewFilters.ViewClasses(
+            self.ui.detectionsFilterGrid,
             button_ids=labels,
             button_labels=labels,
             button_callback=self.CallbackFilterClassesClicked,
@@ -370,7 +379,8 @@ class MainWindowGui(Ui_MainWindow):
 
         # Setup file info
         self.ui.fileLabel.setText(
-            f"[{imageWidth}px x {imageHeight}x x {imageBytes}B] {imageID}/{filename} | Annotations: {self.annoter.annotations_count}"
+            f"[{imageWidth}px x {imageHeight}x x {imageBytes}B] {imageID}/{filename}"
+            + f" | Annotations: {self.annoter.annotations_count}"
         )
 
         # Setup files selector table widget
@@ -390,7 +400,7 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.paintLabel.setText("Paint size %u" % self.ui.paintSizeSlider.value())
 
         # Setup errors tick
-        errors = self.annoter.GetErrors()
+        self.annoter.GetErrors()
         # @TODO
 
         # Setup viewer/editor
@@ -399,7 +409,10 @@ class MainWindowGui(Ui_MainWindow):
 
         # Table : Refresh
         if table_refresh:
-            files = self.annoter.GetFiles(filter_classnames=self.FilterClassesGet())
+            files = self.annoter.GetFiles(
+                filter_classnames=self.FilterClassesGet(),
+                filter_detection_classnames=self.FilterDetectionClassesGet(),
+            )
 
             # Images table : Setup
             ViewImagesTable.View(self.ui.fileSelectorTableWidget, files)
@@ -420,6 +433,19 @@ class MainWindowGui(Ui_MainWindow):
         checked = [
             button.text()
             for button in ViewFilters.filter_classes_group.buttons()
+            if button.isChecked()
+        ]
+
+        return checked
+
+    def FilterDetectionClassesGet(self) -> list[str]:
+        """Get classes filter from every button from
+        self.ui.filtersGrid
+        """
+        # Get all checked buttons
+        checked = [
+            button.text()
+            for button in ViewFilters.filter_detection_classes_group.buttons()
             if button.isChecked()
         ]
 
@@ -544,9 +570,14 @@ class MainWindowGui(Ui_MainWindow):
         self.annoter.ClearAnnotations()
         self.Setup()
 
-    def CallbackClassFiltersButton(self):
+    def CallbackAnnotationsFilterButton(self):
         """Remove annotations."""
-        self.ui.toolSettingsStackedWidget.setCurrentWidget(self.ui.pageFilters)
+        self.ui.toolSettingsStackedWidget.setCurrentWidget(self.ui.pageAnnFilter)
+        # self.ui.viewerEditor.SetEditorMode(ViewerEditorImage.ModeRenameAnnotation)
+
+    def CallbackDetectionsFilterButton(self):
+        """Remove annotations."""
+        self.ui.toolSettingsStackedWidget.setCurrentWidget(self.ui.pageDetFilter)
         # self.ui.viewerEditor.SetEditorMode(ViewerEditorImage.ModeRenameAnnotation)
 
     def CallbackDeleteImageAnnotationsButton(self):

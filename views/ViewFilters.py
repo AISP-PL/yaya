@@ -4,18 +4,9 @@
 
 from PyQt5 import QtCore
 from PyQt5.Qt import QSizePolicy, QSpacerItem
-from PyQt5.QtWidgets import (
-    QButtonGroup,
-    QGridLayout,
-    QLabel,
-    QPushButton,
-    QTableWidget,
-    QWidget,
-)
-from tqdm import tqdm
+from PyQt5.QtWidgets import QButtonGroup, QGridLayout, QPushButton
 
 from helpers.texts import abbrev
-from views.ViewImagesTableRow import ViewImagesTableRow
 
 
 class ViewFilters:

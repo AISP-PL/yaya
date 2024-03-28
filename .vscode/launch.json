@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "Python: bieżący plik",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "program": "${file}",
@@ -16,7 +16,7 @@
         },
         {
             "name": "YAYA",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/yolo-annotate.py",
             "console": "integratedTerminal",
@@ -28,7 +28,7 @@
         },
         {
             "name": "YoloDistribution",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/yolo-distribution.py",
             "console": "integratedTerminal",

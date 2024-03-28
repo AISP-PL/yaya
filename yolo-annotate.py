@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 import argparse
 import logging
+import os
 import sys
 
 import engine.annote as annote
 from Detectors import CreateDetector, GetDetectorLabels, IsDarknet
-from engine.annoter import *
-from helpers.files import *
-from helpers.textAnnotations import *
+from engine.annoter import Annoter
+from helpers.files import FixPath, GetFileLocation
 from MainWindow import MainWindowGui
 
 

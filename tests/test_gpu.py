@@ -2,8 +2,6 @@
 Test file for the boxes module.
 """
 
-import pytest
-
 from helpers.gpu import CudaDeviceLowestMemory, IsCuda
 
 
