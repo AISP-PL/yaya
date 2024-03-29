@@ -505,11 +505,14 @@
              <cursorShape>PointingHandCursor</cursorShape>
             </property>
             <property name="text">
-             <string>(Y)olo World</string>
+             <string>(W)Yolo World</string>
             </property>
             <property name="icon">
              <iconset resource="icons/tango.qrc">
               <normaloff>:/icons/32x32/camera-photo.png</normaloff>:/icons/32x32/camera-photo.png</iconset>
+            </property>
+            <property name="shortcut">
+             <string>W</string>
             </property>
            </widget>
           </item>

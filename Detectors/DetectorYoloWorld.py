@@ -35,7 +35,26 @@ class DetectorYOLOWorld(Detector):
 
     def set_ontology(self, ontology: dict[str, str]):
         """Set ontology for detector"""
-        self.ontology = OrderedDict(ontology)
+        self.ontology = OrderedDict()
+
+        # Keys : Add and validate
+        for key in ontology:
+            # Check, if key is empty
+            if (key is None) or len(key) == 0:
+                logging.warning("Empty key %s in ontology", key)
+                continue
+
+            value = ontology[key]
+            # Check, value is empty
+            if (value is None) or len(value) == 0:
+                logging.warning("Empty value %s in ontology", value)
+                continue
+
+            key = key.strip()
+            value = value.strip()
+            self.ontology[key] = value
+
+        self.classes = self.ontology_labels
 
     @property
     def prompt_labels(self) -> list[str]:
@@ -60,11 +79,10 @@ class DetectorYOLOWorld(Detector):
 
         imheight, imwidth, _ = frame.shape
 
-        confidence = max(0.1, confidence)
+        det_confidence = max(0.001, confidence)
 
-        resuluts = self.model.infer(
-            frame, text=self.prompt_labels, confidence=confidence
-        )
+        self.model.set_classes(self.prompt_labels)
+        results = self.model.infer(frame, confidence=det_confidence)
 
         # Change results to list of detections
         detections = [
@@ -75,14 +93,14 @@ class DetectorYOLOWorld(Detector):
                     [prediction.x, prediction.y, prediction.width, prediction.height]
                 ),
             )
-            for prediction in resuluts.predictions
+            for prediction in results.predictions
         ]
 
         # Change box coordinates to rectangle
         if boxRelative is True:
             h, w = imheight, imwidth
             for i, d in enumerate(detections):
-                className, confidence, box = d
+                className, conf, box = d
                 # Correct (-x, -y) value to fit inside box
                 x1, y1, x2, y2 = box
                 x1 = max(0, min(x1, w))
@@ -91,6 +109,6 @@ class DetectorYOLOWorld(Detector):
                 y2 = max(0, min(y2, h))
                 box = x1, y1, x2, y2
                 # Change to relative
-                detections[i] = (className, confidence, ToRelative(box, w, h))
+                detections[i] = (className, conf, ToRelative(box, w, h))
 
         return detections

@@ -6,9 +6,11 @@ Created on 17 lis 2020
 
 import logging
 import os
+from enum import Enum
 from math import sqrt
 
 import cv2
+import numpy as np
 from tqdm import tqdm
 
 import engine.annote as annote
@@ -36,6 +38,13 @@ from helpers.textAnnotations import (
     SaveDetections,
 )
 from helpers.visuals import Visuals, VisualsDuplicates
+
+
+class DetectorSelected(str, Enum):
+    """Selected detector."""
+
+    Default = "Default"
+    YoloWorld = "YoloWorld"
 
 
 class Annoter:
@@ -96,6 +105,9 @@ class Annoter:
         # Detector : NMS method
         self.nmsMethod = NmsMethod.Nms
 
+        # Selection of detector:
+        self.detector_selected = DetectorSelected.Default
+
         # File entries list
         self.files = None
         # Annotations list
@@ -137,6 +149,11 @@ class Annoter:
                 datasetPath,
             )
 
+    @property
+    def detectors_labels(self) -> list[str]:
+        """Get prompt labels for detector"""
+        return annote.GetClasses() + self.yolo_world.classes
+
     def GetFileAnnotations(self, filepath):
         """Read file annotations if possible."""
         txtAnnotes = []
@@ -167,17 +184,33 @@ class Annoter:
             )
             return None
 
-    def ReadFileDetections(self, filepath: str):
+    def ReadDetections(self, filepath: str) -> list:
         """Read file annotations if possible."""
+
+        # Selecte extension str
+        extension_str = ".detector"
+        if self.detector_selected == DetectorSelected.YoloWorld:
+            extension_str = ".yoloworld"
+
         detAnnotes = []
         # If detector annotations not exists then call detector
-        if IsExistsAnnotations(filepath, extension=".detector"):
-            detAnnotes = ReadDetections(filepath, extension=".detector")
+        if IsExistsAnnotations(filepath, extension=extension_str):
+            detAnnotes = ReadDetections(filepath, extension=extension_str)
             detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
 
         return detAnnotes
 
-    def ProcessFileDetections(self, im, filepath) -> list:
+    def ProcessDetections(self, im: np.array, filepath: str) -> list:
+        """Process detections for file."""
+
+        # Detector : Use Yolo World detector
+        if self.detector_selected == DetectorSelected.YoloWorld:
+            return self.ProcessYoloWorldDetections(im, filepath)
+
+        # Detector : default detector
+        return self.ProcessYolov4Detections(im, filepath)
+
+    def ProcessYolov4Detections(self, im, filepath) -> list:
         """Read file annotations if possible."""
         if (self.detector is None) or (im is None):
             return []
@@ -231,7 +264,7 @@ class Annoter:
 
         return metrics
 
-    def OpenLocation(self, path: str):
+    def OpenLocation(self, path: str, force_detector: bool = False):
         """Open images/annotations location."""
         # Check : If path is valid
         if (path is None) or (len(path) == 0):
@@ -247,6 +280,10 @@ class Annoter:
         if self.dirpath == path:
             logging.info("(Annoter) Path `%s` is same!", path)
             return
+
+        # Force detector : Update from config
+        if force_detector is False:
+            force_detector = self.config["forceDetector"]
 
         # Update dirpath
         self.dirpath = path
@@ -282,12 +319,13 @@ class Annoter:
             # Force detector if needed
             detections = []
             # Force detector to process every image
-            if self.config["forceDetector"] is True:
+            if force_detector is True:
                 im = self.GetFileImage(path + filename)
-                detections = self.ProcessFileDetections(im, path + filename)
+                detections = self.ProcessDetections(im, path + filename)
+
             # Read historical detections
             else:
-                detections = self.ReadFileDetections(path + filename)
+                detections = self.ReadDetections(path + filename)
 
             # For calculation : Filter detections with itself for multiple detections catches.
             detections = prefilters.FilterIOUbyConfidence(detections, detections)
@@ -673,7 +711,6 @@ class Annoter:
         self,
         processImage: bool = True,
         forceDetector: bool = False,
-        processYoloWorld: bool = False,
     ):
         """process file."""
         if (self.offset >= 0) and (self.offset < self.GetFilesCount()):
@@ -691,15 +728,12 @@ class Annoter:
             if (self.noDetector is False) and (
                 (processImage is True) or (len(txtAnnotations) == 0)
             ):
-                # Detector : Use Yolo World detector
-                if processYoloWorld is True:
-                    detAnnotes = self.ProcessYoloWorldDetections(im, fileEntry["Path"])
-                # Detector : default detector
-                else:
-                    detAnnotes = self.ProcessFileDetections(im, fileEntry["Path"])
+                # Detector : Process
+                detAnnotes = self.ProcessDetections(im, fileEntry["Path"])
 
                 # Calculate metrics
                 metrics = self.CalculateYoloMetrics(txtAnnotations, detAnnotes)
+
                 # For view : Filter by IOU internal with same annotes and also with txt annotes.
                 if len(txtAnnotations):
                     detAnnotes = prefilters.FilterIOUbyConfidence(

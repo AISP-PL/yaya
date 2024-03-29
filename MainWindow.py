@@ -24,7 +24,7 @@ from PyQt5.QtWidgets import (
 from Detectors.common.Detector import NmsMethod
 from Detectors.common.image_strategy import ImageStrategy
 from engine.annote import GetClasses
-from engine.annoter import Annoter
+from engine.annoter import Annoter, DetectorSelected
 from engine.session import Session
 from helpers.files import ChangeExtension, FixPath
 from MainWindow_ui import Ui_MainWindow
@@ -349,11 +349,12 @@ class MainWindowGui(Ui_MainWindow):
             buttons_group=ViewFilters.filter_classes_group,
         )
         # Filters detections : Setup
+        det_labels = self.annoter.detectors_labels
         ViewFilters.ViewClasses(
             self.ui.detectionsFilterGrid,
             layout_title="Filter of detections",
-            button_ids=labels,
-            button_labels=labels,
+            button_ids=det_labels,
+            button_labels=det_labels,
             button_callback=self.CallbackFilterClassesClicked,
             buttons_group=ViewFilters.filter_detections_group,
         )
@@ -542,6 +543,7 @@ class MainWindowGui(Ui_MainWindow):
         self.annoter.imageStrategy = ImageStrategy(
             self.ui.imageStrategyCombo.currentText()
         )
+        self.detector_selected = DetectorSelected.Default
         self.annoter.Process(forceDetector=True)
         self.Setup()
 
@@ -576,7 +578,8 @@ class MainWindowGui(Ui_MainWindow):
         self.annoter.yolo_world_confidence = (
             self.ui.yoloWorldConfidenceSlider.value() / 100
         )
-        self.annoter.Process(forceDetector=True, processYoloWorld=True)
+        self.annoter.detector_selected = DetectorSelected.YoloWorld
+        self.annoter.Process(forceDetector=True)
         self.Setup()
 
     def CallbackYoloWorldUpdate(self):
@@ -687,11 +690,24 @@ class MainWindowGui(Ui_MainWindow):
         """Open location callback."""
         # Open file dialog
         filepath = QFileDialog.getExistingDirectory(None, "Select Directory")
+        if filepath is None:
+            return
+
+        # Dialog Yes/no to confirm if reprocess detector locations files.
+        button_reply = QMessageBox.question(
+            self.window,
+            "Detector reprocess ",
+            "Do you want to reprocess all files by curent detector?",
+        )
+
+        force_detector = False
+        if button_reply == QMessageBox.Yes:
+            force_detector = True
 
         # Open location
-        self.LocationOpen(filepath)
+        self.LocationOpen(filepath=filepath, force_detector=force_detector)
 
-    def LocationOpen(self, filepath: str) -> bool:
+    def LocationOpen(self, filepath: str, force_detector: bool = False) -> bool:
         """
         Open location and process files.
 
@@ -708,7 +724,7 @@ class MainWindowGui(Ui_MainWindow):
         # System settings : Store filepaths
         self.OpenedDirectoriesStore(filepath)
 
-        self.annoter.OpenLocation(FixPath(filepath))
+        self.annoter.OpenLocation(FixPath(filepath), force_detector=force_detector)
         self.SetupDefault()
         self.Setup()
         return True

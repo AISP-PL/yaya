@@ -870,7 +870,8 @@ class Ui_MainWindow(object):
         self.hideAnnotationsButton.setShortcut(_translate("MainWindow", "H"))
         self.detFilterButton.setText(_translate("MainWindow", "Det. Filter"))
         self.annotationFilterButton.setText(_translate("MainWindow", "Adn. Filter"))
-        self.yoloWorldButton.setText(_translate("MainWindow", "(Y)olo World"))
+        self.yoloWorldButton.setText(_translate("MainWindow", "(W)Yolo World"))
+        self.yoloWorldButton.setShortcut(_translate("MainWindow", "W"))
         self.detectorClassesLabel.setText(
             _translate("MainWindow", "Selected detector classes :")
         )
