@@ -6,3 +6,4 @@ pytest==7.2.0
 tqdm==4.66.2
 opencv-python-headless==4.9.0.80
 sahi==0.11.15
+torch==2.2.2
