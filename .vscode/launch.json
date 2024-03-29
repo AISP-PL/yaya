@@ -15,6 +15,20 @@
             "env": {"PYTHONPATH": "${workspaceFolder}"}
         },
         {
+            "name": "Yolo resize",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/yolo-resize.py",
+            "console": "integratedTerminal",
+            "args": [
+                "-i",
+                "input/",
+                "-s",
+                "900"
+            ],
+            "justMyCode": false
+        },
+        {
             "name": "YAYA",
             "type": "debugpy",
             "request": "launch",
