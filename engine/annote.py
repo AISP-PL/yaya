@@ -240,6 +240,9 @@ class Annote:
         if highlight is True:
             thickness = 2
 
+        # Brush opacity : Default 0.25
+        brush_opacity: float = 0.25
+
         # Human orignal from file detection
         if self.authorType == AnnoteAuthorType.byHuman:
             if self.evalution in [
@@ -255,6 +258,7 @@ class Annote:
         # Created by detector YOLO
         elif self.authorType == AnnoteAuthorType.byDetector:
             brushColor = Qt.darkBlue
+            brush_opacity = 0.6
             label = "{}".format(self.className)
             # If confidence drawing enabled
             if isConfidence:
@@ -263,6 +267,7 @@ class Annote:
         # Created by hand
         elif self.authorType == AnnoteAuthorType.byHand:
             brushColor = Qt.darkGreen
+            brush_opacity = 0.6
 
         # Draw rectangle box
         QDrawRectangle(
@@ -271,7 +276,7 @@ class Annote:
             pen=brushColor,
             penThickness=thickness,
             brushColor=brushColor,
-            brushOpacity=0.25,
+            brushOpacity=brush_opacity,
         )
 
         # Text
