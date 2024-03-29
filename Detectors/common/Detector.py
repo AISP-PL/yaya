@@ -110,7 +110,9 @@ class Detector:
                 skip_box_thr=conf_thresh,
             )
 
-    def ToDetections(self, boxes, scores, classids) -> list:
+    def ToDetections(
+        self, boxes: list, scores: list[float], classids: list[int]
+    ) -> list:
         """Zip together to sinigle tuples list."""
         return [
             (self.classes[int(classid)], 100 * score, box)
@@ -146,7 +148,7 @@ class Detector:
         """Returns all interesing us class names."""
         return self.classes
 
-    def GetClassNumber(self, label):
+    def GetClassNumber(self, label: str) -> int:
         """Return number of label."""
         if self.classes is None:
             return -1

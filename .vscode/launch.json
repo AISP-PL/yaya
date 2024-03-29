@@ -24,7 +24,7 @@
                 "-i",
                 "input/",
             ],
-            "justMyCode": true
+            "justMyCode": false
         },
         {
             "name": "YoloDistribution",
