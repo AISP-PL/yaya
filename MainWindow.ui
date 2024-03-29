@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1598</width>
+    <width>1605</width>
     <height>897</height>
    </rect>
   </property>
@@ -312,20 +312,98 @@
         </item>
         <item>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="3">
-           <widget class="QPushButton" name="renameAnnotationsButton">
+          <item row="0" column="6">
+           <widget class="QPushButton" name="paintCircleButton">
             <property name="text">
-             <string>Re(N)ame</string>
+             <string>Circl(e)</string>
             </property>
             <property name="icon">
              <iconset resource="icons/tango.qrc">
-              <normaloff>:/icons/32x32/accessories-text-editor.png</normaloff>:/icons/32x32/accessories-text-editor.png</iconset>
+              <normaloff>:/icons/32x32/list-add.png</normaloff>:/icons/32x32/list-add.png</iconset>
             </property>
             <property name="shortcut">
-             <string>N</string>
+             <string>E</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>90</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Annotations</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="7">
+           <widget class="QPushButton" name="hideLabelsButton">
+            <property name="text">
+             <string>(L)abels hide</string>
+            </property>
+            <property name="icon">
+             <iconset resource="icons/tango.qrc">
+              <normaloff>:/icons/32x32/go-jump.png</normaloff>:/icons/32x32/go-jump.png</iconset>
+            </property>
+            <property name="shortcut">
+             <string>L</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4">
+           <widget class="QPushButton" name="removeAnnotationsButton">
+            <property name="text">
+             <string>(R)emove</string>
+            </property>
+            <property name="icon">
+             <iconset resource="icons/tango.qrc">
+              <normaloff>:/icons/16x16/list-remove.png</normaloff>:/icons/16x16/list-remove.png</iconset>
+            </property>
+            <property name="shortcut">
+             <string>R</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="5">
+           <widget class="QPushButton" name="ClearAnnotationsButton">
+            <property name="text">
+             <string>(C)lear</string>
+            </property>
+            <property name="icon">
+             <iconset resource="icons/tango.qrc">
+              <normaloff>:/icons/16x16/edit-clear.png</normaloff>:/icons/16x16/edit-clear.png</iconset>
+            </property>
+            <property name="shortcut">
+             <string>C</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="detectAnnotationsButton">
+            <property name="text">
+             <string>(D)etect </string>
+            </property>
+            <property name="icon">
+             <iconset resource="icons/tango.qrc">
+              <normaloff>:/icons/16x16/camera-photo.png</normaloff>:/icons/16x16/camera-photo.png</iconset>
+            </property>
+            <property name="shortcut">
+             <string>D</string>
             </property>
            </widget>
           </item>
@@ -362,50 +440,20 @@
             </property>
            </spacer>
           </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>90</width>
-              <height>0</height>
-             </size>
-            </property>
+          <item row="0" column="3">
+           <widget class="QPushButton" name="renameAnnotationsButton">
             <property name="text">
-             <string>Annotations</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="5">
-           <widget class="QPushButton" name="ClearAnnotationsButton">
-            <property name="text">
-             <string>(C)lear</string>
+             <string>Re(N)ame</string>
             </property>
             <property name="icon">
              <iconset resource="icons/tango.qrc">
-              <normaloff>:/icons/16x16/edit-clear.png</normaloff>:/icons/16x16/edit-clear.png</iconset>
+              <normaloff>:/icons/32x32/accessories-text-editor.png</normaloff>:/icons/32x32/accessories-text-editor.png</iconset>
             </property>
             <property name="shortcut">
-             <string>C</string>
+             <string>N</string>
             </property>
-           </widget>
-          </item>
-          <item row="0" column="7">
-           <widget class="QPushButton" name="hideLabelsButton">
-            <property name="text">
-             <string>(L)abels hide</string>
-            </property>
-            <property name="icon">
-             <iconset resource="icons/tango.qrc">
-              <normaloff>:/icons/32x32/go-jump.png</normaloff>:/icons/32x32/go-jump.png</iconset>
-            </property>
-            <property name="shortcut">
-             <string>L</string>
+            <property name="checkable">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -423,41 +471,21 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="4">
-           <widget class="QPushButton" name="removeAnnotationsButton">
+          <item row="1" column="5">
+           <widget class="QPushButton" name="detFilterButton">
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
             <property name="text">
-             <string>(R)emove</string>
+             <string>Det. Filter</string>
             </property>
             <property name="icon">
              <iconset resource="icons/tango.qrc">
-              <normaloff>:/icons/16x16/list-remove.png</normaloff>:/icons/16x16/list-remove.png</iconset>
-            </property>
-            <property name="shortcut">
-             <string>R</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
+              <normaloff>:/icons/32x32/edit-find.png</normaloff>:/icons/32x32/edit-find.png</iconset>
             </property>
            </widget>
           </item>
-          <item row="0" column="6">
-           <widget class="QPushButton" name="paintCircleButton">
-            <property name="text">
-             <string>Circl(e)</string>
-            </property>
-            <property name="icon">
-             <iconset resource="icons/tango.qrc">
-              <normaloff>:/icons/32x32/list-add.png</normaloff>:/icons/32x32/list-add.png</iconset>
-            </property>
-            <property name="shortcut">
-             <string>E</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
+          <item row="1" column="4">
            <widget class="QPushButton" name="annotationFilterButton">
             <property name="cursor">
              <cursorShape>PointingHandCursor</cursorShape>
@@ -471,31 +499,17 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="2">
-           <widget class="QPushButton" name="detectAnnotationsButton">
-            <property name="text">
-             <string>(D)etect </string>
-            </property>
-            <property name="icon">
-             <iconset resource="icons/tango.qrc">
-              <normaloff>:/icons/16x16/camera-photo.png</normaloff>:/icons/16x16/camera-photo.png</iconset>
-            </property>
-            <property name="shortcut">
-             <string>D</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="4">
-           <widget class="QPushButton" name="detFilterButton">
+          <item row="1" column="3">
+           <widget class="QPushButton" name="yoloWorldButton">
             <property name="cursor">
              <cursorShape>PointingHandCursor</cursorShape>
             </property>
             <property name="text">
-             <string>Det. Filter</string>
+             <string>(Y)olo World</string>
             </property>
             <property name="icon">
              <iconset resource="icons/tango.qrc">
-              <normaloff>:/icons/32x32/edit-find.png</normaloff>:/icons/32x32/edit-find.png</iconset>
+              <normaloff>:/icons/32x32/camera-photo.png</normaloff>:/icons/32x32/camera-photo.png</iconset>
             </property>
            </widget>
           </item>
@@ -519,7 +533,7 @@
            <number>1</number>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="pageAnnotations">
            <property name="sizePolicy">
@@ -1112,6 +1126,66 @@
             </item>
            </layout>
           </widget>
+          <widget class="QWidget" name="pageYoloWorld">
+           <layout class="QVBoxLayout" name="verticalLayout_7">
+            <item>
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Detector details</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <item>
+               <widget class="QLabel" name="yoloWorldConfidenceLabel">
+                <property name="text">
+                 <string>Confidence</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QSlider" name="yoloWorldConfidenceSlider">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <widget class="QLabel" name="label_8">
+                <property name="text">
+                 <string>Enter class names separated by comma (ontology as text:label). Ex bus:autobus, person:osoba.</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="yoloWorldPrompt">
+              <property name="text">
+               <string>bus:g.autobusy, person:i1.pieszy, car:c1.osobowe</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_6">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>175</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
           <widget class="QWidget" name="pageCircle">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
@@ -1246,7 +1320,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1598</width>
+     <width>1605</width>
      <height>30</height>
     </rect>
    </property>

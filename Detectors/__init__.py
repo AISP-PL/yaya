@@ -52,6 +52,7 @@ def ListDetectors(path: str = None):
 def CreateDetector(detectorID=0, gpuID=0, path=None):
     """Creates detector."""
     detectors = ListDetectors(path)
+
     # Create detector
     if detectorID < len(detectors):
         cfgPath, weightPath, metaPath = detectors[detectorID]
@@ -71,5 +72,3 @@ def GetDetectorLabels(detectorID=0):
             return [line.strip() for line in data]
 
     return []
-
-    return None

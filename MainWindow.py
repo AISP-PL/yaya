@@ -24,6 +24,7 @@ from PyQt5.QtWidgets import (
 from Detectors.common.Detector import NmsMethod
 from Detectors.common.image_strategy import ImageStrategy
 from engine.annote import GetClasses
+from engine.annoter import Annoter
 from engine.session import Session
 from helpers.files import ChangeExtension, FixPath
 from MainWindow_ui import Ui_MainWindow
@@ -57,7 +58,7 @@ class MainWindowGui(Ui_MainWindow):
         # Store detector handle
         self.detector = detector
         # Store annoter handle
-        self.annoter = annoter
+        self.annoter: Annoter = annoter
         # Keys offset
         self.keysOffset = 0
         # Keys length
@@ -203,6 +204,13 @@ class MainWindowGui(Ui_MainWindow):
         )
         self.ui.detectorNmsSlider.valueChanged.connect(self.CallbackDetectorUpdate)
         self.ui.detectorNmsCombo.currentTextChanged.connect(self.CallbackDetectorUpdate)
+
+        # YoloWorld
+        self.ui.yoloWorldConfidenceSlider.valueChanged.connect(
+            self.CallbackYoloWorldUpdate
+        )
+        self.ui.yoloWorldPrompt.textChanged.connect(self.CallbackYoloWorldUpdate)
+        self.ui.yoloWorldButton.clicked.connect(self.CallbackDetectYoloWorld)
 
         # Paint size slider
         self.ui.paintSizeSlider.valueChanged.connect(self.CallbackPaintSizeSlider)
@@ -546,6 +554,35 @@ class MainWindowGui(Ui_MainWindow):
         )
         self.ui.detectorNmsLabel.setText(
             f"NMS: {self.ui.detectorNmsSlider.value()/100:02}%"
+        )
+
+    def CallbackDetectYoloWorld(self):
+        """Detect annotations."""
+        self.ui.toolSettingsStackedWidget.setCurrentWidget(self.ui.pageYoloWorld)
+
+        # Prompt : change to ontology
+        prompt = self.ui.yoloWorldPrompt.text()
+        items = prompt.split(",")
+        ontology = {}
+        for item in items:
+            items = item.split(":")
+            if items[0] == "":
+                continue
+
+            ontology[items[0]] = items[-1]
+
+        # Annoter update
+        self.annoter.yolo_world_ontology = ontology
+        self.annoter.yolo_world_confidence = (
+            self.ui.yoloWorldConfidenceSlider.value() / 100
+        )
+        self.annoter.Process(forceDetector=True, processYoloWorld=True)
+        self.Setup()
+
+    def CallbackYoloWorldUpdate(self):
+        """YoloWorld update."""
+        self.ui.yoloWorldConfidenceLabel.setText(
+            f"Confidence: {self.ui.yoloWorldConfidenceSlider.value()/100:02}%"
         )
 
     def CallbackAddAnnotationsButton(self):

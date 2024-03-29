@@ -52,6 +52,18 @@ class BoxState:
         return symbol
 
 
+def to_xyxy(yolo_bbox: tuple) -> tuple:
+    """
+    Convert YOLO bounding box to x1, y1, x2, y2
+    """
+    x, y, w, h = yolo_bbox
+    x1 = x - w / 2
+    y1 = y - h / 2
+    x2 = x + w / 2
+    y2 = y + h / 2
+    return x1, y1, x2, y2
+
+
 def Bbox2Rect(bbox):
     """
     From bounding box yolo format

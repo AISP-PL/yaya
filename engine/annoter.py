@@ -17,6 +17,7 @@ import helpers.prefilters as prefilters
 import helpers.transformations as transformations
 from Detectors.common.Detector import NmsMethod
 from Detectors.common.image_strategy import ImageStrategy
+from Detectors.DetectorYoloWorld import DetectorYOLOWorld
 from helpers.files import (
     DeleteFile,
     FixPath,
@@ -76,12 +77,16 @@ class Annoter:
             "isOnlyDetectedClass": isOnlyDetectedClass,
             "isOnlySpecificClass": isOnlySpecificClass,
         }
-        # Detector handle
-        self.detector = detector
+        # Yolo World handle
+        self.yolo_world = DetectorYOLOWorld()
+        self.yolo_world_confidence = 0.1
+        self.yolo_world_ontology = {"bus": "g.autobusy"}
         # Path
         self.dirpath = None
         # Use of detector
         self.noDetector = noDetector
+        # Detector handle
+        self.detector = detector
         # Detector : Confidence value
         self.confidence = detectorConfidence
         # Detector : Image fitting strategy
@@ -189,6 +194,30 @@ class Annoter:
 
         # Save/Update detector annotations file
         SaveDetections(filepath, detAnnotes, extension=".detector")
+
+        # Create annotes
+        detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
+        return detAnnotes
+
+    def ProcessYoloWorldDetections(self, im, filepath) -> list:
+        """Read file annotations if possible."""
+        if (self.yolo_world is None) or (im is None):
+            return []
+
+        self.yolo_world.set_ontology(self.yolo_world_ontology)
+
+        # Call detector manually!
+        detAnnotes = self.yolo_world.Detect(
+            im,
+            confidence=self.yolo_world_confidence,
+            nms_thresh=self.nms,
+            boxRelative=True,
+            nmsMethod=self.nmsMethod,
+            image_strategy=self.imageStrategy,
+        )
+
+        # Save/Update detector annotations file
+        SaveDetections(filepath, detAnnotes, extension=".yoloworld")
 
         # Create annotes
         detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
@@ -640,7 +669,12 @@ class Annoter:
 
         return errors
 
-    def Process(self, processImage: bool = True, forceDetector: bool = False):
+    def Process(
+        self,
+        processImage: bool = True,
+        forceDetector: bool = False,
+        processYoloWorld: bool = False,
+    ):
         """process file."""
         if (self.offset >= 0) and (self.offset < self.GetFilesCount()):
             fileEntry = self.GetFile()
@@ -657,8 +691,12 @@ class Annoter:
             if (self.noDetector is False) and (
                 (processImage is True) or (len(txtAnnotations) == 0)
             ):
-                # Process detector
-                detAnnotes = self.ProcessFileDetections(im, fileEntry["Path"])
+                # Detector : Use Yolo World detector
+                if processYoloWorld is True:
+                    detAnnotes = self.ProcessYoloWorldDetections(im, fileEntry["Path"])
+                # Detector : default detector
+                else:
+                    detAnnotes = self.ProcessFileDetections(im, fileEntry["Path"])
 
                 # Calculate metrics
                 metrics = self.CalculateYoloMetrics(txtAnnotations, detAnnotes)
