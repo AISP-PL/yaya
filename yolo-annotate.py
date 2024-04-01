@@ -28,8 +28,8 @@ def main():
         "--detectorConfidence",
         type=float,
         nargs="?",
-        const=0.5,
-        default=0.5,
+        const=0.35,
+        default=0.35,
         required=False,
         help="Detector default confidence",
     )

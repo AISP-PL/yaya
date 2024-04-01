@@ -70,7 +70,7 @@ class Annoter:
         isOnlyDetectedClass=None,
         isOnlySpecificClass=None,
         forceDetector=False,
-        detectorConfidence: float = 0.5,
+        detectorConfidence: float = 0.4,
         detectorNms: float = 0.45,
     ):
         """
