@@ -450,7 +450,7 @@ class MainWindowGui(Ui_MainWindow):
 
         # Get all checked buttons
         checked = [
-            button.text()
+            button.toolTip()
             for button in ViewFilters.filter_classes_group.buttons()
             if button.isChecked()
         ]
@@ -466,7 +466,7 @@ class MainWindowGui(Ui_MainWindow):
 
         # Get all checked buttons
         checked = [
-            button.text()
+            button.toolTip()
             for button in ViewFilters.filter_detections_group.buttons()
             if button.isChecked()
         ]
