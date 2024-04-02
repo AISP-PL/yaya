@@ -44,54 +44,6 @@ def main():
         help="Detector default NMS threshold",
     )
     parser.add_argument(
-        "-dc",
-        "--drawConfidence",
-        type=int,
-        nargs="?",
-        const=1,
-        default=1,
-        required=False,
-        help="Draw annotations confidence (=1). No drawing (=0).",
-    )
-    parser.add_argument(
-        "-sb",
-        "--sortBy",
-        type=int,
-        nargs="?",
-        const=2,
-        default=2,
-        required=False,
-        help="Sort by method number (0 None, 1 Datetime, 2 Inv. Datetime, 3 Alphabet)",
-    )
-    parser.add_argument(
-        "-oc",
-        "--onlyClass",
-        type=int,
-        required=False,
-        help="Only specific class number",
-    )
-    parser.add_argument(
-        "-odc",
-        "--onlyDetectedClass",
-        type=int,
-        required=False,
-        help="Only specific detected class number(Procces all detections)",
-    )
-    parser.add_argument(
-        "-on",
-        "--onlyNewFiles",
-        action="store_true",
-        required=False,
-        help="Process only files without detections file.",
-    )
-    parser.add_argument(
-        "-oo",
-        "--onlyOldFiles",
-        action="store_true",
-        required=False,
-        help="Process only files with detections file.",
-    )
-    parser.add_argument(
         "-nd",
         "--noDetector",
         action="store_true",

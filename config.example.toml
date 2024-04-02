@@ -1,0 +1,38 @@
+[detector]
+# Default detector confidence
+confidence = 0.25
+# Default Detector NMS value
+nms = 0.45
+# Default Detector NMS method (Nms, SoftNms, NmWeighted, FusionBox)
+nms_method = "greedy"
+# Default Detector ImageStrategy (Rescale, LetterBox, Tiling2x2, Tiling(SAHI))
+image_strategy = "resize"
+
+
+
+[detector.yolov4]
+
+[detector.yolo_world]
+# YOLO world default prompt
+default_prompt = "warning lamp:lamp1, emergency light:lamp2"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
