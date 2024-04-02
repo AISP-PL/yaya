@@ -100,7 +100,7 @@ def RenameToSha1Filepath(filename, dirpath):
     return newFilename
 
 
-def FixPath(path):
+def FixPath(path: str) -> str:
     """
     Fix path / character at the end.
     Only works with directory paths.

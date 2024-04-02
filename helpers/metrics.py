@@ -98,8 +98,9 @@ class Metrics:
     @property
     def correct(self) -> float:
         """Returns % of correct detections."""
+        # Check : No annotations, then everything is correct.
         if self.All == 0:
-            return 0
+            return 100
 
         return 100 * self.LTP / self.All
 

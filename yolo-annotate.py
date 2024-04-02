@@ -7,6 +7,7 @@ import sys
 import engine.annote as annote
 from Detectors import CreateDetector, GetDetectorLabels, IsDarknet
 from engine.annoter import Annoter
+from engine.config_toml import ConfigToml
 from helpers.files import FixPath, GetFileLocation
 from MainWindow import MainWindowGui
 
@@ -23,6 +24,16 @@ def main():
         help="Input path",
     )
     parser.add_argument("-c", "--config", type=str, required=False, help="Config path")
+    parser.add_argument(
+        "-det",
+        "--detector",
+        type=int,
+        nargs="?",
+        const=0,
+        default=0,
+        required=False,
+        help="Detector type - default 0",
+    )
     parser.add_argument(
         "-detc",
         "--detectorConfidence",
@@ -58,16 +69,6 @@ def main():
         help="Process only files with errors.",
     )
     parser.add_argument(
-        "-d",
-        "--detector",
-        type=int,
-        nargs="?",
-        const=0,
-        default=0,
-        required=False,
-        help="Detector type - default 0",
-    )
-    parser.add_argument(
         "-f",
         "--forceDetector",
         action="store_true",
@@ -88,31 +89,6 @@ def main():
         print("Error! No arguments!")
         sys.exit(-1)
 
-    # Check - files filter
-    isOnlyNewFiles = False
-    if args.onlyNewFiles:
-        isOnlyNewFiles = True
-
-    # Check - files filter
-    isOnlyOldFiles = False
-    if args.onlyOldFiles:
-        isOnlyOldFiles = True
-
-    # Check - files filter
-    isOnlyErrorFiles = False
-    if args.onlyFilesWithErrors:
-        isOnlyErrorFiles = True
-
-    # Check - files filter
-    isOnlySpecificClass = None
-    if args.onlyClass is not None:
-        isOnlySpecificClass = args.onlyClass
-
-    # Check - files filter
-    isOnlyDetectedClass = None
-    if args.onlyDetectedClass is not None:
-        isOnlyDetectedClass = args.onlyDetectedClass
-
     # Check - detector
     noDetector = False
     if args.noDetector is not None:
@@ -129,6 +105,11 @@ def main():
     else:
         logging.basicConfig(stream=sys.stderr, level=logging.INFO)
     logging.debug("Logging enabled!")
+
+    # Config .toml : Check
+    if ConfigToml()["detector"] is None:
+        logging.fatal("Invalid config file!")
+        return
 
     # Create detector
 
@@ -153,16 +134,10 @@ def main():
 
     # Create annoter
     annoter = Annoter(
-        None,
-        detector,
-        noDetector,
-        args.sortBy,
-        isOnlyNewFiles,
-        isOnlyOldFiles,
-        isOnlyErrorFiles,
-        isOnlyDetectedClass,
-        isOnlySpecificClass,
-        forceDetector,
+        filepath=None,
+        detector=detector,
+        noDetector=noDetector,
+        forceDetector=forceDetector,
         detectorConfidence=args.detectorConfidence,
         detectorNms=args.detectorNms,
     )

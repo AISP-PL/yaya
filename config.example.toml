@@ -1,4 +1,6 @@
 [detector]
+# Detector selected (Default or YoloWorld)
+detector = "Default"
 # Default detector confidence
 confidence = 0.25
 # Default Detector NMS value
