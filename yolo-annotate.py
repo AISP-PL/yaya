@@ -107,9 +107,9 @@ def main():
     logging.debug("Logging enabled!")
 
     # Config .toml : Check
-    if ConfigToml()["detector"] is None:
-        logging.fatal("Invalid config file!")
-        return
+    # if ConfigToml()["detector"] is None:
+    #     logging.fatal("Invalid config file!")
+    #     return
 
     # Create detector
 
