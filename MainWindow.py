@@ -82,7 +82,13 @@ class MainWindowGui(Ui_MainWindow):
         self.SetupDefault()
         self.Setup()
 
-        # Locations : Open
+        # Location : Open if provided in arguments
+        if args.input is not None:
+            is_opened = self.LocationOpen(args.input)
+            if is_opened:
+                return
+
+        # Locations : Get last location
         last_location = self.OpenedDirectoriesGet(amount=1)
 
         # Locations : If stored, try to open last location.

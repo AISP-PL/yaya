@@ -36,7 +36,7 @@ def GetClassName(number):
         return "Invalid_C" + str(number)
 
 
-def GetClassNumber(name):
+def GetClassNumber(name: str) -> int:
     """Retruns class number"""
     if name in classNames:
         return classNames.index(name)
@@ -125,12 +125,12 @@ class Annote:
             self.className = className
 
     @property
-    def width(self):
+    def width(self) -> float:
         """Returns width."""
         return self.box[2] - self.box[0]
 
     @property
-    def height(self):
+    def height(self) -> float:
         """Returns height."""
         return self.box[3] - self.box[1]
 

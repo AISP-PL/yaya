@@ -19,9 +19,9 @@ class Metrics:
     # Number of all annotations
     All: int = field(init=True, default=0)
     # Average width of all annotations
-    AvgWidth: float = field(init=True, default=0)
+    AvgWidth: float = field(init=True, default=-1.0)
     # Average height of all annotations
-    AvgHeight: float = field(init=True, default=0)
+    AvgHeight: float = field(init=True, default=-1.0)
     # True postive validated annotations
     TP: int = field(init=True, default=0)
     # False positive validated annotations

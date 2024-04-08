@@ -119,6 +119,7 @@ class Annoter:
         # Set of all errors
         self.errors = set()
 
+        # Check : Open location
         if (filepath is not None) and (len(filepath) != 0):
             self.OpenLocation(filepath)
 

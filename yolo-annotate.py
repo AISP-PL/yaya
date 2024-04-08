@@ -20,7 +20,7 @@ def main():
         "-i",
         "--input",
         type=str,
-        required=True,
+        required=False,
         help="Input path",
     )
     parser.add_argument("-c", "--config", type=str, required=False, help="Config path")
@@ -134,7 +134,7 @@ def main():
 
     # Create annoter
     annoter = Annoter(
-        filepath=None,
+        filepath=args.input,
         detector=detector,
         noDetector=noDetector,
         forceDetector=forceDetector,

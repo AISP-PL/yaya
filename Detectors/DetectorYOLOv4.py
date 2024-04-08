@@ -10,7 +10,6 @@ from typing import List, NamedTuple, Optional
 
 import cv2
 import numpy as np
-from sahi import ObjectPrediction
 from sahi.predict import get_sliced_prediction
 from sahi.prediction import ObjectPrediction
 from sahi.utils.compatibility import fix_full_shape_list, fix_shift_amount_list
