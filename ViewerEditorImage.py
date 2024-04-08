@@ -5,15 +5,12 @@ Created on 30 gru 2020
 """
 
 import logging
-import os
-import subprocess
-from datetime import datetime
+from typing import Any
 
 import cv2
 import numpy as np
-from PyQt5.Qt import QPoint, QTimer
-from PyQt5.QtCore import QPointF, QRect, Qt, pyqtSignal
-from PyQt5.QtGui import QBrush, QFont, QPainter, QPixmap
+from PyQt5.QtCore import QPointF, Qt, pyqtSignal
+from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import QWidget
 
 import helpers.boxes as boxes
@@ -21,17 +18,10 @@ from engine.annote import AnnoteAuthorType
 from helpers.boxes import IsInside, PointsToRect, PointToAbsolute, PointToRelative
 from helpers.images import GetFixedFitToBox
 from helpers.QtDrawing import (
-    CvBGRColorToQColor,
     CvImage2QtImage,
-    CvRGBColorToQColor,
-    QDrawArrow,
     QDrawCrosshair,
     QDrawElipse,
-    QDrawJoints,
-    QDrawPolygon,
-    QDrawPolyline,
     QDrawRectangle,
-    QDrawText,
 )
 
 
@@ -196,28 +186,34 @@ class ViewerEditorImage(QWidget):
         width, height = self.rect().getRect()[2:]
         return width, height
 
-    def GetHoveredAnnotation(self, point):
+    def GetHoveredAnnotation(self, point: tuple) -> Any:
         """Finds currently hovered annotation."""
         founded = None
         for element in self.annoter.GetAnnotations():
-            if element.IsInside(point) == True:
-                if founded is not None:
-                    area1 = boxes.GetArea(element.GetBox())
-                    area2 = boxes.GetArea(founded.GetBox())
-                    if area1 < area2:
-                        founded = element
-                else:
-                    founded = element
+            # Check : Is inside
+            if not element.IsInside(point):
+                continue
+
+            # Check : Is founded
+            if founded is None:
+                founded = element
+                continue
+
+            # Check : Area
+            area1 = boxes.GetArea(element.GetBox())
+            area2 = boxes.GetArea(founded.GetBox())
+            if area1 < area2:
+                founded = element
 
         return founded
 
-    def SaveScreenshot(self, filepath):
+    def SaveScreenshot(self, filepath: str) -> None:
         """Returns screenshot."""
         pixmap = QPixmap((self.size()))
         self.render(pixmap)
         pixmap.save(filepath)
 
-    def ScreenshotToFile(self, path) -> bool:
+    def ScreenshotToFile(self, path: str) -> bool:
         """Public method which renders widget to file."""
         # Render to pixmap of same width and height
         pixmap = self.grab(self.rect())

@@ -185,6 +185,7 @@ class DetectorYOLOv4(Detector):
         confidence: float = 0.5,
         nms_thresh: float = 0.45,
         nmsMethod: NmsMethod = NmsMethod.Nms,
+        interpolation: int = cv2.INTER_LINEAR,
     ) -> tuple:
         """Detect objects in given image using rescale strategy."""
         im_height, im_width, _ = frame.shape
@@ -194,7 +195,7 @@ class DetectorYOLOv4(Detector):
             resized = cv2.resize(
                 frame,
                 (self.netWidth, self.netHeight),
-                interpolation=cv2.INTER_LINEAR,
+                interpolation=interpolation,
             )
         # If image match network dimensions then use it directly
         else:
@@ -537,6 +538,14 @@ class DetectorYOLOv4(Detector):
         if image_strategy == ImageStrategy.Rescale:
             detections, boundaryHeight, boundaryWidth = self.detect_rescale(
                 frame, confidence, nms_thresh, nmsMethod
+            )
+        elif image_strategy == ImageStrategy.RescaleNearest:
+            detections, boundaryHeight, boundaryWidth = self.detect_rescale(
+                frame,
+                confidence,
+                nms_thresh,
+                nmsMethod,
+                interpolation=cv2.INTER_NEAREST,
             )
         elif image_strategy == ImageStrategy.LetterBox:
             detections, boundaryHeight, boundaryWidth = self.detect_letterbox(
