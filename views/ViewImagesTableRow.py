@@ -9,6 +9,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
 
+from Gui.widgets.AnnotationsTableWidgetItem import AnnotationsTableWidgetItem
 from Gui.widgets.BoolTableWidgetItem import BoolTableWidgetItem
 from Gui.widgets.FloatTableWidgetItem import FloatTableWidgetItem
 from Gui.widgets.HsvTableWidgetItem import HsvTableWidgetItem
@@ -103,8 +104,7 @@ class ViewImagesTableRow:
         colIndex += 1
 
         # Annotation classes
-        item = QTableWidgetItem()
-        item.setText(fileEntry["AnnotationsClasses"])
+        item = AnnotationsTableWidgetItem(fileEntry["Annotations"])
         item.setToolTip(str(fileEntry["ID"]))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
