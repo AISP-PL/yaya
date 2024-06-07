@@ -3,7 +3,9 @@ PyQt5==5.15.7
 pytest==7.2.0
 tqdm==4.66.2
 opencv-python-headless<=4.8.0.0
-sahi==0.11.15
-inference-gpu[yolo-world]
+sahi==0.11.16
+inference-gpu[yolo-world]==0.9.20
 progressbar==2.5
-torch==2.3.1
+torch==2.2.2
+torchsummary==1.5.1
+torchvision==0.17.2
