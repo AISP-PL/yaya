@@ -115,6 +115,7 @@ def main():
         logging.warning(
             "No detectors found! Create subdirectory in Detectors/ with detector cfg, names, data to add detector."
         )
+        noDetector = True
 
     # Check : Detectors exists
     elif IsDarknet() and (noDetector is False):

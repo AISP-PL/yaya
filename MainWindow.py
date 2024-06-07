@@ -11,6 +11,13 @@ import sys
 from copy import copy
 from datetime import datetime
 
+from Detectors.common.Detector import NmsMethod
+from Detectors.common.image_strategy import ImageStrategy
+from engine.annote import GetClasses
+from engine.annoter import Annoter, DetectorSelected
+from engine.session import Session
+from helpers.files import ChangeExtension, FixPath
+from MainWindow_ui import Ui_MainWindow
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import (
     QApplication,
@@ -20,14 +27,6 @@ from PyQt5.QtWidgets import (
     QMainWindow,
     QMessageBox,
 )
-
-from Detectors.common.Detector import NmsMethod
-from Detectors.common.image_strategy import ImageStrategy
-from engine.annote import GetClasses
-from engine.annoter import Annoter, DetectorSelected
-from engine.session import Session
-from helpers.files import ChangeExtension, FixPath
-from MainWindow_ui import Ui_MainWindow
 from ViewerEditorImage import ViewerEditorImage
 from views.ViewFilters import ViewFilters
 from views.ViewImagesSummary import ViewImagesSummary
@@ -555,6 +554,8 @@ class MainWindowGui(Ui_MainWindow):
 
     def CallbackDetectorUpdate(self):
         """Detector update."""
+        if self.annoter.detector is None:
+            return
 
         self.ui.detectorDetails.setText(self.annoter.detector.details_str)
         self.ui.detectorConfidenceLabel.setText(

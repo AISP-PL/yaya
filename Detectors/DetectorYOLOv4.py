@@ -10,10 +10,6 @@ from typing import List, NamedTuple, Optional
 
 import cv2
 import numpy as np
-from sahi.predict import get_sliced_prediction
-from sahi.prediction import ObjectPrediction
-from sahi.utils.compatibility import fix_full_shape_list, fix_shift_amount_list
-
 from Detectors.common.Detector import Detector, NmsMethod
 from Detectors.common.image_strategy import ImageStrategy
 from Detectors.yolov4 import darknet
@@ -22,6 +18,9 @@ from helpers.detections import tiles_detections_merge
 from helpers.files import GetFilepath
 from helpers.gpu import CudaDeviceLowestMemory
 from helpers.images import GetFixedFitToBox
+from sahi.predict import get_sliced_prediction
+from sahi.prediction import ObjectPrediction
+from sahi.utils.compatibility import fix_full_shape_list, fix_shift_amount_list
 
 
 class ImageTile(NamedTuple):
@@ -81,12 +80,11 @@ class DetectorYOLOv4(Detector):
         # List of colors matched with labels
         self.colors = []
         # Pre-Read and strip all labels
-        self.classes = (
-            open(GetFilepath(dataPath, dropExtension=True) + ".names")
-            .read()
-            .splitlines()
-        )
-        self.classes = list(map(str.strip, self.classes))  # strip names
+        self.classes = []
+        names_path = GetFilepath(dataPath, dropExtension=True) + ".names"
+        if os.path.exists(names_path):
+            classes_readed = open(names_path, "r").read().splitlines()
+            self.classes = list(map(str.strip, classes_readed))
 
         # Validate labels
         self.__validateLabels()
@@ -127,10 +125,16 @@ class DetectorYOLOv4(Detector):
 
     def __validateLabels(self):
         """Validated loaded labels."""
+        # Check : Empty labels
+        if len(self.classes) == 0:
+            logging.error("(DetectorYOLOv4) No labels loaded!")
+            return
+
         # Check if last label is empty (could be because of \n)
         if (self.classes[-1] == "") or (len(self.classes[-1]) == 0):
             del self.classes[-1]
             logging.warning("(DetectorYOLOv4) Removed last empty label!")
+
         # Check labels integrity
         for c in self.classes:
             # Check for missing labels

@@ -2,11 +2,10 @@
     View of images QTableWidget.
 """
 
+from helpers.texts import abbrev
 from PyQt5 import QtCore
 from PyQt5.Qt import QSizePolicy, QSpacerItem
 from PyQt5.QtWidgets import QButtonGroup, QGridLayout, QLabel, QPushButton
-
-from helpers.texts import abbrev
 
 
 class ViewFilters:
@@ -52,6 +51,7 @@ class ViewFilters:
         buttons_group.setExclusive(False)
 
         # Buttons : Create
+        rowIndex: int = rowStart
         for button_index, button_id in enumerate(button_ids):
             # Label : Get
             button_label = abbrev(button_labels[button_index], label_max_length)
