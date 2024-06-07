@@ -5,9 +5,9 @@ import os
 import sys
 
 import engine.annote as annote
-from Detectors import CreateDetector, GetDetectorLabels, IsDarknet
+from Detectors import CreateDetector, GetDetectorLabels, IsDarknet, ListDetectors
+from Detectors.common.Detector import Detector
 from engine.annoter import Annoter
-from engine.config_toml import ConfigToml
 from helpers.files import FixPath, GetFileLocation
 from MainWindow import MainWindowGui
 
@@ -84,11 +84,6 @@ def main():
     )
     args = parser.parse_args()
 
-    # Check - input argument
-    if args.input is None:
-        print("Error! No arguments!")
-        sys.exit(-1)
-
     # Check - detector
     noDetector = False
     if args.noDetector is not None:
@@ -111,11 +106,19 @@ def main():
     #     logging.fatal("Invalid config file!")
     #     return
 
-    # Create detector
+    # Detector
+    detector: Detector = None
 
-    scriptPath = os.path.dirname(os.path.realpath(__file__))
-    detector = None
-    if IsDarknet() and (noDetector is False):
+    # Check : Detectors not found
+    detectors_found = ListDetectors()
+    if len(detectors_found) == 0:
+        logging.warning(
+            "No detectors found! Create subdirectory in Detectors/ with detector cfg, names, data to add detector."
+        )
+
+    # Check : Detectors exists
+    elif IsDarknet() and (noDetector is False):
+        scriptPath = os.path.dirname(os.path.realpath(__file__))
         detector = CreateDetector(args.detector, path=scriptPath)
         if detector is None:
             logging.error("Wrong detector!")
@@ -123,6 +126,7 @@ def main():
 
         detector.Init()
         annote.Init(detector.GetClassNames())
+
     # CUDA not installed
     else:
         noDetector = True

@@ -21,9 +21,9 @@ def IsCuda():
     return False
 
 
-def ListDetectors(path: str = None):
+def ListDetectors(path: str = None) -> list[tuple[str, str, str]]:
     """List detectors in directory."""
-    detectors = []
+    detectors: list[tuple, tuple, tuple] = []
 
     # Handle path
     if path is None:
@@ -33,18 +33,21 @@ def ListDetectors(path: str = None):
 
     for filename in os.listdir(path):
         filepath = path + filename
-        # Get directories
-        if os.path.isdir(filepath):
-            filepath = FixPath(filepath)
-            # Get cfg files
-            files = GetFiles(filepath, "*.cfg")
-            # If any file found
-            if len(files) != 0:
-                outpath = filepath + GetFilename(files[0])
-                logging.info("(Found detector) %u - %s.", len(detectors), outpath)
-                detectors.append(
-                    (outpath + ".cfg", outpath + ".weights", outpath + ".data")
-                )
+        # Check : Not a directory, skip
+        if not os.path.isdir(filepath):
+            continue
+
+        filepath = FixPath(filepath)
+        # Get cfg files
+        files = GetFiles(filepath, "*.cfg")
+
+        # Check : If no cfg file found
+        if len(files) == 0:
+            continue
+
+        outpath = filepath + GetFilename(files[0])
+        logging.info("(Found detector) %u - %s.", len(detectors), outpath)
+        detectors.append((outpath + ".cfg", outpath + ".weights", outpath + ".data"))
 
     return detectors
 
