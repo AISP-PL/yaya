@@ -5,5 +5,5 @@ tqdm==4.66.2
 opencv-python-headless<=4.8.0.0
 sahi==0.11.15
 inference-gpu[yolo-world]
-
 progressbar==2.5
+torch==2.3.1
