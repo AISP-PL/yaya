@@ -11,11 +11,20 @@
         "files.trimTrailingWhitespace": false
     },
     "flake8.args": [
-        "--max-line-length=120"
+        "--max-line-length=120",
+        "--ignore=E203,E501,W503"
     ],
     "mypy-type-checker.importStrategy": "fromEnvironment",
     "mypy-type-checker.reportingScope": "workspace",
     "mypy-type-checker.cwd": "${workspaceFolder}",
+    "mypy-type-checker.ignorePatterns": [
+        "**/site-packages/**/*.py",
+        ".vscode/*.py",
+        "scripts/*",
+        "scripts/**/*",
+        "scripts/**/**/*",
+
+    ],
     "cSpell.enabled": false,
     "python.testing.pytestArgs": [
         "tests"
