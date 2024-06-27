@@ -5,14 +5,14 @@ Created on 17 lis 2020
 """
 
 import logging
-from enum import Enum
 
 import cv2
-from PyQt5.QtCore import QPoint, Qt
 
+from engine.annotators.annotator_confidence_heat import AnnotatorConfidenceHeat
+from engine.annotators.annotator_default import AnnotatorDefault
+from engine.annote_enums import AnnotatorType, AnnoteAuthorType, AnnoteEvaluation
 import helpers.boxes as boxes
 from helpers.colors import blue, green, red, white, yellow
-from helpers.QtDrawing import QDrawRectangle, QDrawText
 
 classNames = []
 
@@ -43,23 +43,6 @@ def GetClassNumber(name: str) -> int:
 
     logging.error("(Annote) Invalid class name %s.", name)
     return 0
-
-
-class AnnoteAuthorType(Enum):
-    """Annotation author type."""
-
-    byHuman = 0
-    byDetector = 1
-    byHand = 2
-
-
-class AnnoteEvaluation(Enum):
-    """Annotation evalution."""
-
-    noEvaluation = 0
-    TruePositiveLabel = 1
-    TruePositive = 2
-    FalseNegative = 3
 
 
 def toTxtAnnote(annote):
@@ -228,65 +211,20 @@ class Annote:
             1,
         )
 
-    def QtDraw(self, painter, highlight=False, isConfidence=True, isLabel=True):
+    def QtDraw(
+        self,
+        painter,
+        annotator_type: AnnotatorType = AnnotatorType.Default,
+        highlight: bool = False,
+        isConfidence: bool = True,
+        isLabel: bool = True,
+    ):
         """Draw self."""
-        width, height = painter.window().getRect()[2:]
-        x1, y1, x2, y2 = boxes.ToAbsolute(self.box, width, height)
-
-        # Label text
-        label = self.className
-        # Thicknes of border
-        thickness = 1
-        if highlight is True:
-            thickness = 2
-
-        # Brush opacity : Default 0.25
-        brush_opacity: float = 0.25
-
-        # Human orignal from file detection
-        if self.authorType == AnnoteAuthorType.byHuman:
-            if self.evalution in [
-                AnnoteEvaluation.noEvaluation,
-                AnnoteEvaluation.TruePositiveLabel,
-            ]:
-                brushColor = Qt.black
-            elif self.evalution == AnnoteEvaluation.TruePositive:
-                brushColor = Qt.darkYellow
-            elif self.evalution == AnnoteEvaluation.FalseNegative:
-                brushColor = Qt.red
-
-        # Created by detector YOLO
-        elif self.authorType == AnnoteAuthorType.byDetector:
-            brushColor = Qt.darkBlue
-            brush_opacity = 0.6
-            label = "{}".format(self.className)
-            # If confidence drawing enabled
-            if isConfidence:
-                label += "[{:.2f}]".format(float(self.confidence))
-
-        # Created by hand
-        elif self.authorType == AnnoteAuthorType.byHand:
-            brushColor = Qt.darkGreen
-            brush_opacity = 0.6
-
-        # Draw rectangle box
-        QDrawRectangle(
-            painter,
-            [QPoint(x1, y1), QPoint(x2, y2)],
-            pen=brushColor,
-            penThickness=thickness,
-            brushColor=brushColor,
-            brushOpacity=brush_opacity,
-        )
-
-        # Text
-        if isLabel:
-            QDrawText(
-                painter,
-                QPoint(x1, y1),
-                label,
-                bgColor=brushColor,
-                textAlign="bottomright",
+        if annotator_type == AnnotatorType.Default:
+            AnnotatorDefault.Draw(self, painter, highlight, isConfidence, isLabel)
+        elif annotator_type == AnnotatorType.ConfidenceHeat:
+            AnnotatorConfidenceHeat.Draw(
+                self, painter, highlight, isConfidence, isLabel
             )
 
     def IsInside(self, point):

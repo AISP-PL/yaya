@@ -4,19 +4,38 @@ Created on 30 gru 2020
 @author: spasz
 """
 
+from enum import Enum, auto
 from random import randint
 
 import numpy as np
 from PyQt5.Qt import QFontMetrics, QPoint
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QBrush, QColor, QImage, QPen, QPixmap, QPolygon, QTransform
+from PyQt5.QtCore import QRect, QRectF, Qt
+from PyQt5.QtGui import (
+    QBrush,
+    QColor,
+    QImage,
+    QPen,
+    QPixmap,
+    QPolygon,
+    QTransform,
+)
 from PyQt5.QtWidgets import QTableWidgetItem
 
 import Gui.colors as colors
 import helpers.algebra as algebra
 
 
-def CvBGRColorToQColor(color):
+class TextAlignment(str, Enum):
+    """Text alignment enum."""
+
+    Center = auto()
+    TopRight = auto()
+    TopLeft = auto()
+    BottomRight = auto()
+    BottomLeft = auto()
+
+
+def CvBGRColorToQColor(color: tuple) -> QColor:
     """Translate bgr OpenCV color to QColor."""
     return QColor(color[2], color[1], color[0])
 
@@ -151,6 +170,34 @@ def CreateRectangle(x, y, width=100, height=20, angle=0, align="center") -> QPol
     return polygon
 
 
+def CreateRectangle(
+    x, y, width=100, height=20, align: TextAlignment = TextAlignment.Center
+) -> QRect:
+    """
+        Creates polygon as rectangle centered
+        in the center of axes.
+    ."""
+    rect = QRect(x, y, width, height)
+
+    # Alignment
+    # Info : Y axis is inverted on screen.
+    # top left    | top right
+    # ------------+-----------
+    # bottom left | bottom right
+    if align == TextAlignment.Center:
+        rect.translate(round(-width / 2), round(-height / 2))
+    if align == TextAlignment.TopRight:
+        rect.translate(0, -height)
+    elif align == TextAlignment.TopLeft:
+        rect.translate(-width, -height)
+    elif align == TextAlignment.BottomRight:
+        """Default, do nothing."""
+    elif align == TextAlignment.BottomLeft:
+        rect.translate(-width, 0)
+
+    return rect
+
+
 def QDrawTriangle(
     painter,
     point,
@@ -230,52 +277,53 @@ def QDrawText(
     fontSize=10,
     fontBold=False,
     pen=Qt.white,
-    shadow=None,
-    shadowMargin=2,
     bgColor=Qt.black,
     bgStyle=Qt.SolidPattern,
     bgOpacity=1,
-    bgMargin=4,
-    textAlign="center",
+    bgMargin=2,
+    textAlign: TextAlignment = TextAlignment.Center,
 ):
     """Helper function for polygon drawing."""
-    # Create Font
+    # Font : create & set
     font = painter.font()
     font.setPixelSize(fontSize)
     font.setBold(fontBold)
+    font.setFamily("Arial")
     painter.setFont(font)
 
-    # Create rectangle surronding text
+    # Get font height.
     metric = QFontMetrics(font)
+    # Get number of font text lines.
+    textLines = text.split("\n")
+    # Get max width/height
+    textHeight = metric.height()
+    textWidth = max([metric.width(text) for text in textLines])
+    # BgRect : Width and Height
+    bgRectWidth = textWidth + bgMargin * 2
+    bgRectHeight = textHeight * len(textLines) + bgMargin * 2
+
+    # Creat 4-point rectangle.
     bgrect = CreateRectangle(
-        point.x(),
-        point.y(),
-        metric.width(text) + bgMargin * 2,
-        metric.height() + bgMargin * 2,
-        align=textAlign,
+        point.x(), point.y(), bgRectWidth, bgRectHeight, align=textAlign
     )
+
+    # Pen set
+    painter.setPen(pen)
 
     # Draw background if enabled
     if bgColor is not None:
-        color = QColor(bgColor)
-        color.setAlphaF(bgOpacity)
-        painter.setBrush(QBrush(color, bgStyle))
-        painter.drawPolygon(bgrect)
+        painter.fillRect(bgrect, bgColor)
 
-    # Get top/left rectangle point
-    p1, p2, p3, p4 = bgrect.point(0), bgrect.point(1), bgrect.point(2), bgrect.point(3)
-    textPoint = QPoint(min(p1.x(), p2.x()) + bgMargin, max(p1.y(), p3.y()) - bgMargin)
-
-    # Draw shadow
-    if shadow is not None:
-        painter.setPen(shadow)
-        painter.drawText(
-            textPoint.x() + shadowMargin, textPoint.y() + shadowMargin, text
-        )
+    # TextPoint : TopLeft + margin + textHeight
+    textPoint = bgrect.topLeft() + QPoint(bgMargin, textHeight)
 
     # Draw text
-    painter.setPen(pen)
-    painter.drawText(textPoint, text)
+    for text in textLines:
+        painter.drawText(textPoint, text)
+        textPoint += QPoint(0, textHeight)
+
+    # Return end point of text rect.
+    return (bgrect.bottomRight().x(), bgrect.bottomRight().y())
 
 
 def QDrawCrosshair(

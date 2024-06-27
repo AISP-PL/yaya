@@ -226,6 +226,12 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.actionOtworzLokacje.triggered.connect(self.CallbackOpenLocation)
         self.ui.actionSave_screenshoot.triggered.connect(self.CallbackScreenshot)
         self.ui.actionSave_copy.triggered.connect(self.CallbackSaveCopy)
+        self.ui.action_annotations_default.triggered.connect(
+            lambda: self.annoter.SetAnnotationsDefault()
+        )
+        self.ui.action_annotations_confidence_heat.triggered.connect(
+            lambda: self.annoter.SetAnnotationsConfidenceHeat()
+        )
 
         # Buttons group - for mode buttons
         self.modeButtonGroup = QButtonGroup(self.window)

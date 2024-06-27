@@ -14,7 +14,7 @@ from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import QWidget
 
 import helpers.boxes as boxes
-from engine.annote import AnnoteAuthorType
+from engine.annote import AnnotatorType, AnnoteAuthorType
 from helpers.boxes import IsInside, PointsToRect, PointToAbsolute, PointToRelative
 from helpers.images import GetFixedFitToBox
 from helpers.QtDrawing import (
@@ -446,6 +446,7 @@ class ViewerEditorImage(QWidget):
             for annotate in self.annoter.GetAnnotations():
                 annotate.QtDraw(
                     widgetPainter,
+                    AnnotatorType.ConfidenceHeat,
                     isConfidence=True,
                     isLabel=not self.config["isLabelsHidden"],
                 )

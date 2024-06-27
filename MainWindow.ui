@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1605</width>
+    <width>1643</width>
     <height>897</height>
    </rect>
   </property>
@@ -1323,7 +1323,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1605</width>
+     <width>1643</width>
      <height>30</height>
     </rect>
    </property>
@@ -1347,7 +1347,21 @@
     <addaction name="actionSave_screenshoot"/>
     <addaction name="actionSave_copy"/>
    </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <widget class="QMenu" name="menuAnnotations_type">
+     <property name="title">
+      <string>Annotations as</string>
+     </property>
+     <addaction name="action_annotations_default"/>
+     <addaction name="action_annotations_confidence_heat"/>
+    </widget>
+    <addaction name="menuAnnotations_type"/>
+   </widget>
    <addaction name="menuMenu"/>
+   <addaction name="menuView"/>
    <addaction name="menuEdit"/>
    <addaction name="menuPomoc"/>
   </widget>
@@ -1442,6 +1456,22 @@
    </property>
    <property name="shortcut">
     <string>Shift+C</string>
+   </property>
+  </action>
+  <action name="action_annotations_default">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Default</string>
+   </property>
+  </action>
+  <action name="action_annotations_confidence_heat">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Confidence Heat</string>
    </property>
   </action>
  </widget>
