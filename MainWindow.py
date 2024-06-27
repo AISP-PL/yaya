@@ -14,6 +14,7 @@ from datetime import datetime
 from Detectors.common.Detector import NmsMethod
 from Detectors.common.image_strategy import ImageStrategy
 from engine.annote import GetClasses
+from engine.annote_enums import AnnotatorType
 from engine.annoter import Annoter, DetectorSelected
 from engine.session import Session
 from helpers.files import ChangeExtension, FixPath
@@ -22,6 +23,7 @@ from PyQt5 import QtCore
 from PyQt5.QtWidgets import (
     QApplication,
     QButtonGroup,
+    QActionGroup,
     QFileDialog,
     QListWidgetItem,
     QMainWindow,
@@ -226,11 +228,21 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.actionOtworzLokacje.triggered.connect(self.CallbackOpenLocation)
         self.ui.actionSave_screenshoot.triggered.connect(self.CallbackScreenshot)
         self.ui.actionSave_copy.triggered.connect(self.CallbackSaveCopy)
+
+        # Menu action group of annotations : Create exclusive group
+        self.annotatorTypeGroup = QActionGroup(self.window)
+        self.annotatorTypeGroup.addAction(self.ui.action_annotations_default)
+        self.annotatorTypeGroup.addAction(self.ui.action_annotations_confidence_heat)
+        self.annotatorTypeGroup.setExclusive(True)
+
+        # Menu action group of annotations : callbacks
         self.ui.action_annotations_default.triggered.connect(
-            lambda: self.annoter.SetAnnotationsDefault()
+            lambda: self.ui.viewerEditor.set_annotator_type(AnnotatorType.Default)
         )
         self.ui.action_annotations_confidence_heat.triggered.connect(
-            lambda: self.annoter.SetAnnotationsConfidenceHeat()
+            lambda: self.ui.viewerEditor.set_annotator_type(
+                AnnotatorType.ConfidenceHeat
+            )
         )
 
         # Buttons group - for mode buttons

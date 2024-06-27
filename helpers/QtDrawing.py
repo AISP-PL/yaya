@@ -9,7 +9,7 @@ from random import randint
 
 import numpy as np
 from PyQt5.Qt import QFontMetrics, QPoint
-from PyQt5.QtCore import QRect, QRectF, Qt
+from PyQt5.QtCore import QRect, Qt
 from PyQt5.QtGui import (
     QBrush,
     QColor,
@@ -124,48 +124,6 @@ def CreateTraingle(x, y, size=10, angle=0) -> QPolygon:
         polygon = transform.map(polygon)
     # Move to point (x,y)
     polygon.translate(x, y)
-
-    return polygon
-
-
-def CreateRectangle(x, y, width=100, height=20, angle=0, align="center") -> QPolygon:
-    """
-        Creates polygon as rectangle centered
-        in the center of axes.
-    ."""
-    w2 = int(width / 2)
-    h2 = int(height / 2)
-
-    # Create rectangle centered in
-    # the center of axes
-    polygon = QPolygon()
-    polygon.append(QPoint(w2, h2))  # top right
-    polygon.append(QPoint(-w2, h2))  # top left
-    polygon.append(QPoint(-w2, -h2))  # bottom left
-    polygon.append(QPoint(w2, -h2))  # bottom right
-
-    # Rotate by angle
-    if angle != 0:
-        transform = QTransform()
-        transform.rotate(angle)
-        polygon = transform.map(polygon)
-
-    # Move to destination (x,y)
-    polygon.translate(x, y)
-
-    # Alignment
-    # Info : Y axis is inverted on screen.
-    # top left    | top right
-    # ------------+-----------
-    # bottom left | bottom right
-    if align == "topright":
-        polygon.translate(w2, -h2)
-    elif align == "topleft":
-        polygon.translate(-w2, -h2)
-    elif align == "bottomright":
-        polygon.translate(w2, h2)
-    elif align == "bottomleft":
-        polygon.translate(-w2, h2)
 
     return polygon
 

@@ -68,6 +68,8 @@ class ViewerEditorImage(QWidget):
         self.imageScaling = self.ImageScalingResize
         # Annoter for image
         self.annoter = None
+        # Annotator type for annotations
+        self.annotator_type = AnnotatorType.Default
         # Current class number
         self.classNumber = 0
 
@@ -90,6 +92,10 @@ class ViewerEditorImage(QWidget):
         # UI init and show
         self.setMouseTracking(True)
         self.show()
+
+    def set_annotator_type(self, annotator_type: AnnotatorType) -> None:
+        """Set annotator type."""
+        self.annotator_type = annotator_type
 
     def TrajectoryToAbsoluteQTrajectory(self, trajectory, width, height):
         """Recalculate trajectory to Q absolute trajectory."""
@@ -446,7 +452,7 @@ class ViewerEditorImage(QWidget):
             for annotate in self.annoter.GetAnnotations():
                 annotate.QtDraw(
                     widgetPainter,
-                    AnnotatorType.ConfidenceHeat,
+                    self.annotator_type,
                     isConfidence=True,
                     isLabel=not self.config["isLabelsHidden"],
                 )
