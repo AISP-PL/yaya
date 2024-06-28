@@ -92,10 +92,9 @@ class Annoter:
         self.yolo_world_ontology = {"bus": "g.autobusy"}
         # Path
         self.dirpath = None
-        # Use of detector
-        self.noDetector = noDetector
         # Detector handle
         self.detector = detector
+        self.is_detector_enabled = not noDetector
         # Detector : Confidence value
         self.confidence = detectorConfidence
         # Detector : Image fitting strategy
@@ -726,7 +725,7 @@ class Annoter:
             # Detector annotations list
             detAnnotes = []
             # if annotations file not exists or empty then detect.
-            if (self.noDetector is False) and (
+            if (self.is_detector_enabled is True) and (
                 (processImage is True) or (len(txtAnnotations) == 0)
             ):
                 # Detector : Process

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1643</width>
-    <height>897</height>
+    <height>898</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1132,11 +1132,38 @@
           <widget class="QWidget" name="pageYoloWorld">
            <layout class="QVBoxLayout" name="verticalLayout_7">
             <item>
-             <widget class="QLabel" name="label_6">
-              <property name="text">
-               <string>Detector details</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_10">
+              <item>
+               <widget class="QCheckBox" name="detectorEnabled">
+                <property name="text">
+                 <string>Is enabled?</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_6">
+                <property name="text">
+                 <string>Detector details</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
             </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_3">

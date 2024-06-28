@@ -5,7 +5,7 @@
 from PyQt5.QtCore import QPoint, Qt
 from engine.annote_enums import AnnoteAuthorType, AnnoteEvaluation
 import helpers.boxes as boxes
-from helpers.QtDrawing import QDrawRectangle, QDrawText, TextAlignment
+from helpers.QtDrawing import QDrawElipse, QDrawRectangle, QDrawText, TextAlignment
 
 
 class AnnotatorDefault:
@@ -71,4 +71,15 @@ class AnnotatorDefault:
                 text=label,
                 bgColor=brushColor,
                 textAlign=TextAlignment.Center,
+            )
+
+        # Author Human : Draw green circle in the center
+        if self.authorType == AnnoteAuthorType.byHuman:
+            xc, yc = (x1 + x2) // 2, (y1 + y2) // 2
+            QDrawElipse(
+                painter=painter,
+                point=QPoint(xc, yc),
+                radius=10,
+                brushColor=Qt.green,
+                brushStyle=Qt.SolidPattern,
             )
