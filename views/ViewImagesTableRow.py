@@ -2,9 +2,6 @@
     View of images QTableWidget.
 """
 
-import logging
-
-from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
@@ -29,8 +26,6 @@ class ViewImagesTableRow:
         isSelected: bool = False,
     ):
         """View images in table."""
-        # Get translations
-        _translate = QtCore.QCoreApplication.translate
 
         # Check : Invalid metrics
         if "Metrics" not in fileEntry:
