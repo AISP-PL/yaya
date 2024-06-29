@@ -13,8 +13,9 @@ from PyQt5.QtCore import QPointF, Qt, pyqtSignal
 from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import QWidget
 
+from engine.annotators.annotator import Annotator
 import helpers.boxes as boxes
-from engine.annote import AnnotatorType, AnnoteAuthorType
+from engine.annote_enums import AnnotatorType, AnnoteAuthorType
 from helpers.boxes import IsInside, PointsToRect, PointToAbsolute, PointToRelative
 from helpers.images import GetFixedFitToBox
 from helpers.QtDrawing import (
@@ -450,7 +451,8 @@ class ViewerEditorImage(QWidget):
         # Draw all annotations
         if not self.config["isAnnotationsHidden"]:
             for annotate in self.annoter.GetAnnotations():
-                annotate.QtDraw(
+                Annotator.QtDraw(
+                    annotate,
                     widgetPainter,
                     self.annotator_type,
                     isConfidence=True,
@@ -468,8 +470,12 @@ class ViewerEditorImage(QWidget):
                     )
                 )
                 if annote is not None:
-                    annote.QtDraw(
-                        widgetPainter, highlight=True, isConfidence=True, isLabel=True
+                    Annotator.QtDraw(
+                        annote,
+                        widgetPainter,
+                        highlight=True,
+                        isConfidence=True,
+                        isLabel=True,
                     )
 
         # -------- Mode Annotation Draw -------

@@ -8,9 +8,7 @@ import logging
 
 import cv2
 
-from engine.annotators.annotator_confidence_heat import AnnotatorConfidenceHeat
-from engine.annotators.annotator_default import AnnotatorDefault
-from engine.annote_enums import AnnotatorType, AnnoteAuthorType, AnnoteEvaluation
+from engine.annote_enums import AnnoteAuthorType, AnnoteEvaluation
 import helpers.boxes as boxes
 from helpers.colors import blue, green, red, white, yellow
 
@@ -210,22 +208,6 @@ class Annote:
             (255, 255, 255),
             1,
         )
-
-    def QtDraw(
-        self,
-        painter,
-        annotator_type: AnnotatorType = AnnotatorType.Default,
-        highlight: bool = False,
-        isConfidence: bool = True,
-        isLabel: bool = True,
-    ):
-        """Draw self."""
-        if annotator_type == AnnotatorType.Default:
-            AnnotatorDefault.Draw(self, painter, highlight, isConfidence, isLabel)
-        elif annotator_type == AnnotatorType.ConfidenceHeat:
-            AnnotatorConfidenceHeat.Draw(
-                self, painter, highlight, isConfidence, isLabel
-            )
 
     def IsInside(self, point):
         """True if point is inside note box."""
