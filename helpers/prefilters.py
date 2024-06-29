@@ -11,7 +11,7 @@ from engine.annote import Annote
 from helpers.boxes import iou
 
 
-def FilterIOUbyConfidence(
+def filter_iou_by_confidence(
     annotations1: list[Annote], annotations2: list[Annote], maxIOU: float = 0.70
 ) -> list[Annote]:
     """
@@ -32,17 +32,22 @@ def FilterIOUbyConfidence(
     for i, annote in enumerate(annotations1):
         isFiltered = False
 
+        # For every other annotation
         for j in range(len(annotations2)):
-            # If IOU >= maxIOU
-            if results[i, j] >= maxIOU:
-                # If confidence is smaller
-                if annote.GetConfidence() <= annotations2[j].GetConfidence():
-                    isFiltered = True
-                    break
+            # If (IOU >= maxIOU) and confidence is smaller
+            if (results[i, j] >= maxIOU) and (
+                annote.GetConfidence() <= annotations2[j].GetConfidence()
+            ):
+                isFiltered = True
+                # Affect annotations_2 confidence
+                annotations2[j].confidence = annote.confidence
+                break
 
+        # Check : Filtered, then skip adding
         if isFiltered is True:
-            """Do nothing"""
-        else:
-            passed.append(annote)
+            continue
+
+        # If not filtered, add to passed list
+        passed.append(annote)
 
     return passed

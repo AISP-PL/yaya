@@ -152,7 +152,7 @@ def dDeficit(annotations, detections, minConfidence=0.5):
     detections = [item for item in detections if (item.confidence > minConfidence)]
 
     # Filter by IOU>=0.75 with itself.
-    detections = prefilters.FilterIOUbyConfidence(detections, detections)
+    detections = prefilters.filter_iou_by_confidence(detections, detections)
 
     return len(annotations) - len(detections)
 
@@ -170,7 +170,7 @@ def dSurplus(annotations, detections, minConfidence=0.5):
     detections = [item for item in detections if (item.confidence > minConfidence)]
 
     # Filter by IOU>=0.75 with itself.
-    detections = prefilters.FilterIOUbyConfidence(detections, detections)
+    detections = prefilters.filter_iou_by_confidence(detections, detections)
 
     return len(detections) - len(annotations)
 
@@ -237,7 +237,7 @@ def EvaluateMetrics(
     # Detections unmatched are detections left in list.
     detectionsUnmatched = detections
     # For view : Filter by IOU internal with same annotes and also with txt annotes.
-    detectionsUnmatched = prefilters.FilterIOUbyConfidence(
+    detectionsUnmatched = prefilters.filter_iou_by_confidence(
         detectionsUnmatched, annotations
     )
 

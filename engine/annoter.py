@@ -328,9 +328,10 @@ class Annoter:
                 detections = self.ReadDetections(path + filename)
 
             # For calculation : Filter detections with itself for multiple detections catches.
-            detections = prefilters.FilterIOUbyConfidence(detections, detections)
+            detections = prefilters.filter_iou_by_confidence(detections, detections)
+
             # For view : Filter by IOU internal with same annotes and also with txt annotes.
-            detections_filtered = prefilters.FilterIOUbyConfidence(
+            detections_filtered = prefilters.filter_iou_by_confidence(
                 detections, detections + txtAnnotations
             )
 
@@ -700,7 +701,7 @@ class Annoter:
         """Check current image/annotations for errors."""
         errors = set()
         if len(self.annotations) != len(
-            prefilters.FilterIOUbyConfidence(self.annotations, self.annotations)
+            prefilters.filter_iou_by_confidence(self.annotations, self.annotations)
         ):
             logging.error("(Annoter) Annotations overrides each other!")
             errors.add("Override error!")
@@ -736,7 +737,7 @@ class Annoter:
 
                 # For view : Filter by IOU internal with same annotes and also with txt annotes.
                 if len(txtAnnotations):
-                    detAnnotes = prefilters.FilterIOUbyConfidence(
+                    detAnnotes = prefilters.filter_iou_by_confidence(
                         detAnnotes, detAnnotes + txtAnnotations, maxIOU=sqrt(self.nms)
                     )
 

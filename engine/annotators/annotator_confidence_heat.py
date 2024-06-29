@@ -6,7 +6,7 @@ from PyQt5.QtGui import QColor
 
 from engine.annote import Annote
 from PyQt5.QtCore import QPoint, Qt
-from engine.annote_enums import AnnoteAuthorType
+from engine.annote_enums import AnnoteAuthorType, AnnoteEvaluation
 import helpers.boxes as boxes
 from helpers.QtDrawing import QDrawRectangle, QDrawText, TextAlignment
 
@@ -39,23 +39,34 @@ class AnnotatorConfidenceHeat:
     @staticmethod
     def Draw(annote: Annote, painter, highlight=False, isConfidence=True, isLabel=True):
         """Draw self."""
+        # Brush opacity : Default 0.25
+        brush_opacity: float = 0.25
+        # Get image size
         width, height = painter.window().getRect()[2:]
+        # Get box coordinates
         x1, y1, x2, y2 = boxes.ToAbsolute(annote.box, width, height)
+        # Confidence
+        confidence = annote.confidence
+        # Human orignal from file detection
+        if annote.authorType == AnnoteAuthorType.byHuman:
+            if annote.evalution == AnnoteEvaluation.TruePositive:
+                confidence = 50
+            elif annote.evalution == AnnoteEvaluation.FalseNegative:
+                confidence = 0
+
+        # Brush color
+        r, g, b = RYG_color_as_rgb(confidence)
+        brush_color = QColor(r, g, b)
 
         # Pen properties  : Depends on author type
         if annote.authorType in {AnnoteAuthorType.byHuman, AnnoteAuthorType.byHand}:
             pen_color = Qt.black
-            pen_thickness = 3
+            text_color = Qt.black
+            pen_thickness = 2
         elif annote.authorType == AnnoteAuthorType.byDetector:
-            pen_color = Qt.white
-            pen_thickness = 1
-
-        # Brush opacity : Default 0.25
-        brush_opacity: float = 0.25
-
-        # Brush color
-        r, g, b = RYG_color_as_rgb(annote.confidence)
-        brushColor = QColor(r, g, b)
+            pen_color = brush_color
+            text_color = Qt.white
+            pen_thickness = 2
 
         # Draw rectangle box
         QDrawRectangle(
@@ -63,7 +74,7 @@ class AnnotatorConfidenceHeat:
             [QPoint(x1, y1), QPoint(x2, y2)],
             pen=pen_color,
             penThickness=pen_thickness,
-            brushColor=brushColor,
+            brushColor=brush_color,
             brushOpacity=brush_opacity,
         )
 
@@ -80,6 +91,7 @@ class AnnotatorConfidenceHeat:
                 painter=painter,
                 point=QPoint(xc, yc),
                 text=label,
-                bgColor=brushColor,
+                pen=text_color,
+                bgColor=brush_color,
                 textAlign=TextAlignment.Center,
             )
