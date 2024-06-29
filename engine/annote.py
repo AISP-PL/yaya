@@ -8,8 +8,8 @@ import logging
 
 import cv2
 
-from engine.annote_enums import AnnoteAuthorType, AnnoteEvaluation
 import helpers.boxes as boxes
+from engine.annote_enums import AnnoteAuthorType, AnnoteEvaluation
 from helpers.colors import blue, green, red, white, yellow
 
 classNames = []

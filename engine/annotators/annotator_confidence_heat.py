@@ -2,12 +2,12 @@
  Default annotator class.
 """
 
+from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtGui import QColor
 
-from engine.annote import Annote
-from PyQt5.QtCore import QPoint, Qt
-from engine.annote_enums import AnnoteAuthorType, AnnoteEvaluation
 import helpers.boxes as boxes
+from engine.annote import Annote
+from engine.annote_enums import AnnoteAuthorType, AnnoteEvaluation
 from helpers.QtDrawing import QDrawRectangle, QDrawText, TextAlignment
 
 
@@ -45,14 +45,27 @@ class AnnotatorConfidenceHeat:
         width, height = painter.window().getRect()[2:]
         # Get box coordinates
         x1, y1, x2, y2 = boxes.ToAbsolute(annote.box, width, height)
+        # Label text
+        text_label = f"{annote.className}\n{annote.confidence:2.0f}%"
         # Confidence
         confidence = annote.confidence
         # Human orignal from file detection
         if annote.authorType == AnnoteAuthorType.byHuman:
-            if annote.evalution == AnnoteEvaluation.TruePositive:
-                confidence = 50
-            elif annote.evalution == AnnoteEvaluation.FalseNegative:
+            # Evalution : Missing or not detected.
+            if annote.evalution in {
+                AnnoteEvaluation.noEvaluation,
+                AnnoteEvaluation.FalseNegative,
+            }:
                 confidence = 0
+                text_label = f"{annote.className}[X]"
+            # Evalution :  Perfect match and label
+            elif annote.evalution == AnnoteEvaluation.TruePositiveLabel:
+                confidence = annote.confidence
+                text_label += "[OK]"
+            # Evalution :  Perfect match box but not label
+            elif annote.evalution == AnnoteEvaluation.TruePositive:
+                confidence = min(50, confidence)
+                text_label += "[~]"
 
         # Brush color
         r, g, b = RYG_color_as_rgb(confidence)
@@ -80,9 +93,6 @@ class AnnotatorConfidenceHeat:
 
         # Text
         if isLabel or isConfidence:
-            # Label text
-            label = f"{annote.className}\n{annote.confidence:2.0f}%"
-
             # Position : Center of the box
             xc = (x1 + x2) // 2
             yc = (y1 + y2) // 2
@@ -90,7 +100,7 @@ class AnnotatorConfidenceHeat:
             QDrawText(
                 painter=painter,
                 point=QPoint(xc, yc),
-                text=label,
+                text=text_label,
                 pen=text_color,
                 bgColor=brush_color,
                 textAlign=TextAlignment.Center,
