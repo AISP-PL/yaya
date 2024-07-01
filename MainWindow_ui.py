@@ -668,10 +668,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_7.setObjectName("verticalLayout_7")
         self.horizontalLayout_10 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_10.setObjectName("horizontalLayout_10")
-        self.detectorEnabled = QtWidgets.QCheckBox(self.pageYoloWorld)
-        self.detectorEnabled.setChecked(True)
-        self.detectorEnabled.setObjectName("detectorEnabled")
-        self.horizontalLayout_10.addWidget(self.detectorEnabled)
         self.label_6 = QtWidgets.QLabel(self.pageYoloWorld)
         self.label_6.setObjectName("label_6")
         self.horizontalLayout_10.addWidget(self.label_6)
@@ -831,11 +827,16 @@ class Ui_MainWindow(object):
         self.action_annotations_confidence_heat.setObjectName(
             "action_annotations_confidence_heat"
         )
+        self.actionEnable_detector = QtWidgets.QAction(MainWindow)
+        self.actionEnable_detector.setCheckable(True)
+        self.actionEnable_detector.setChecked(True)
+        self.actionEnable_detector.setObjectName("actionEnable_detector")
         self.menuMenu.addAction(self.actionOtworzLokacje)
         self.menuMenu.addAction(self.actionZapisz)
         self.menuMenu.addAction(self.actionZamknijProgram)
         self.menuEdit.addAction(self.actionSave_screenshoot)
         self.menuEdit.addAction(self.actionSave_copy)
+        self.menuEdit.addAction(self.actionEnable_detector)
         self.menuAnnotations_type.addAction(self.action_annotations_default)
         self.menuAnnotations_type.addAction(self.action_annotations_confidence_heat)
         self.menuView.addAction(self.menuAnnotations_type.menuAction())
@@ -936,7 +937,6 @@ class Ui_MainWindow(object):
         self.detectorNmsLabel.setText(_translate("MainWindow", "NMS threshold"))
         self.detectorNmsCombo.setItemText(0, _translate("MainWindow", "NMS"))
         self.detectorNmsCombo.setItemText(1, _translate("MainWindow", "SoftNMS"))
-        self.detectorEnabled.setText(_translate("MainWindow", "Is enabled?"))
         self.label_6.setText(_translate("MainWindow", "Detector details"))
         self.yoloWorldConfidenceLabel.setText(_translate("MainWindow", "Confidence"))
         self.label_8.setText(
@@ -988,6 +988,7 @@ class Ui_MainWindow(object):
         self.action_annotations_confidence_heat.setText(
             _translate("MainWindow", "Confidence Heat")
         )
+        self.actionEnable_detector.setText(_translate("MainWindow", "Enable detector"))
 
 
 from ViewerEditorImage import ViewerEditorImage

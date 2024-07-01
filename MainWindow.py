@@ -211,7 +211,7 @@ class MainWindowGui(Ui_MainWindow):
         )
         self.ui.detectorNmsSlider.valueChanged.connect(self.CallbackDetectorUpdate)
         self.ui.detectorNmsCombo.currentTextChanged.connect(self.CallbackDetectorUpdate)
-        self.ui.detectorEnabled.stateChanged.connect(self.CallbackDetectorUpdate)
+        self.ui.actionEnable_detector.triggered.connect(self.CallbackDetectorUpdate)
 
         # YoloWorld
         self.ui.yoloWorldConfidenceSlider.valueChanged.connect(
@@ -350,7 +350,7 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.labelsListWidget.setCurrentRow(0)
 
         # Detector : Confidence and NMS sliders defaults (0.5 and 0.45)
-        self.ui.detectorEnabled.setChecked(self.annoter.is_detector_enabled)
+        self.ui.actionEnable_detector.setChecked(self.annoter.is_detector_enabled)
         self.ui.detectorConfidenceSlider.setValue(round(self.annoter.confidence * 100))
         self.ui.detectorNmsSlider.setValue(round(self.annoter.nms * 100))
         self.ui.detectorNmsCombo.clear()
@@ -577,7 +577,7 @@ class MainWindowGui(Ui_MainWindow):
         if self.annoter.detector is None:
             return
 
-        self.annoter.is_detector_enabled = self.ui.detectorEnabled.isChecked()
+        self.annoter.is_detector_enabled = self.ui.actionEnable_detector.isChecked()
 
         self.ui.detectorDetails.setText(self.annoter.detector.details_str)
         self.ui.detectorConfidenceLabel.setText(

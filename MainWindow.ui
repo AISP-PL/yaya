@@ -1134,16 +1134,6 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_10">
               <item>
-               <widget class="QCheckBox" name="detectorEnabled">
-                <property name="text">
-                 <string>Is enabled?</string>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
                <widget class="QLabel" name="label_6">
                 <property name="text">
                  <string>Detector details</string>
@@ -1373,6 +1363,7 @@
     </property>
     <addaction name="actionSave_screenshoot"/>
     <addaction name="actionSave_copy"/>
+    <addaction name="actionEnable_detector"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -1499,6 +1490,17 @@
    </property>
    <property name="text">
     <string>Confidence Heat</string>
+   </property>
+  </action>
+  <action name="actionEnable_detector">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Enable detector</string>
    </property>
   </action>
  </widget>
