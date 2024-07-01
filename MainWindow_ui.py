@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/spasz/python/qursor-vision/yaya/MainWindow.ui'
+# Form implementation generated from reading ui file 'MainWindow.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.7
 #
@@ -831,6 +831,9 @@ class Ui_MainWindow(object):
         self.actionEnable_detector.setCheckable(True)
         self.actionEnable_detector.setChecked(True)
         self.actionEnable_detector.setObjectName("actionEnable_detector")
+        self.action_annotations_category = QtWidgets.QAction(MainWindow)
+        self.action_annotations_category.setCheckable(True)
+        self.action_annotations_category.setObjectName("action_annotations_category")
         self.menuMenu.addAction(self.actionOtworzLokacje)
         self.menuMenu.addAction(self.actionZapisz)
         self.menuMenu.addAction(self.actionZamknijProgram)
@@ -839,6 +842,7 @@ class Ui_MainWindow(object):
         self.menuEdit.addAction(self.actionEnable_detector)
         self.menuAnnotations_type.addAction(self.action_annotations_default)
         self.menuAnnotations_type.addAction(self.action_annotations_confidence_heat)
+        self.menuAnnotations_type.addAction(self.action_annotations_category)
         self.menuView.addAction(self.menuAnnotations_type.menuAction())
         self.menubar.addAction(self.menuMenu.menuAction())
         self.menubar.addAction(self.menuView.menuAction())
@@ -989,6 +993,7 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Confidence Heat")
         )
         self.actionEnable_detector.setText(_translate("MainWindow", "Enable detector"))
+        self.action_annotations_category.setText(_translate("MainWindow", "Category"))
 
 
 from ViewerEditorImage import ViewerEditorImage

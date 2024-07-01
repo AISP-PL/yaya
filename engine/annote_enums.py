@@ -23,3 +23,4 @@ class AnnotatorType(str, Enum):
 
     Default = "Default"
     ConfidenceHeat = "ConfidenceHeat"
+    Category = "Category"

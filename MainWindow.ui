@@ -1375,6 +1375,7 @@
      </property>
      <addaction name="action_annotations_default"/>
      <addaction name="action_annotations_confidence_heat"/>
+     <addaction name="action_annotations_category"/>
     </widget>
     <addaction name="menuAnnotations_type"/>
    </widget>
@@ -1501,6 +1502,14 @@
    </property>
    <property name="text">
     <string>Enable detector</string>
+   </property>
+  </action>
+  <action name="action_annotations_category">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Category</string>
    </property>
   </action>
  </widget>

@@ -1,8 +1,8 @@
-'''
+"""
 Created on 23 lis 2020
 
 @author: spasz
-'''
+"""
 
 from random import randint
 import logging
@@ -51,16 +51,16 @@ colorSchemeBright = [
 
 # Default matplotlib color cycler (BGR)
 colorSchemeMatplotlib = [
-    (0xb4, 0x77, 0x1f),
-    (0x0e, 0x7f, 0xff),
-    (0x2c, 0xa0, 0x2c),
-    (0x28, 0x27, 0xd6),
-    (0xbd, 0x67, 0x94),
-    (0x4b, 0x56, 0x8c),
-    (0xc2, 0x77, 0xe3),
-    (0x7f, 0x7f, 0x7f),
-    (0x22, 0xbd, 0xbc),
-    (0xcf, 0xbe, 0x17),
+    (0xB4, 0x77, 0x1F),
+    (0x0E, 0x7F, 0xFF),
+    (0x2C, 0xA0, 0x2C),
+    (0x28, 0x27, 0xD6),
+    (0xBD, 0x67, 0x94),
+    (0x4B, 0x56, 0x8C),
+    (0xC2, 0x77, 0xE3),
+    (0x7F, 0x7F, 0x7F),
+    (0x22, 0xBD, 0xBC),
+    (0xCF, 0xBE, 0x17),
     (0x33, 0x33, 0x33),
     red,
     blue,
@@ -71,14 +71,14 @@ colorSchemeMatplotlib = [
 
 
 class ColorCycler:
-    '''
+    """
     classdocs
-    '''
+    """
 
     def __init__(self, scheme=None):
-        ''' Constructor.'''
-        if (scheme is None):
-            logging.fatal('(ColorCycler) Invalid color scheme!')
+        """Constructor."""
+        if scheme is None:
+            logging.fatal("(ColorCycler) Invalid color scheme!")
 
         # Save color scheme
         self.scheme = scheme
@@ -86,22 +86,22 @@ class ColorCycler:
         self.index = 0
 
     def GetColor(self, index):
-        ''' Get color stored with index.'''
+        """Get color stored with index."""
         return self.scheme[index % len(self.scheme)]
 
     def GetNextColor(self):
-        ''' Return next color.'''
+        """Return next color."""
         # Store color
         color = self.scheme[self.index]
         # Increment index
         self.index += 1
-        if (self.index == len(self.scheme)):
+        if self.index == len(self.scheme):
             self.index = 0
 
         return color
 
     def Reset(self):
-        ''' Reset color cycler index.'''
+        """Reset color cycler index."""
         self.index = 0
 
 
@@ -110,47 +110,43 @@ defaultColorCycler = ColorCycler(scheme=colorSchemeBright)
 
 
 def toMatplotlibColor(rgb, alpha=1):
-    ''' Convert single RGB color to matplotlib color.'''
+    """Convert single RGB color to matplotlib color."""
     r, g, b = rgb
     return (r, g, b, alpha)
 
 
 def GetOpposedColor(color):
-    ''' Returns opposed color.'''
+    """Returns opposed color."""
     r, g, b = color
-    return (255-r, 255-g, 255-b)
+    return (255 - r, 255 - g, 255 - b)
 
 
 def LighterColor(color, mag=1.25):
-    ''' Returns opposed color.'''
+    """Returns opposed color."""
     r, g, b = color
-    return (min(255, int(r*mag)),
-            min(255, int(g*mag)),
-            min(255, int(b*mag)))
+    return (min(255, int(r * mag)), min(255, int(g * mag)), min(255, int(b * mag)))
 
 
 def DarkerColor(color, mag=0.75):
-    ''' Returns opposed color.'''
+    """Returns opposed color."""
     r, g, b = color
-    return (max(0, int(r*mag)),
-            max(0, int(g*mag)),
-            max(0, int(b*mag)))
+    return (max(0, int(r * mag)), max(0, int(g * mag)), max(0, int(b * mag)))
 
 
 def GetRandomColor():
-    ''' Returns random color.'''
+    """Returns random color."""
     return (randint(0, 255), randint(0, 255), randint(0, 255))
 
 
 def GetTableColor(index):
-    ''' Get table color under index.'''
+    """Get table color under index."""
     return defaultColorCycler.GetColor(index)
 
 
 def GetNextTableColor():
-    '''
+    """
         Returns next color from predefinied
         table of example based colors.
-    .'''
+    ."""
     global defaultColorCycler
     return defaultColorCycler.GetNextColor()

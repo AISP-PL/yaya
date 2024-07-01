@@ -234,6 +234,7 @@ class MainWindowGui(Ui_MainWindow):
         self.annotatorTypeGroup = QActionGroup(self.window)
         self.annotatorTypeGroup.addAction(self.ui.action_annotations_default)
         self.annotatorTypeGroup.addAction(self.ui.action_annotations_confidence_heat)
+        self.annotatorTypeGroup.addAction(self.ui.action_annotations_category)
         self.annotatorTypeGroup.setExclusive(True)
 
         # Menu action group of annotations : callbacks
@@ -244,6 +245,9 @@ class MainWindowGui(Ui_MainWindow):
             lambda: self.ui.viewerEditor.set_annotator_type(
                 AnnotatorType.ConfidenceHeat
             )
+        )
+        self.ui.action_annotations_category.triggered.connect(
+            lambda: self.ui.viewerEditor.set_annotator_type(AnnotatorType.Category)
         )
 
         # Buttons group - for mode buttons
