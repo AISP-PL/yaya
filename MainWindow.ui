@@ -1389,6 +1389,8 @@
     <addaction name="actionSave_screenshoot"/>
     <addaction name="actionSave_copy"/>
     <addaction name="actionEnable_detector"/>
+    <addaction name="actionCopy_detection"/>
+    <addaction name="actionPaste_detections"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -1535,6 +1537,22 @@
    </property>
    <property name="text">
     <string>Category</string>
+   </property>
+  </action>
+  <action name="actionCopy_detection">
+   <property name="text">
+    <string>Copy detection</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionPaste_detections">
+   <property name="text">
+    <string>Paste detections</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
    </property>
   </action>
  </widget>

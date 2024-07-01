@@ -213,6 +213,8 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.detectorNmsCombo.currentTextChanged.connect(self.CallbackDetectorUpdate)
         self.ui.actionEnable_detector.triggered.connect(self.CallbackDetectorUpdate)
 
+        # Setup : Selection and move of detections and copy and paste
+
         # YoloWorld
         self.ui.yoloWorldConfidenceSlider.valueChanged.connect(
             self.CallbackYoloWorldUpdate
