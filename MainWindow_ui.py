@@ -908,8 +908,9 @@ class Ui_MainWindow(object):
         self.CacheImageButton.setText(_translate("MainWindow", "Cache(Y)"))
         self.CacheImageButton.setShortcut(_translate("MainWindow", "Y"))
         self.AddRemoveValidationButton.setText(
-            _translate("MainWindow", "Add/Rem Valid.")
+            _translate("MainWindow", "Add/Rem (V)alid.")
         )
+        self.AddRemoveValidationButton.setShortcut(_translate("MainWindow", "V"))
         self.DeleteImageAnnotationsButton.setText(_translate("MainWindow", "(X)Delete"))
         self.DeleteImageAnnotationsButton.setShortcut(_translate("MainWindow", "X"))
         self.DeleteNotAnnotatedFilesButton.setText(

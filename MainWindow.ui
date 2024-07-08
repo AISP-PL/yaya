@@ -270,11 +270,14 @@
           <item>
            <widget class="QPushButton" name="AddRemoveValidationButton">
             <property name="text">
-             <string>Add/Rem Valid.</string>
+             <string>Add/Rem (V)alid.</string>
             </property>
             <property name="icon">
              <iconset resource="icons/tango.qrc">
               <normaloff>:/icons/32x32/list-add.png</normaloff>:/icons/32x32/list-add.png</iconset>
+            </property>
+            <property name="shortcut">
+             <string>V</string>
             </property>
            </widget>
           </item>
