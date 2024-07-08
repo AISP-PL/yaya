@@ -276,6 +276,9 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.CacheImageButton.clicked.connect(
             lambda _x: self.session.fileentry_store(self.annoter.GetFile())
         )
+        self.ui.AddRemoveValidationButton.clicked.connect(
+            self.CallbackAddRemoveValidationDataset
+        )
 
         # Buttons - Annotations
         self.ui.addAnnotationsButton.clicked.connect(self.CallbackAddAnnotationsButton)
@@ -656,6 +659,11 @@ class MainWindowGui(Ui_MainWindow):
         self.annoter.Save()
         self.Setup()
 
+    def CallbackAddRemoveValidationDataset(self):
+        """Callback"""
+        self.annoter.AddRemoveValidationDataset()
+        self.Setup()
+
     def CallbackClearAnnotationsButton(self):
         """Callback"""
         self.annoter.ClearAnnotations()
@@ -795,21 +803,22 @@ class MainWindowGui(Ui_MainWindow):
     def CallbackSaveCopy(self):
         """Save configuration."""
         file = self.annoter.GetFile()
+        if file is None:
+            return
 
-        if file is not None:
-            # Set default screenshots location
-            if os.name == "posix":
-                screenshotsPath = "/home/%s/Obrazy/" % (os.environ.get("USER", "Error"))
-            else:
-                screenshotsPath = "C:\\"
+        # Set default screenshots location
+        if os.name == "posix":
+            screenshotsPath = "/home/%s/Obrazy/" % (os.environ.get("USER", "Error"))
+        else:
+            screenshotsPath = "C:\\"
 
-            # Copy original image file to screenshots path
-            shutil.copy(file["Path"], screenshotsPath + file["Name"])
+        # Copy original image file to screenshots path
+        shutil.copy(file["Path"], screenshotsPath + file["Name"])
 
-            # Copy annotations .txt file to screenshots path
-            annotationsPath = ChangeExtension(file["Path"], ".txt")
-            if os.path.exists(annotationsPath):
-                shutil.copy(
-                    annotationsPath,
-                    screenshotsPath + ChangeExtension(file["Name"], ".txt"),
-                )
+        # Copy annotations .txt file to screenshots path
+        annotationsPath = ChangeExtension(file["Path"], ".txt")
+        if os.path.exists(annotationsPath):
+            shutil.copy(
+                annotationsPath,
+                screenshotsPath + ChangeExtension(file["Name"], ".txt"),
+            )

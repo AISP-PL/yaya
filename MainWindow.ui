@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1643</width>
+    <width>1681</width>
     <height>898</height>
    </rect>
   </property>
@@ -264,6 +264,17 @@
             </property>
             <property name="shortcut">
              <string>Y</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="AddRemoveValidationButton">
+            <property name="text">
+             <string>Add/Rem Valid.</string>
+            </property>
+            <property name="icon">
+             <iconset resource="icons/tango.qrc">
+              <normaloff>:/icons/32x32/list-add.png</normaloff>:/icons/32x32/list-add.png</iconset>
             </property>
            </widget>
           </item>
@@ -1365,7 +1376,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1643</width>
+     <width>1681</width>
      <height>30</height>
     </rect>
    </property>

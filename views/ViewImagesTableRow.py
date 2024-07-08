@@ -38,8 +38,7 @@ class ViewImagesTableRow:
         # Start from column zero
         colIndex = 0
 
-        # Filename column
-        item = QTableWidgetItem(str(fileEntry["Name"]))
+        # Filename + Image : Color
         item = ImageTableWidgetItem(
             imagePath=fileEntry["Path"],
             text=fileEntry["Name"],
@@ -60,7 +59,18 @@ class ViewImagesTableRow:
 
         # IsAnnotation column
         item = BoolTableWidgetItem(fileEntry["IsAnnotation"])
-        # @TODO dedicated item with annotations number
+        item.setToolTip(str(fileEntry["ID"]))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1
+
+        # IsValidation dataset column
+        item = BoolTableWidgetItem(fileEntry["IsValidation"])
+        item.setToolTip(str(fileEntry["ID"]))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1
+
+        # Correct [%]
+        item = PercentTableWidgetItem(metrics.correct, is_color=True)
         item.setToolTip(str(fileEntry["ID"]))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
@@ -112,12 +122,6 @@ class ViewImagesTableRow:
 
         # New detections [j]
         item = FloatTableWidgetItem(metrics.new_detections, decimals=0)
-        item.setToolTip(str(fileEntry["ID"]))
-        table.setItem(rowIndex, colIndex, item)
-        colIndex += 1
-
-        # Correct [%]
-        item = PercentTableWidgetItem(metrics.correct, is_color=True)
         item.setToolTip(str(fileEntry["ID"]))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1

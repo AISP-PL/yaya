@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1643, 898)
+        MainWindow.resize(1681, 898)
         MainWindow.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         sizePolicy = QtWidgets.QSizePolicy(
@@ -182,30 +182,40 @@ class Ui_MainWindow(object):
         self.CacheImageButton.setIcon(icon3)
         self.CacheImageButton.setObjectName("CacheImageButton")
         self.horizontalLayout_2.addWidget(self.CacheImageButton)
+        self.AddRemoveValidationButton = QtWidgets.QPushButton(self.layoutWidget)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(
+            QtGui.QPixmap(":/icons/32x32/list-add.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        self.AddRemoveValidationButton.setIcon(icon4)
+        self.AddRemoveValidationButton.setObjectName("AddRemoveValidationButton")
+        self.horizontalLayout_2.addWidget(self.AddRemoveValidationButton)
         self.DeleteImageAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
         self.DeleteImageAnnotationsButton.setCursor(
             QtGui.QCursor(QtCore.Qt.PointingHandCursor)
         )
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(
             QtGui.QPixmap(":/icons/16x16/process-stop.png"),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off,
         )
-        self.DeleteImageAnnotationsButton.setIcon(icon4)
+        self.DeleteImageAnnotationsButton.setIcon(icon5)
         self.DeleteImageAnnotationsButton.setObjectName("DeleteImageAnnotationsButton")
         self.horizontalLayout_2.addWidget(self.DeleteImageAnnotationsButton)
         self.DeleteNotAnnotatedFilesButton = QtWidgets.QPushButton(self.layoutWidget)
         self.DeleteNotAnnotatedFilesButton.setCursor(
             QtGui.QCursor(QtCore.Qt.PointingHandCursor)
         )
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(
             QtGui.QPixmap(":/icons/32x32/process-stop.png"),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off,
         )
-        self.DeleteNotAnnotatedFilesButton.setIcon(icon5)
+        self.DeleteNotAnnotatedFilesButton.setIcon(icon6)
         self.DeleteNotAnnotatedFilesButton.setObjectName(
             "DeleteNotAnnotatedFilesButton"
         )
@@ -218,13 +228,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2 = QtWidgets.QGridLayout()
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.paintCircleButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(
-            QtGui.QPixmap(":/icons/32x32/list-add.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
-        )
-        self.paintCircleButton.setIcon(icon6)
+        self.paintCircleButton.setIcon(icon4)
         self.paintCircleButton.setCheckable(True)
         self.paintCircleButton.setObjectName("paintCircleButton")
         self.gridLayout_2.addWidget(self.paintCircleButton, 0, 7, 1, 1)
@@ -796,7 +800,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.splitter_4, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1643, 30))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1681, 30))
         self.menubar.setObjectName("menubar")
         self.menuMenu = QtWidgets.QMenu(self.menubar)
         self.menuMenu.setObjectName("menuMenu")
@@ -903,6 +907,9 @@ class Ui_MainWindow(object):
         self.SaveFileAnnotationsButton.setShortcut(_translate("MainWindow", "S"))
         self.CacheImageButton.setText(_translate("MainWindow", "Cache(Y)"))
         self.CacheImageButton.setShortcut(_translate("MainWindow", "Y"))
+        self.AddRemoveValidationButton.setText(
+            _translate("MainWindow", "Add/Rem Valid.")
+        )
         self.DeleteImageAnnotationsButton.setText(_translate("MainWindow", "(X)Delete"))
         self.DeleteImageAnnotationsButton.setShortcut(_translate("MainWindow", "X"))
         self.DeleteNotAnnotatedFilesButton.setText(

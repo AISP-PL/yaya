@@ -8,12 +8,14 @@ import logging
 import os
 from enum import Enum
 from math import sqrt
+from typing import Optional
 
 import cv2
 import numpy as np
 from tqdm import tqdm
 
 import engine.annote as annote
+from engine.dataset import Dataset
 import helpers.boxes as boxes
 import helpers.prefilters as prefilters
 import helpers.transformations as transformations
@@ -108,7 +110,9 @@ class Annoter:
         self.detector_selected = DetectorSelected.Default
 
         # File entries list
-        self.files = None
+        self.files: Optional[list[dict]] = None
+        # Validation dataset
+        self.dataset_validation = Dataset()
         # Annotations list
         self.annotations = []
         # Readed image cv2 object
@@ -301,6 +305,9 @@ class Annoter:
             if (filename not in excludes) and (IsImageFile(filename))
         ]
 
+        # Dataset Validation : Read from filepath
+        self.dataset_validation.load(FixPath(self.dirpath) + "validation.txt")
+
         # VisualsDuplicates : Create to find duplicates
         visualsDuplicates = VisualsDuplicates()
         # Files : List of all files
@@ -353,6 +360,7 @@ class Annoter:
                     "Path": path + filename,
                     "ID": index,
                     "IsAnnotation": isAnnotation,
+                    "IsValidation": self.dataset_validation.is_inside(filename),
                     "Annotations": txtAnnotations,
                     "AnnotationsClasses": ", ".join(
                         {f"{item.class_abbrev}" for item in txtAnnotations}
@@ -654,6 +662,24 @@ class Annoter:
         self.filenames.insert(self.offset, filename)
         logging.info("(Annoter) New image %s created!", filename)
 
+    def AddRemoveValidationDataset(self):
+        """Add or remove current file to validation dataset"""
+        filename = self.GetFilename()
+
+        if self.dataset_validation.is_inside(filename):
+            self.dataset_validation.remove(filename)
+        else:
+            self.dataset_validation.add(filename)
+
+        # Dataset : Save if needed
+        if self.dataset_validation.is_not_saved():
+            self.dataset_validation.save()
+
+        # File entry : Update
+        self.files[self.offset]["IsValidation"] = self.dataset_validation.is_inside(
+            filename
+        )
+
     def Save(self):
         """Save current annotations."""
         filename = self.GetFilename()
@@ -683,10 +709,17 @@ class Annoter:
         annotations = SaveAnnotations(self.dirpath + filename, annotations)
         logging.debug("(Annoter) Saved annotations for %s!", filename)
 
+        # Dataset : Save if needed
+        if self.dataset_validation.is_not_saved():
+            self.dataset_validation.save()
+
         # Process file again after save
         self.Process()
 
         # Update file entry
+        self.files[self.offset]["IsValidation"] = self.dataset_validation.is_inside(
+            filename
+        )
         self.files[self.offset]["IsAnnotation"] = True
         self.files[self.offset]["Annotations"] = self.annotations
         self.files[self.offset]["AnnotationsClasses"] = ",".join(

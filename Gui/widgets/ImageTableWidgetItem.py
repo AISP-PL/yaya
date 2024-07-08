@@ -19,6 +19,7 @@ class ImageTableWidgetItem(QtWidgets.QTableWidgetItem):
         data: str = None,
         fontSize: int = None,
         fontColor: QColor = None,
+        backgroundColor: QColor = None,
         fontUnderline: bool = False,
         tooltipImageWidth: int = 640,
     ):
@@ -52,6 +53,9 @@ class ImageTableWidgetItem(QtWidgets.QTableWidgetItem):
 
         if fontColor is not None:
             self.setForeground(fontColor)
+
+        if backgroundColor is not None:
+            self.setBackground(backgroundColor)
 
         if fontUnderline:
             font = self.font()
