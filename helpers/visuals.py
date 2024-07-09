@@ -1,7 +1,8 @@
-'''
+"""
     Dataclass with image visual properties
     analyzed from image array.
-'''
+"""
+
 from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 import os
@@ -15,7 +16,8 @@ from helpers.json import jsonRead, jsonWrite
 
 @dataclass
 class Visuals:
-    ''' Dataclass with visual properties of image. '''
+    """Dataclass with visual properties of image."""
+
     # Path to analyzed image
     imagepath: str = field(init=True, default=None)
     # Image width
@@ -34,23 +36,23 @@ class Visuals:
     isDuplicate: bool = False
 
     def __post_init__(self):
-        ''' Post initiliatizaton.'''
+        """Post initiliatizaton."""
 
     def Save(self):
-        ''' Save data to file.'''
+        """Save data to file."""
         # Check : Not existing image
-        if (self.imagepath is None):
+        if self.imagepath is None:
             return
 
         # Create visuals annotations json filepath.
-        jsonpath = ChangeExtension(self.imagepath, '.visuals.json')
+        jsonpath = ChangeExtension(self.imagepath, ".visuals.json")
 
         # Save data to json file.
         jsonWrite(jsonpath, asdict(self))
 
     @staticmethod
     def LoadCreate(imagepath: str, force: bool = False) -> Visuals:
-        ''' Load or create visuals from image.'''
+        """Load or create visuals from image."""
 
         # 1. Load from json file
         loaded = Visuals.Load(imagepath)
@@ -65,10 +67,10 @@ class Visuals:
 
     @staticmethod
     def Load(imagepath: str) -> Visuals:
-        ''' Load visuals from image annotations json file.'''
+        """Load visuals from image annotations json file."""
         # Create visuals annotations json filepath.
-        jsonpath = ChangeExtension(imagepath, '.visuals.json')
-        if (not os.path.exists(jsonpath)):
+        jsonpath = ChangeExtension(imagepath, ".visuals.json")
+        if not os.path.exists(jsonpath):
             return None
 
         # Load json dict.
@@ -77,14 +79,14 @@ class Visuals:
 
     @staticmethod
     def Create(imagepath: str) -> Visuals:
-        ''' Create visuals from image.'''
+        """Create visuals from image."""
         # Check : Not existing image, empty visuals
-        if (not os.path.exists(imagepath)):
+        if not os.path.exists(imagepath):
             return Visuals(imagepath=imagepath)
 
         # Load/Check image
         image = cv2.imread(imagepath)
-        if (image is None):
+        if image is None:
             return Visuals(imagepath=imagepath)
 
         # Get image size
@@ -101,46 +103,50 @@ class Visuals:
         dhash = imagehash.dhash(image_pil, hash_size=6)
         dhash_normalized = int(str(dhash), 16) / (16**9)
 
-        return Visuals(imagepath=imagepath,
-                       width=width,
-                       height=height,
-                       hue=hue,
-                       saturation=saturation,
-                       brightness=brightness,
-                       dhash=dhash_normalized
-                       )
+        return Visuals(
+            imagepath=imagepath,
+            width=width,
+            height=height,
+            hue=hue,
+            saturation=saturation,
+            brightness=brightness,
+            dhash=dhash_normalized,
+        )
 
 
 @dataclass
 class VisualsDuplicates:
-    ''' Dataclass for visuals duplicates finder. '''
+    """Dataclass for visuals duplicates finder."""
+
     # Dictionary with hashes : visuals
     visuals: dict = field(init=True, default_factory=dict)
 
     def __post_init__(self):
-        ''' Post initiliatizaton.'''
+        """Post initiliatizaton."""
 
     def Add(self, visuals: Visuals):
-        ''' Add visuals to dictionary.'''
+        """Add visuals to dictionary."""
         # Check : Invalid visuals
-        if (visuals is None):
+        if visuals is None:
             return
 
         # Add visuals to dictionary
         self.visuals[visuals.dhash] = visuals
 
     def IsDuplicate(self, visuals: Visuals) -> bool:
-        ''' Check if visuals is duplicate of other image.'''
+        """Check if visuals is duplicate of other image."""
         # Check : Invalid visuals
-        if (visuals is None):
+        if visuals is None:
             return False
 
         # Check : Duplicate
-        if (visuals.dhash not in self.visuals):
+        if visuals.dhash not in self.visuals:
             return False
 
         # Check : HSV
         other = self.visuals[visuals.dhash]
-        return (visuals.hue == other.hue) and \
-               (visuals.saturation == other.saturation) and \
-               (visuals.brightness == other.brightness)
+        return (
+            (visuals.hue == other.hue)
+            and (visuals.saturation == other.saturation)
+            and (visuals.brightness == other.brightness)
+        )
