@@ -681,13 +681,21 @@ class MainWindowGui(Ui_MainWindow):
 
     def CallbackDeleteImageAnnotationsButton(self):
         """Callback"""
+        image_id = self.annoter.GetFileID()
+        # Next table row : From image_id
+        table_row = self.ImageIDToRowNumber(image_id) + 1
+        if table_row >= self.ui.fileSelectorTableWidget.rowCount():
+            table_row = 0
+        # Next image_id : From table row
+        next_image_id = self.RowNumberToImageID(table_row)
+
         # Remove QtableWidget row
         rowIndex = self.ImageIDToRowNumber(self.annoter.GetFileID())
         if rowIndex is not None:
             self.ui.fileSelectorTableWidget.removeRow(rowIndex)
             # Remove annoter data
             self.annoter.Delete()
-            self.annoter.Process()
+            self.annoter.SetImageID(next_image_id)
             self.Setup()
 
     def CallbackDeleteNotAnnotatedFilesButton(self):

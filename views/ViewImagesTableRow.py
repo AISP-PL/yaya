@@ -4,7 +4,7 @@
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QTableWidget
 
 from Gui.widgets.AnnotationsTableWidgetItem import AnnotationsTableWidgetItem
 from Gui.widgets.BoolTableWidgetItem import BoolTableWidgetItem
@@ -75,6 +75,12 @@ class ViewImagesTableRow:
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 
+        # Annotation classes
+        item = AnnotationsTableWidgetItem(fileEntry["Annotations"])
+        item.setToolTip(str(fileEntry["ID"]))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1
+
         # Hue column
         item = HsvTableWidgetItem(hue=visuals.hue, value=visuals.hue)
         item.setToolTip(str(fileEntry["ID"]))
@@ -105,12 +111,6 @@ class ViewImagesTableRow:
         item.setToolTip(str(fileEntry["ID"]))
         if visuals.isDuplicate:
             item.setBackground(Qt.red)
-        table.setItem(rowIndex, colIndex, item)
-        colIndex += 1
-
-        # Annotation classes
-        item = AnnotationsTableWidgetItem(fileEntry["Annotations"])
-        item.setToolTip(str(fileEntry["ID"]))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 
