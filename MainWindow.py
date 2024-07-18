@@ -231,6 +231,9 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.actionOtworzLokacje.triggered.connect(self.CallbackOpenLocation)
         self.ui.actionSave_screenshoot.triggered.connect(self.CallbackScreenshot)
         self.ui.actionSave_copy.triggered.connect(self.CallbackSaveCopy)
+        self.ui.actionClear_detections.triggered.connect(
+            self.CallbackClearDetectionsButton
+        )
 
         # Menu action group of annotations : Create exclusive group
         self.annotatorTypeGroup = QActionGroup(self.window)
@@ -295,6 +298,9 @@ class MainWindowGui(Ui_MainWindow):
         )
         self.ui.ClearAnnotationsButton.clicked.connect(
             self.CallbackClearAnnotationsButton
+        )
+        self.ui.detectionsClearButton.clicked.connect(
+            self.CallbackClearDetectionsButton
         )
 
         # Buttons - Painting
@@ -667,6 +673,11 @@ class MainWindowGui(Ui_MainWindow):
     def CallbackClearAnnotationsButton(self):
         """Callback"""
         self.annoter.ClearAnnotations()
+        self.Setup()
+
+    def CallbackClearDetectionsButton(self):
+        """Callback"""
+        self.annoter.ClearDetections()
         self.Setup()
 
     def CallbackAnnotationsFilterButton(self):

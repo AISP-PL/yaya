@@ -612,6 +612,15 @@ class Annoter:
         self.errors = self.__checkOfErrors()
         logging.debug("(Annoter) Cleared annotations!")
 
+    def ClearDetections(self):
+        """Clear only annotations from detector."""
+        self.annotations = [
+            annotation
+            for annotation in self.annotations
+            if annotation.authorType != annote.AnnoteAuthorType.byDetector
+        ]
+        self.errors = self.__checkOfErrors()
+
     def RemoveAnnotation(self, element):
         """Remove annotation ."""
         if len(self.annotations) != 0:

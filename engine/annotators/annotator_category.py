@@ -26,6 +26,8 @@ class AnnotatorCategory:
         """Draw self."""
         # Brush opacity : Default
         brush_opacity: float = 0.30
+        if highlight:
+            brush_opacity = 0.60
         # Get image size
         width, height = painter.window().getRect()[2:]
         # Get box coordinates

@@ -864,12 +864,15 @@ class Ui_MainWindow(object):
         self.actionCopy_detection.setObjectName("actionCopy_detection")
         self.actionPaste_detections = QtWidgets.QAction(MainWindow)
         self.actionPaste_detections.setObjectName("actionPaste_detections")
+        self.actionClear_detections = QtWidgets.QAction(MainWindow)
+        self.actionClear_detections.setObjectName("actionClear_detections")
         self.menuMenu.addAction(self.actionOtworzLokacje)
         self.menuMenu.addAction(self.actionZapisz)
         self.menuMenu.addAction(self.actionZamknijProgram)
         self.menuEdit.addAction(self.actionSave_screenshoot)
         self.menuEdit.addAction(self.actionSave_copy)
         self.menuEdit.addAction(self.actionEnable_detector)
+        self.menuEdit.addAction(self.actionClear_detections)
         self.menuEdit.addAction(self.actionCopy_detection)
         self.menuEdit.addAction(self.actionPaste_detections)
         self.menuAnnotations_type.addAction(self.action_annotations_default)
@@ -932,8 +935,8 @@ class Ui_MainWindow(object):
         self.detectAnnotationsButton.setText(_translate("MainWindow", "(D)etect "))
         self.detectAnnotationsButton.setShortcut(_translate("MainWindow", "D"))
         self.detFilterButton.setText(_translate("MainWindow", "Det. Filter"))
-        self.detectionsClearButton.setText(_translate("MainWindow", "Det (shf+C)lear"))
-        self.detectionsClearButton.setShortcut(_translate("MainWindow", "Shift+C"))
+        self.detectionsClearButton.setText(_translate("MainWindow", "Det clear(Q)"))
+        self.detectionsClearButton.setShortcut(_translate("MainWindow", "Q"))
         self.renameAnnotationsButton.setText(_translate("MainWindow", "Re(N)ame"))
         self.renameAnnotationsButton.setShortcut(_translate("MainWindow", "N"))
         self.removeAnnotationsButton.setText(_translate("MainWindow", "(R)emove"))
@@ -1039,6 +1042,10 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Paste detections")
         )
         self.actionPaste_detections.setShortcut(_translate("MainWindow", "Ctrl+V"))
+        self.actionClear_detections.setText(
+            _translate("MainWindow", "Clear detections")
+        )
+        self.actionClear_detections.setShortcut(_translate("MainWindow", "Alt+C"))
 
 
 from ViewerEditorImage import ViewerEditorImage

@@ -493,10 +493,10 @@
           <item row="1" column="4">
            <widget class="QPushButton" name="detectionsClearButton">
             <property name="text">
-             <string>Det (shf+C)lear</string>
+             <string>Det clear(Q)</string>
             </property>
             <property name="shortcut">
-             <string>Shift+C</string>
+             <string>Q</string>
             </property>
            </widget>
           </item>
@@ -1413,6 +1413,7 @@
     <addaction name="actionSave_screenshoot"/>
     <addaction name="actionSave_copy"/>
     <addaction name="actionEnable_detector"/>
+    <addaction name="actionClear_detections"/>
     <addaction name="actionCopy_detection"/>
     <addaction name="actionPaste_detections"/>
    </widget>
@@ -1580,6 +1581,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="actionClear_detections">
+   <property name="text">
+    <string>Clear detections</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+C</string>
    </property>
   </action>
  </widget>
