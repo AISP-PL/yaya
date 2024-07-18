@@ -473,6 +473,7 @@ class ViewerEditorImage(QWidget):
                     Annotator.QtDraw(
                         annote,
                         widgetPainter,
+                        self.annotator_type,
                         highlight=True,
                         isConfidence=True,
                         isLabel=True,

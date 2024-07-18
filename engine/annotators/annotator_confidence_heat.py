@@ -41,10 +41,19 @@ class AnnotatorConfidenceHeat:
         """Draw self."""
         # Brush opacity : Default 0.25
         brush_opacity: float = 0.25
+        if highlight:
+            brush_opacity = 0.60
+        # Text alignment
+        text_align = TextAlignment.Center
         # Get image size
         width, height = painter.window().getRect()[2:]
         # Get box coordinates
         x1, y1, x2, y2 = boxes.ToAbsolute(annote.box, width, height)
+        # Position : Center of the box
+        xc = (x1 + x2) // 2
+        yc = (y1 + y2) // 2
+        # Text corrdinates
+        text_point = QPoint(xc, yc)
         # Label text
         text_label = f"{annote.className}\n{annote.confidence:2.0f}%"
         # Confidence
@@ -77,6 +86,8 @@ class AnnotatorConfidenceHeat:
             text_color = Qt.black
             pen_thickness = 2
         elif annote.authorType == AnnoteAuthorType.byDetector:
+            text_point = QPoint(x1, y1)
+            brush_color = Qt.darkBlue
             pen_color = brush_color
             text_color = Qt.white
             pen_thickness = 2
@@ -93,15 +104,11 @@ class AnnotatorConfidenceHeat:
 
         # Text
         if isLabel or isConfidence:
-            # Position : Center of the box
-            xc = (x1 + x2) // 2
-            yc = (y1 + y2) // 2
-
             QDrawText(
                 painter=painter,
-                point=QPoint(xc, yc),
+                point=text_point,
                 text=text_label,
                 pen=text_color,
                 bgColor=brush_color,
-                textAlign=TextAlignment.Center,
+                textAlign=text_align,
             )
