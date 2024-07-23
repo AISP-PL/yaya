@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1681</width>
+    <width>1693</width>
     <height>898</height>
    </rect>
   </property>
@@ -1389,7 +1389,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1681</width>
+     <width>1693</width>
      <height>30</height>
     </rect>
    </property>
@@ -1413,9 +1413,10 @@
     <addaction name="actionSave_screenshoot"/>
     <addaction name="actionSave_copy"/>
     <addaction name="actionEnable_detector"/>
+    <addaction name="separator"/>
     <addaction name="actionClear_detections"/>
-    <addaction name="actionCopy_detection"/>
-    <addaction name="actionPaste_detections"/>
+    <addaction name="actionCopy_annotations"/>
+    <addaction name="actionPaste_annotations"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -1567,17 +1568,17 @@
     <string>Category</string>
    </property>
   </action>
-  <action name="actionCopy_detection">
+  <action name="actionCopy_annotations">
    <property name="text">
-    <string>Copy detection</string>
+    <string>Copy annotations</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+C</string>
    </property>
   </action>
-  <action name="actionPaste_detections">
+  <action name="actionPaste_annotations">
    <property name="text">
-    <string>Paste detections</string>
+    <string>Paste annotations</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+V</string>

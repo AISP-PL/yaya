@@ -234,6 +234,8 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.actionClear_detections.triggered.connect(
             self.CallbackClearDetectionsButton
         )
+        self.ui.actionCopy_annotations.triggered.connect(self.CallbackCopyAnnotations)
+        self.ui.actionPaste_annotations.triggered.connect(self.CallbackPasteAnnotations)
 
         # Menu action group of annotations : Create exclusive group
         self.annotatorTypeGroup = QActionGroup(self.window)
@@ -678,6 +680,16 @@ class MainWindowGui(Ui_MainWindow):
     def CallbackClearDetectionsButton(self):
         """Callback"""
         self.annoter.ClearDetections()
+        self.Setup()
+
+    def CallbackCopyAnnotations(self):
+        """Callback"""
+        self.annoter.CopyAnnotations()
+        self.Setup()
+
+    def CallbackPasteAnnotations(self):
+        """Callback"""
+        self.annoter.PasteAnnotations()
         self.Setup()
 
     def CallbackAnnotationsFilterButton(self):

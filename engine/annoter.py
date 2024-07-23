@@ -74,7 +74,7 @@ class Annoter:
         forceDetector=False,
         detectorConfidence: float = 0.4,
         detectorNms: float = 0.45,
-    ):
+    ) -> None:
         """
         Constructor
         """
@@ -114,7 +114,9 @@ class Annoter:
         # Validation dataset
         self.dataset_validation = Dataset()
         # Annotations list
-        self.annotations = []
+        self.annotations: list[annote.Annote] = []
+        # Copied annotations list
+        self.annotations_copy: list[annote.Annote] = []
         # Readed image cv2 object
         self.image = None
         # Current file number offset
@@ -606,7 +608,21 @@ class Annoter:
         logging.debug("(Annoter) Added annotation class %u!", classNumber)
         self.errors = self.__checkOfErrors()
 
-    def ClearAnnotations(self):
+    def CopyAnnotations(self) -> None:
+        """Copy current annotations to copy cache for future paste."""
+        self.annotations_copy = self.annotations.copy()
+
+    def PasteAnnotations(self) -> None:
+        """Paste annotations from copy cache and merge
+        with current annotations."""
+        if len(self.annotations_copy) == 0:
+            logging.info("(Annoter) No annotations to paste!")
+            return
+
+        self.annotations += self.annotations_copy
+        self.errors = self.__checkOfErrors()
+
+    def ClearAnnotations(self) -> None:
         """Clear all annotations."""
         self.annotations = []
         self.errors = self.__checkOfErrors()
@@ -614,7 +630,7 @@ class Annoter:
 
     def ClearDetections(self):
         """Clear only annotations from detector."""
-        self.annotations = [
+        self.annotations: list[annote.Annote] = [
             annotation
             for annotation in self.annotations
             if annotation.authorType != annote.AnnoteAuthorType.byDetector
