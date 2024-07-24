@@ -1,11 +1,13 @@
 import logging
 import os
+from typing import Optional
 
 from helpers.files import FixPath, GetFilename, GetFiles
 
 
 def IsDarknet():
     """Checks if darknet exists cuda is installed and working."""
+    return False
     if os.system("ls /usr/local/lib/libdarknet.so") == 0:
         return True
 
@@ -20,7 +22,7 @@ def IsCuda():
     return False
 
 
-def ListDetectors(path: str = None) -> list[tuple[str, str, str]]:
+def ListDetectors(path: Optional[str] = None) -> list[tuple[str, str, str]]:
     """List detectors in directory."""
     detectors: list[tuple, tuple, tuple] = []
 
@@ -46,23 +48,34 @@ def ListDetectors(path: str = None) -> list[tuple[str, str, str]]:
 
         outpath = filepath + GetFilename(files[0])
         logging.info("(Found detector) %u - %s.", len(detectors), outpath)
-        detectors.append((outpath + ".cfg", outpath + ".weights", outpath + ".data"))
+        detectors.append(
+            (
+                outpath + ".cfg",
+                outpath + ".weights",
+                outpath + ".data",
+                outpath + ".names",
+            )
+        )
 
     return detectors
 
 
-def CreateDetector(detectorID=0, gpuID=0, path=None):
+def CreateDetector(detectorID: int = 0, gpuID: int = 0, path: str = None):
     """Creates detector."""
     detectors = ListDetectors(path)
+    if detectorID >= len(detectors):
+        return None
 
-    # Create detector
-    if detectorID < len(detectors):
+    if IsDarknet():
         from Detectors.DetectorYOLOv4 import DetectorYOLOv4
 
-        cfgPath, weightPath, metaPath = detectors[detectorID]
+        cfgPath, weightPath, metaPath, namesPath = detectors[detectorID]
         return DetectorYOLOv4(cfgPath, weightPath, metaPath)
+    else:
+        from Detectors.detector_yolov4_cvdnn import DetectorCVDNN
 
-    return None
+        cfgPath, weightPath, metaPath, namesPath = detectors[detectorID]
+        return DetectorCVDNN(cfgPath, weightPath, metaPath, namesPath)
 
 
 def GetDetectorLabels(detectorID=0):

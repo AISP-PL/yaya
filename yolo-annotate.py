@@ -118,7 +118,7 @@ def main():
         noDetector = True
 
     # Check : Detectors exists
-    elif IsDarknet() and (noDetector is False):
+    elif noDetector is False:
         scriptPath = os.path.dirname(os.path.realpath(__file__))
         detector = CreateDetector(args.detector, path=scriptPath)
         if detector is None:
