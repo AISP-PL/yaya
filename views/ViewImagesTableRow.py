@@ -4,7 +4,7 @@
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QTableWidget
+from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
 
 from Gui.widgets.AnnotationsTableWidgetItem import AnnotationsTableWidgetItem
 from Gui.widgets.BoolTableWidgetItem import BoolTableWidgetItem
@@ -14,6 +14,7 @@ from Gui.widgets.ImageTableWidgetItem import ImageTableWidgetItem
 from Gui.widgets.ImhashTableWidgetItem import ImhashTableWidgetItem
 from Gui.widgets.PercentTableWidgetItem import PercentTableWidgetItem
 from Gui.widgets.RectTableWidgetItem import RectTableWidgetItem
+from Gui.widgets.StatTableWidgetItem import StatTableWidgetItem
 
 
 class ViewImagesTableRow:
@@ -77,6 +78,12 @@ class ViewImagesTableRow:
 
         # Annotation classes
         item = AnnotationsTableWidgetItem(fileEntry["Annotations"])
+        item.setToolTip(str(fileEntry["ID"]))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1
+
+        # Timestamp from now
+        item = StatTableWidgetItem(fileEntry["Datetime"])
         item.setToolTip(str(fileEntry["ID"]))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1

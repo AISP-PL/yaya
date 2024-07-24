@@ -28,7 +28,7 @@ class ViewImagesTable:
         table.clear()
         labels = _translate(
             "ViewImagesTable",
-            "Name;ImSize;Annotated;Validation;Correct;Classes;Hue;Saturation;Brightness;ImHash;"
+            "Name;ImSize;Annotated;Validation;Correct;Classes;Time;Hue;Saturation;Brightness;ImHash;"
             + "Size;New dets;CorrectBbox;Precision;Recall;Errors;"
             + "Match.Confidence;Det.WorstConfidence",
         ).split(";")
