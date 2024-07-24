@@ -82,8 +82,8 @@ def GetDetectorLabels(detectorID=0):
     detectors = ListDetectors()
     # Create detector
     if detectorID < len(detectors):
-        cfgPath, weightPath, metaPath = detectors[detectorID]
-        with open(GetFilename(metaPath) + ".names", "r") as f:
+        cfgPath, weightPath, metaPath, namespath = detectors[detectorID]
+        with open(namespath, "r") as f:
             data = f.readlines()
             return [line.strip() for line in data]
 
