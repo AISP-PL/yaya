@@ -7,7 +7,6 @@ from helpers.files import FixPath, GetFilename, GetFiles
 
 def IsDarknet():
     """Checks if darknet exists cuda is installed and working."""
-    return False
     if os.system("ls /usr/local/lib/libdarknet.so") == 0:
         return True
 

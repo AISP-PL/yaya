@@ -5,7 +5,7 @@ import os
 import sys
 
 import engine.annote as annote
-from Detectors import CreateDetector, GetDetectorLabels, IsDarknet, ListDetectors
+from Detectors import CreateDetector, GetDetectorLabels, ListDetectors
 from Detectors.common.Detector import Detector
 from engine.annoter import Annoter
 from helpers.files import FixPath, GetFileLocation

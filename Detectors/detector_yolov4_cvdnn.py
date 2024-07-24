@@ -3,11 +3,10 @@ YOLOv4 detector class using OpenCV DNN module.
 """
 
 import logging
-from typing import Any, Optional, Sequence
+from typing import Optional, Sequence
 
 import cv2
 import numpy as np
-import supervision as sv  # type: ignore
 
 from Detectors.common.Detector import NmsMethod, Detector
 from Detectors.common.image_strategy import ImageStrategy
