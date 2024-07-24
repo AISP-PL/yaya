@@ -21,7 +21,8 @@ import helpers.prefilters as prefilters
 import helpers.transformations as transformations
 from Detectors.common.Detector import NmsMethod
 from Detectors.common.image_strategy import ImageStrategy
-from Detectors.DetectorYoloWorld import DetectorYOLOWorld
+
+# from Detectors.DetectorYoloWorld import DetectorYOLOWorld
 from helpers.files import (
     DeleteFile,
     FixPath,
@@ -89,7 +90,7 @@ class Annoter:
             "isOnlySpecificClass": isOnlySpecificClass,
         }
         # Yolo World handle
-        self.yolo_world = DetectorYOLOWorld()
+        self.yolo_world = None
         self.yolo_world_confidence = 0.1
         self.yolo_world_ontology = {"bus": "g.autobusy"}
         # Path
@@ -158,7 +159,7 @@ class Annoter:
     @property
     def detectors_labels(self) -> list[str]:
         """Get prompt labels for detector"""
-        return annote.GetClasses() + self.yolo_world.classes
+        return annote.GetClasses()  # + self.yolo_world.classes
 
     def GetFileAnnotations(self, filepath):
         """Read file annotations if possible."""
@@ -243,24 +244,24 @@ class Annoter:
         if (self.yolo_world is None) or (im is None):
             return []
 
-        self.yolo_world.set_ontology(self.yolo_world_ontology)
+        # self.yolo_world.set_ontology(self.yolo_world_ontology)
 
-        # Call detector manually!
-        detAnnotes = self.yolo_world.Detect(
-            im,
-            confidence=self.yolo_world_confidence,
-            nms_thresh=self.nms,
-            boxRelative=True,
-            nmsMethod=self.nmsMethod,
-            image_strategy=self.imageStrategy,
-        )
+        # # Call detector manually!
+        # detAnnotes = self.yolo_world.Detect(
+        #     im,
+        #     confidence=self.yolo_world_confidence,
+        #     nms_thresh=self.nms,
+        #     boxRelative=True,
+        #     nmsMethod=self.nmsMethod,
+        #     image_strategy=self.imageStrategy,
+        # )
 
-        # Save/Update detector annotations file
-        SaveDetections(filepath, detAnnotes, extension=".yoloworld")
+        # # Save/Update detector annotations file
+        # SaveDetections(filepath, detAnnotes, extension=".yoloworld")
 
-        # Create annotes
-        detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
-        return detAnnotes
+        # # Create annotes
+        # detAnnotes = [annote.fromDetection(el) for el in detAnnotes]
+        # return detAnnotes
 
     def CalculateYoloMetrics(self, txtAnnotes: list, detAnnotes: list) -> Metrics:
         """Calculate mAP between two annotations sets."""
