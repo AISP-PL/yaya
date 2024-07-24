@@ -1,7 +1,6 @@
 import logging
 import os
 
-from Detectors.DetectorYOLOv4 import DetectorYOLOv4
 from helpers.files import FixPath, GetFilename, GetFiles
 
 
@@ -58,6 +57,8 @@ def CreateDetector(detectorID=0, gpuID=0, path=None):
 
     # Create detector
     if detectorID < len(detectors):
+        from Detectors.DetectorYOLOv4 import DetectorYOLOv4
+
         cfgPath, weightPath, metaPath = detectors[detectorID]
         return DetectorYOLOv4(cfgPath, weightPath, metaPath)
 
