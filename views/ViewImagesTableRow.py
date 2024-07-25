@@ -2,9 +2,8 @@
     View of images QTableWidget.
 """
 
-from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QTableWidget
 
 from Gui.widgets.AnnotationsTableWidgetItem import AnnotationsTableWidgetItem
 from Gui.widgets.BoolTableWidgetItem import BoolTableWidgetItem
@@ -114,10 +113,8 @@ class ViewImagesTableRow:
         colIndex += 1
 
         # Image hash column
-        item = ImhashTableWidgetItem(visuals.dhash)
+        item = ImhashTableWidgetItem(visuals.dhash, visuals.isDuplicate)
         item.setToolTip(str(fileEntry["ID"]))
-        if visuals.isDuplicate:
-            item.setBackground(Qt.red)
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 
