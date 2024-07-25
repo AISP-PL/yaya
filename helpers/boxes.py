@@ -6,6 +6,7 @@ Created on 21 lip 2020
 """
 
 import math
+from typing import Tuple, List
 
 from helpers import algebra
 
@@ -15,36 +16,36 @@ class BoxState:
     Box occlusion/conatining state.
     """
 
-    Isolated = 0
-    Occluding = 0x01
-    Occluded = 0x02
-    Containing = 0x04
-    Contained = 0x08
+    Isolated: int = 0
+    Occluding: int = 0x01
+    Occluded: int = 0x02
+    Containing: int = 0x04
+    Contained: int = 0x08
 
-    def __init__(self):
+    def __init__(self) -> None:
         """constructor"""
-        self.state = self.Isolated
+        self.state: int = self.Isolated
 
-    def Reset(self):
+    def Reset(self) -> None:
         """Resets my state"""
         self.state = self.Isolated
 
-    def Set(self, state):
+    def Set(self, state: int) -> None:
         """Overrides state with higher priority state."""
         self.state |= state
 
-    def Get(self):
+    def Get(self) -> int:
         """Returns tracker state"""
         return self.state
 
-    def IsSet(self, bit):
+    def IsSet(self, bit: int) -> bool:
         """Is state bit set"""
         return (self.state & bit) == bit
 
-    def toSymbol(self):
+    def toSymbol(self) -> str:
         """State symbols array"""
-        symbols = ["O", "o", "C", "c"]
-        symbol = ""
+        symbols: List[str] = ["O", "o", "C", "c"]
+        symbol: str = ""
         for i in range(len(symbols)):
             bit = 1 << i
             if self.state & bit:
@@ -52,7 +53,9 @@ class BoxState:
         return symbol
 
 
-def to_xyxy(yolo_bbox: tuple) -> tuple:
+def to_xyxy(
+    yolo_bbox: Tuple[float, float, float, float]
+) -> Tuple[float, float, float, float]:
     """
     Convert YOLO bounding box to x1, y1, x2, y2
     """
@@ -64,7 +67,9 @@ def to_xyxy(yolo_bbox: tuple) -> tuple:
     return x1, y1, x2, y2
 
 
-def Bbox2Rect(bbox):
+def Bbox2Rect(
+    bbox: Tuple[float, float, float, float]
+) -> Tuple[float, float, float, float]:
     """
     From bounding box yolo format
     to corner points cv2 rectangle
@@ -77,7 +82,9 @@ def Bbox2Rect(bbox):
     return xmin, ymin, xmax, ymax
 
 
-def Rect2Bbox(rect):
+def Rect2Bbox(
+    rect: Tuple[float, float, float, float]
+) -> Tuple[float, float, float, float]:
     """
     From bounding box yolo format
     to corner points cv2 rectangle
@@ -88,61 +95,71 @@ def Rect2Bbox(rect):
     return x, y, w, h
 
 
-def PointsToRect(p1, p2):
+def PointsToRect(
+    p1: Tuple[float, float], p2: Tuple[float, float]
+) -> Tuple[float, float, float, float]:
     """Create proper rect from 2 points."""
     x1, y1 = p1
     x2, y2 = p2
     return min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2)
 
 
-def GetCenter(box):
+def GetCenter(box: Tuple[float, float, float, float]) -> Tuple[float, float]:
     """Get center of tracker pos"""
     x, y, x2, y2 = box
     return ((x + x2) / 2), ((y + y2) / 2)
 
 
-def GetTopCenter(box, height=0):
+def GetTopCenter(
+    box: Tuple[float, float, float, float], height: float = 0
+) -> Tuple[int, int]:
     """Get center of tracker pos"""
     x, y, x2, y2 = box
     return int((x + x2) / 2), int(max(y, y2) - abs(y - y2) * height)
 
 
-def GetBottomCenter(box, height=0):
+def GetBottomCenter(
+    box: Tuple[float, float, float, float], height: float = 0
+) -> Tuple[int, int]:
     """Get center of tracker pos"""
     x, y, x2, y2 = box
     return int((x + x2) / 2), int(min(y, y2) + abs(y - y2) * height)
 
 
-def GetDiagonal(box):
+def GetDiagonal(box: Tuple[float, float, float, float]) -> int:
     """Get diagonal of tracker pos"""
     x, y, x2, y2 = box
     return int(math.sqrt((x - x2) * (x - x2) + (y - y2) * (y - y2)))
 
 
-def GetWidth(box):
+def GetWidth(box: Tuple[float, float, float, float]) -> float:
     """Get W of box"""
     return abs(box[2] - box[0])
 
 
-def GetHeight(box):
+def GetHeight(box: Tuple[float, float, float, float]) -> float:
     """Get H of box"""
     x, y, x2, y2 = box
     return abs(box[3] - box[1])
 
 
-def FlipHorizontally(width, box):
+def FlipHorizontally(
+    width: float, box: Tuple[float, float, float, float]
+) -> Tuple[float, float, float, float]:
     """Flip horizontally box."""
     x, y, x2, y2 = box
     return width - x, y, width - x2, y2
 
 
-def GetArea(box):
+def GetArea(box: Tuple[float, float, float, float]) -> float:
     """Get Area of box"""
     x, y, x2, y2 = box
     return abs((x2 - x) * (y2 - y))
 
 
-def GetDistance(box1, box2):
+def GetDistance(
+    box1: Tuple[float, float, float, float], box2: Tuple[float, float, float, float]
+) -> float:
     """Get distance between two boxes"""
     # Get center as float
     x1, y1, x2, y2 = box1
@@ -153,7 +170,9 @@ def GetDistance(box1, box2):
     return algebra.EuclideanDistance(p1, p2)
 
 
-def GetCommonsection(x1, x1e, x2, x2e):
+def GetCommonsection(
+    x1: float, x1e: float, x2: float, x2e: float
+) -> Tuple[float, float]:
     """Returns common section  of cooridantes"""
     begin = max(min(x1, x1e), min(x2, x2e))
     end = min(max(x1, x1e), max(x2, x2e))
@@ -162,13 +181,15 @@ def GetCommonsection(x1, x1e, x2, x2e):
     return 0, 0
 
 
-def GetCommonsectionLength(x1, x1e, x2, x2e):
+def GetCommonsectionLength(x1: float, x1e: float, x2: float, x2e: float) -> float:
     """Returns common section  of cooridantes"""
     begin, end = GetCommonsection(x1, x1e, x2, x2e)
     return end - begin
 
 
-def GetIntersectionArea(box1, box2):
+def GetIntersectionArea(
+    box1: Tuple[float, float, float, float], box2: Tuple[float, float, float, float]
+) -> float:
     """Returns area of intersection box"""
     x1, y1, x1e, y1e = box1
     x2, y2, x2e, y2e = box2
@@ -177,7 +198,9 @@ def GetIntersectionArea(box1, box2):
     return width * height
 
 
-def GetContainingBox(box1: tuple, box2: tuple) -> tuple:
+def GetContainingBox(
+    box1: Tuple[float, float, float, float], box2: Tuple[float, float, float, float]
+) -> Tuple[float, float, float, float]:
     """Get box containing box1 and box2."""
     x1, y1, x2, y2 = box1
     x3, y3, x4, y4 = box2
@@ -191,7 +214,9 @@ def GetContainingBox(box1: tuple, box2: tuple) -> tuple:
     return (xl, yl, xr, yr)
 
 
-def ToRelative(box, width, height):
+def ToRelative(
+    box: Tuple[float, float, float, float], width: float, height: float
+) -> Tuple[float, float, float, float]:
     """Rescale all coordinates to relative."""
     x1, y1, x2, y2 = box
     x1 = x1 / width
@@ -201,7 +226,9 @@ def ToRelative(box, width, height):
     return (x1, y1, x2, y2)
 
 
-def ToAbsolute(box, width, height):
+def ToAbsolute(
+    box: Tuple[float, float, float, float], width: float, height: float
+) -> Tuple[int, int, int, int]:
     """Rescale all coordinates to relative."""
     x1, y1, x2, y2 = box
     x1 = int(x1 * width)
@@ -211,13 +238,15 @@ def ToAbsolute(box, width, height):
     return (x1, y1, x2, y2)
 
 
-def ToPolygon(box):
+def ToPolygon(box: Tuple[float, float, float, float]) -> List[Tuple[float, float]]:
     """Transfer bbox to polygon vector."""
     x, y, x2, y2 = box
     return [(x, y), (x2, y), (x2, y2), (x, y2)]
 
 
-def PointToAbsolute(point, width, height):
+def PointToAbsolute(
+    point: Tuple[float, float], width: float, height: float
+) -> Tuple[float, float]:
     """Rescale all coordinates to absolute."""
     x1, y1 = point
     x1 = x1 * width
@@ -225,7 +254,9 @@ def PointToAbsolute(point, width, height):
     return x1, y1
 
 
-def PointToRelative(point, width, height):
+def PointToRelative(
+    point: Tuple[float, float], width: float, height: float
+) -> Tuple[float, float]:
     """Rescale all coordinates to relative."""
     x1, y1 = point
     x1 = x1 / width
@@ -233,14 +264,18 @@ def PointToRelative(point, width, height):
     return x1, y1
 
 
-def IsInside(point, box):
+def IsInside(
+    point: Tuple[float, float], box: Tuple[float, float, float, float]
+) -> bool:
     """Return true if point is inside a box."""
     x, y = point
     x1, y1, x2, y2 = box
     return ((x >= x1) and (x <= x2)) and ((y >= y1) and (y <= y2))
 
 
-def IsContaining(box1, box2):
+def IsContaining(
+    box1: Tuple[float, float, float, float], box2: Tuple[float, float, float, float]
+) -> Tuple[bool, int, int]:
     """Is occlusion happens then returns which box is occluding"""
     area1 = GetArea(box1)
     area2 = GetArea(box2)
@@ -251,7 +286,9 @@ def IsContaining(box1, box2):
     return False, BoxState.Isolated, BoxState.Isolated
 
 
-def IsOcclusion(box1, box2):
+def IsOcclusion(
+    box1: Tuple[float, float, float, float], box2: Tuple[float, float, float, float]
+) -> Tuple[bool, int, int]:
     """Is occlusion happens then returns which box is occluding"""
     if GetIntersectionArea(box1, box2) != 0:
         area1 = GetArea(box1)
@@ -264,7 +301,9 @@ def IsOcclusion(box1, box2):
     return False, BoxState.Isolated, BoxState.Isolated
 
 
-def GetBoxesState(box1, box2):
+def GetBoxesState(
+    box1: Tuple[float, float, float, float], box2: Tuple[float, float, float, float]
+) -> Tuple[int, int]:
     """Is occlusion happens then returns which box is occluding"""
     intersection = GetIntersectionArea(box1, box2)
     if intersection != 0:
@@ -285,7 +324,7 @@ def GetBoxesState(box1, box2):
     return BoxState.Isolated, BoxState.Isolated
 
 
-def ExtractBoxImagePart(im, box):
+def ExtractBoxImagePart(im, box: Tuple[float, float, float, float]) -> np.ndarray:
     """Extract image part where it fits
     box."""
     # Image height and width
@@ -302,7 +341,9 @@ def ExtractBoxImagePart(im, box):
     return area
 
 
-def iou(box1: tuple, box2: tuple):
+def iou(
+    box1: Tuple[float, float, float, float], box2: Tuple[float, float, float, float]
+) -> float:
     """Calculates metric."""
     area1 = GetArea(box1)
     area2 = GetArea(box2)
@@ -315,7 +356,9 @@ def iou(box1: tuple, box2: tuple):
     return intersection / (area1 + area2 - intersection)
 
 
-def tiles_iou(box1: tuple, box2: tuple):
+def tiles_iou(
+    box1: Tuple[float, float, float, float], box2: Tuple[float, float, float, float]
+) -> float:
     """
     Metric for calculating possiblity of two
     boxes from two different tiles to be the same box.
