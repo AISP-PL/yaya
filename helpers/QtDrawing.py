@@ -294,6 +294,7 @@ def QDrawCrosshair(
     penColorAlpha: float = 1.0,
     penThickness: int = 1,
     penStyle=Qt.SolidLine,
+    length: int = 50,
 ):
     """Helper function for polyline drawing."""
     # Set Pen
@@ -303,8 +304,8 @@ def QDrawCrosshair(
     painter.setPen(pen)
 
     # Draw
-    painter.drawLine(int(x), int(y - 10), int(x), int(y + 10))
-    painter.drawLine(int(x - 10), int(y), int(x + 10), int(y))
+    painter.drawLine(int(x), int(y - length), int(x), int(y + length))
+    painter.drawLine(int(x - length), int(y), int(x + length), int(y))
 
 
 def QDrawPolygon(

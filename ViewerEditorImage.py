@@ -4,6 +4,7 @@ Created on 30 gru 2020
 @author: spasz
 """
 
+from enum import Enum
 import logging
 from typing import Any
 
@@ -24,6 +25,17 @@ from helpers.QtDrawing import (
     QDrawElipse,
     QDrawRectangle,
 )
+
+
+class MouseButton(str, Enum):
+    """Mouse button enum."""
+
+    NoButton = "NoButton"
+    LeftMouseButton = "LMB"
+    RightMouseButton = "RMB"
+    MiddleMouseButton = "MMB"
+    ScrollUp = "ScrollUp"
+    ScrollDown = "ScrollDown"
 
 
 class ViewerEditorImage(QWidget):
@@ -244,7 +256,26 @@ class ViewerEditorImage(QWidget):
                 self.mouseClicks.append(event.pos())
                 # If stored 2 points the call finish.
                 if len(self.mouseClicks) >= 2:
-                    self.CallbackEditorFinished()
+                    self.CallbackEditorFinished(
+                        mouse_button=MouseButton.LeftMouseButton
+                    )
+
+            # RPM cancels or removes
+            elif event.buttons() == Qt.RightButton:
+                if len(self.mouseClicks) > 0:
+                    self.mouseClicks.clear()
+
+                x, y = event.pos().x(), event.pos().y()
+                viewWidth, viewHeight = self.GetViewSize()
+                toDelete = self.GetHoveredAnnotation(
+                    boxes.PointToRelative((x, y), viewWidth, viewHeight)
+                )
+
+                if toDelete is not None:
+                    self.editorModeArgument = toDelete
+                    self.CallbackEditorFinished(
+                        mouse_button=MouseButton.RightMouseButton
+                    )
 
         # Mode Rename Annotation
         elif self.editorMode == self.ModeRenameAnnotation:
@@ -258,7 +289,9 @@ class ViewerEditorImage(QWidget):
                 # If clicked on annotation the return
                 if toDelete is not None:
                     self.editorModeArgument = toDelete
-                    self.CallbackEditorFinished()
+                    self.CallbackEditorFinished(
+                        mouse_button=MouseButton.LeftMouseButton
+                    )
 
         # Mode Remove Annotation
         elif self.editorMode == self.ModeRemoveAnnotation:
@@ -269,10 +302,13 @@ class ViewerEditorImage(QWidget):
                 toDelete = self.GetHoveredAnnotation(
                     boxes.PointToRelative((x, y), viewWidth, viewHeight)
                 )
+
                 # If clicked on annotation the return
                 if toDelete is not None:
                     self.editorModeArgument = toDelete
-                    self.CallbackEditorFinished()
+                    self.CallbackEditorFinished(
+                        mouse_button=MouseButton.LeftMouseButton
+                    )
 
         # Mode Paint circle
         elif self.editorMode == self.ModePaintCircle:
@@ -285,9 +321,11 @@ class ViewerEditorImage(QWidget):
         """Handle mouse event."""
         # Mode Paint circle
         if self.editorMode == self.ModePaintCircle:
-            self.CallbackEditorFinished()
+            self.CallbackEditorFinished(mouse_button=MouseButton.LeftMouseButton)
 
-    def CallbackEditorFinished(self):
+    def CallbackEditorFinished(
+        self, mouse_button: MouseButton = MouseButton.NoButton
+    ) -> None:
         """Finished editor mode."""
         # Get Preview info width & height
         widgetWidth, widgetHeight = self.GetViewSize()
@@ -308,21 +346,32 @@ class ViewerEditorImage(QWidget):
         elif self.imageScaling == self.ImageScalingOriginalSize:
             viewportWidth, viewportHeight = imWidth, imHeight
 
-        # Mouse clicks to relative
-        clicksRel = self.AbsoluteQTrajectoryToTrajectory(
-            self.mouseClicks, viewportWidth, viewportHeight
-        )
-        # Mouse trajectory relative
-        trajectoryRel = []
-        if self.mouseTrajectory is not None:
-            trajectoryRel = self.AbsoluteQTrajectoryToTrajectory(
-                self.mouseTrajectory, viewportWidth, viewportHeight
-            )
-
-        # Mode Add Annotation
+        # Mode : Adding
         if self.editorMode == self.ModeAddAnnotation:
-            box = PointsToRect(clicksRel[0], clicksRel[1])
-            self.annoter.AddAnnotation(box, self.classNumber)
+            # LPM :Add
+            if mouse_button == MouseButton.LeftMouseButton:
+                # Check : Clicks == 2
+                if not len(self.mouseClicks) == 2:
+                    return
+
+                # Check : Clicks width & height > 10x10px
+                width = abs(self.mouseClicks[0].x() - self.mouseClicks[1].x())
+                height = abs(self.mouseClicks[0].y() - self.mouseClicks[1].y())
+                if (width < 10) or (height < 10):
+                    self.mouseClicks.clear()
+                    return
+
+                # Mouse clicks to relative
+                clicks_rel = self.AbsoluteQTrajectoryToTrajectory(
+                    self.mouseClicks, viewportWidth, viewportHeight
+                )
+                box = PointsToRect(clicks_rel[0], clicks_rel[1])
+                self.annoter.AddAnnotation(box, self.classNumber)
+
+            # RPM : Remove
+            elif mouse_button == MouseButton.RightMouseButton:
+                self.annoter.RemoveAnnotation(self.editorModeArgument)
+
         # Mode Rename Annotation
         elif self.editorMode == self.ModeRenameAnnotation:
             annote = self.editorModeArgument
@@ -335,6 +384,13 @@ class ViewerEditorImage(QWidget):
 
         # Mode Paint circle
         elif self.editorMode == self.ModePaintCircle:
+            # Mouse trajectory relative
+            trajectoryRel = []
+            if self.mouseTrajectory is not None:
+                trajectoryRel = self.AbsoluteQTrajectoryToTrajectory(
+                    self.mouseTrajectory, viewportWidth, viewportHeight
+                )
+
             imWidth, imHeight = self.GetImageSize()
             for relPoint in trajectoryRel:
                 imPoint = PointToAbsolute(relPoint, imWidth, imHeight)
