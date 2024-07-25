@@ -41,7 +41,10 @@ class ImhashTableWidgetItem(QtWidgets.QTableWidgetItem):
                 QColor.fromHsv(round(image_similarity * 255), round(255), round(255))
             )
 
-    def __lt__(self, other: QtWidgets.QTableWidgetItem):
-        """Operation < for sorting."""
-        value = other.data(QtCore.Qt.UserRole)
-        return (value is not None) and (self.value < value)
+    def __lt__(self, other: object) -> bool:
+        """Operacja < dla sortowania."""
+        if isinstance(other, QtWidgets.QTableWidgetItem):
+            value = other.data(QtCore.Qt.UserRole)
+            return (value is not None) and (self.value < value)
+
+        return super().__lt__(other)
