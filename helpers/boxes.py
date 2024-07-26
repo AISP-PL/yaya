@@ -7,6 +7,7 @@ Created on 21 lip 2020
 
 import math
 from typing import Tuple, List
+import numpy as np
 
 from helpers import algebra
 
