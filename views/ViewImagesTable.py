@@ -32,10 +32,10 @@ class ViewImagesTable:
             + "Size;New dets;CorrectBbox;Precision;Recall;Errors;"
             + "Match.Confidence;Det.WorstConfidence",
         ).split(";")
+        table.setSortingEnabled(False)
         table.setColumnCount(len(labels))
         table.setHorizontalHeaderLabels(labels)
         table.setRowCount(len(files))
-        table.setColumnCount(len(labels))
 
         # Rows : View each row in a loop
         for rowIndex, fileEntry in enumerate(tqdm(files, desc="Table view creation")):
