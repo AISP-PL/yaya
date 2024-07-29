@@ -213,6 +213,9 @@ class MainWindowGui(Ui_MainWindow):
             self.CallbackFileAnnotationSelected
         )
 
+        # Detections table : Setup
+        self.ui.tableDetections.itemClicked.connect(self.CallbackFileAnnotationSelected)
+
         # Detector : Callbacks for sliders, method
         self.ui.detectorConfidenceSlider.valueChanged.connect(
             self.CallbackDetectorUpdate

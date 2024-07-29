@@ -18,6 +18,8 @@ class ImageTableWidgetItem(QtWidgets.QTableWidgetItem):
     image_path: str
     # Image crop
     image_crop: tuple[float, float, float, float]
+    # Image prefix
+    image_prefix: str
     # Cache dir
     cache_dir: str = "temp"
     # Image cropped cache
@@ -27,6 +29,7 @@ class ImageTableWidgetItem(QtWidgets.QTableWidgetItem):
         self,
         imagePath: str = None,
         image_crop: Optional[tuple[float, float, float, float]] = None,
+        image_prefix: str = "annotate",
         text: str = "",
         data: str = None,
         fontSize: int = None,
@@ -38,6 +41,7 @@ class ImageTableWidgetItem(QtWidgets.QTableWidgetItem):
 
         self.image_path = imagePath
         self.image_crop = image_crop
+        self.image_prefix = image_prefix
 
         # Image crop: If not None, then round
         if self.image_crop is not None:
@@ -75,7 +79,7 @@ class ImageTableWidgetItem(QtWidgets.QTableWidgetItem):
 
         # Cropped image : Generate hash
         x1, y1, x2, y2 = self.image_crop
-        cache_key = (self.image_path, x1, y1, x2, y2)
+        cache_key = (self.image_path, self.image_prefix, x1, y1, x2, y2)
         cached_file_path = os.path.join(self.cache_dir, f"{hash(cache_key)}.png")
 
         # Check : Hashed image not exists

@@ -8,7 +8,6 @@ from tqdm import tqdm
 
 from PyQt5.QtWidgets import QTableWidgetItem
 
-from Gui.widgets.EvalTableWidgetItem import EvaluationTableWidgetItem
 from Gui.widgets.FloatTableWidgetItem import FloatTableWidgetItem
 from Gui.widgets.HsvTableWidgetItem import HsvTableWidgetItem
 from Gui.widgets.ImageTableWidgetItem import ImageTableWidgetItem
@@ -65,6 +64,7 @@ class ViewDetections:
                     imagePath=fileEntry["Path"],
                     text=f"{fileEntry['Name']}_{index}",
                     image_crop=annotation.xyxy_px(visuals.width, visuals.height),
+                    image_prefix="det",
                     data=(fileEntry["ID"], index),
                     fontSize=14,
                     fontColor=QColor("#009970"),
