@@ -79,9 +79,7 @@ class ViewDetections:
                 colIndex += 1
 
                 # Column : Confidence of evaluation
-                item = PercentTableWidgetItem(
-                    annotation.evaluation_confidence, is_color=True
-                )
+                item = PercentTableWidgetItem(annotation.confidence, is_color=True)
                 table.setItem(row_index, colIndex, item)
                 colIndex += 1
 
