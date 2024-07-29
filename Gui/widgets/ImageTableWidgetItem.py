@@ -1,14 +1,13 @@
 """
-Created on 14 gru 2022
-
-@author: spasz
+ ImageTableWidgetItem.py with images buffer cropped creation.
 """
 
+from collections import deque
 import os
 from typing import Optional
 
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtGui import QColor, QIcon
+from PyQt5.QtGui import QColor
 import cv2
 
 
@@ -19,6 +18,10 @@ class ImageTableWidgetItem(QtWidgets.QTableWidgetItem):
     image_path: str
     # Image crop
     image_crop: tuple[float, float, float, float]
+    # Cache dir
+    cache_dir: str = "temp"
+    # Image cropped cache
+    cache = deque(maxlen=100)
 
     def __init__(
         self,
@@ -35,6 +38,10 @@ class ImageTableWidgetItem(QtWidgets.QTableWidgetItem):
 
         self.image_path = imagePath
         self.image_crop = image_crop
+
+        # Image crop: If not None, then round
+        if self.image_crop is not None:
+            self.image_crop = tuple(round(x) for x in self.image_crop)
 
         # Data : Add
         self.setData(QtCore.Qt.UserRole, data)
@@ -62,18 +69,30 @@ class ImageTableWidgetItem(QtWidgets.QTableWidgetItem):
         if self.image_crop is None:
             return f"<img src='{self.image_path}' width='{max_width}'>"
 
-        # Read image, crop and save temp/temp.png
-        image = cv2.imread(self.image_path)
+        # Cropped image : Generate hash
         x1, y1, x2, y2 = self.image_crop
-        x1 = round(x1)
-        y1 = round(y1)
-        x2 = round(x2)
-        y2 = round(y2)
-        image_cropped = image[y1:y2, x1:x2]
-        cv2.imwrite("temp/temp.png", image_cropped)
+        cache_key = (self.image_path, x1, y1, x2, y2)
+        cached_file_path = os.path.join(self.cache_dir, f"{hash(cache_key)}.png")
+
+        # Check : Hashed image not exists
+        if cached_file_path not in self.cache:
+            # Read image, crop and save temp/temp.png
+            image = cv2.imread(self.image_path)
+            x1, y1, x2, y2 = self.image_crop
+            image_cropped = image[y1:y2, x1:x2]
+            cv2.imwrite(cached_file_path, image_cropped)
+
+            # Cache : Append
+            self.cache.append(cached_file_path)
+
+            # Cache : Remove oldest
+            if len(self.cache) > self.cache.maxlen:
+                oldest_file = self.cache.popleft()
+                if os.path.exists(oldest_file):
+                    os.remove(oldest_file)
 
         # Calculate max width
         cropped_max_width = min(max_width, x2 - x1)
 
         # Tooltip : Return
-        return f"<img src='temp/temp.png' width='{cropped_max_width}'>"
+        return f"<img src='{cached_file_path}' width='{cropped_max_width}'>"
