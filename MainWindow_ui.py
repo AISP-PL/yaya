@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'MainWindow.ui'
+# Form implementation generated from reading ui file '/home/spasz/python/qursor-vision/yaya/MainWindow.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.7
 #
@@ -211,7 +211,9 @@ class Ui_MainWindow(object):
         self.translateButton.setText("")
         icon8 = QtGui.QIcon()
         icon8.addPixmap(
-            QtGui.QPixmap("Gui/img/move.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+            QtGui.QPixmap("/home/spasz/python/qursor-vision/yaya/Gui/img/move.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
         )
         self.translateButton.setIcon(icon8)
         self.translateButton.setObjectName("translateButton")
@@ -231,7 +233,9 @@ class Ui_MainWindow(object):
         self.pointerButton.setText("")
         icon9 = QtGui.QIcon()
         icon9.addPixmap(
-            QtGui.QPixmap("Gui/img/pointer.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+            QtGui.QPixmap("/home/spasz/python/qursor-vision/yaya/Gui/img/pointer.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
         )
         self.pointerButton.setIcon(icon9)
         self.pointerButton.setObjectName("pointerButton")

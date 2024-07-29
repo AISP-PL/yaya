@@ -53,7 +53,10 @@ class Visuals:
     @property
     def numpy_grid(self) -> np.ndarray:
         """Returns grid as numpy array."""
-        return np.array(self.grid).reshape((20, 20, 3))
+        array = np.array(self.grid).reshape((20, 20, 3))
+        # Replace NaN as zeroes
+        array = np.nan_to_num(array, copy=False, nan=0.0)
+        return array
 
     def Save(self):
         """Save data to file."""
@@ -94,8 +97,7 @@ class Visuals:
         json = jsonRead(jsonpath)
         try:
             return Visuals(**json)
-        except Exception as e:
-            print(f"Error loading visuals from {jsonpath}: {e}")
+        except Exception:
             return None
 
     @staticmethod

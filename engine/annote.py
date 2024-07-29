@@ -96,9 +96,9 @@ class Annote:
         self.authorType = authorType
 
         # Visual annotation HSV info
-        self.hue = 0
-        self.saturation = 0
-        self.brightness = 0
+        self.hue = 0.0
+        self.saturation = 0.0
+        self.brightness = 0.0
 
         # Evaulation metrics
         self.evalution = AnnoteEvaluation.noEvaluation
@@ -150,12 +150,25 @@ class Annote:
         row2, col2 = min(rows - 1, int(20 * y2)), min(cols - 1, int(20 * x2))
 
         # Get grid values
-        values = grid[row1:row2, col1:col2]
+        values = grid[row1 : row2 + 1, col1 : col2 + 1]
+
+        # Check : Empty
+        if values.size == 0:
+            self.hue = 0.0
+            self.saturation = 0.0
+            self.brightness = 0.0
+            return
 
         # Calculate average
         self.hue = np.mean(values[:, :, 0])
         self.saturation = np.mean(values[:, :, 1])
         self.brightness = np.mean(values[:, :, 2])
+
+        # Check for NaN :
+        if np.isnan(self.hue) or np.isnan(self.saturation) or np.isnan(self.brightness):
+            self.brightness = 0.0
+            self.saturation = 0.0
+            self.hue = 0.0
 
     def height_px(self, imwidth: float) -> float:
         """Returns height in pixels."""
