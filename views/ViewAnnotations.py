@@ -65,7 +65,7 @@ class ViewAnnotations:
                     imagePath=fileEntry["Path"],
                     text=f"{fileEntry['Name']}_{index}",
                     image_crop=annotation.xyxy_px(visuals.width, visuals.height),
-                    data=fileEntry["ID"],
+                    data=(fileEntry["ID"], index),
                     fontSize=14,
                     fontColor=QColor("#009970"),
                     fontUnderline=True,

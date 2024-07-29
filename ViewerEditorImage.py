@@ -6,15 +6,16 @@ Created on 30 gru 2020
 
 from enum import Enum
 import logging
-from typing import Any
+from typing import Any, Optional
 
 import cv2
 import numpy as np
-from PyQt5.QtCore import QPointF, Qt, pyqtSignal
-from PyQt5.QtGui import QPainter, QPixmap
+from PyQt5.QtCore import QPointF, QPoint, Qt, pyqtSignal
+from PyQt5.QtGui import QPainter, QPixmap, QPen
 from PyQt5.QtWidgets import QWidget
 
 from engine.annotators.annotator import Annotator
+from engine.annote import Annote
 import helpers.boxes as boxes
 from engine.annote_enums import AnnotatorType, AnnoteAuthorType
 from helpers.boxes import IsInside, PointsToRect, PointToAbsolute, PointToRelative
@@ -81,6 +82,8 @@ class ViewerEditorImage(QWidget):
         self.imageScaling = self.ImageScalingResize
         # Annoter for image
         self.annoter = None
+        # Selected annotation index
+        self.annotation_selected_id: Optional[int] = None
         # Annotator type for annotations
         self.annotator_type = AnnotatorType.Default
         # Current class number
@@ -182,11 +185,15 @@ class ViewerEditorImage(QWidget):
             self.annoter = annoter
             self.update()
 
-    def SetImage(self, image):
+    def SetImage(self, image: np.ndarray) -> None:
         """Set imagePath to show."""
-        if image is not None:
-            self.imageBg = image
-            self.update()
+        if image is None:
+            logging.error("(ViewerEditorImage) Image is None!")
+            return
+
+        self.annotation_selected_id = None
+        self.imageBg = image
+        self.update()
 
     def SetImageScaling(self, scalingMode):
         """Sets image scaling mode."""
@@ -442,6 +449,23 @@ class ViewerEditorImage(QWidget):
         # Draw on painter in QRect corner
         painter.drawPixmap(miniaturePosition, pixmap)
 
+    def paint_selected(self, painter: QPainter, annote: Annote) -> None:
+        """Draw selected annotation"""
+        # Draw : Red selection circle
+        viewWidth, viewHeight = self.GetViewSize()
+        x1, y1, x2, y2 = boxes.ToAbsolute(annote.GetBox(), viewWidth, viewHeight)
+        xc, yc = (x1 + x2) // 2, (y1 + y2) // 2
+        radius = max(x2 - x1, y2 - y1) // 2
+
+        # Draw : Red circle
+        QDrawElipse(
+            painter=painter,
+            point=QPoint(xc, yc),
+            radius=radius,
+            pen=QPen(Qt.red, 10),
+            brushOpacity=0.0,
+        )
+
     def paintEvent(self, event):
         """Draw on every paint event."""
         # Get Preview info width & height
@@ -504,9 +528,11 @@ class ViewerEditorImage(QWidget):
         # Draw miniature
         self.paintMiniature(widgetPainter, image)
 
-        # Draw all annotations
+        # Check : Annotations not hidden
         if not self.config["isAnnotationsHidden"]:
-            for annotate in self.annoter.GetAnnotations():
+
+            # Draw : All annotations
+            for index, annotate in enumerate(self.annoter.GetAnnotations()):
                 Annotator.QtDraw(
                     annotate,
                     widgetPainter,
@@ -514,6 +540,13 @@ class ViewerEditorImage(QWidget):
                     isConfidence=True,
                     isLabel=not self.config["isLabelsHidden"],
                 )
+
+                # Check : index != selected
+                if index != self.annotation_selected_id:
+                    continue
+
+                # Draw selected annotation
+                self.paint_selected(widgetPainter, annotate)
 
             # Draw hovered annotation
             if mousePosition is not None:

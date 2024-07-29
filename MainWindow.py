@@ -209,7 +209,7 @@ class MainWindowGui(Ui_MainWindow):
 
         # Annotations table : Setup
         self.ui.tableAnnotations.itemClicked.connect(
-            lambda item: self.CallbackFileSelectorItemClicked(item, from_data=True)
+            self.CallbackFileAnnotationSelected
         )
 
         # Detector : Callbacks for sliders, method
@@ -579,6 +579,16 @@ class MainWindowGui(Ui_MainWindow):
         # Setup UI again
         self.Setup()
 
+    def CallbackFileAnnotationSelected(self, item: QTableWidgetItem):
+        """When annotations selector item was clicked."""
+        file_id, annotation_id = item.data(QtCore.Qt.UserRole)
+        # Update annoter
+        self.annoter.SetImageID(fileID=file_id)
+        # Setup UI again
+        self.Setup()
+        # UI Viewer
+        self.ui.viewerEditor.annotation_selected_id = annotation_id
+
     def CallbackPaintSizeSlider(self):
         """Paint size slider changed."""
         self.ui.viewerEditor.SetEditorModeArgument(self.ui.paintSizeSlider.value())
@@ -750,7 +760,7 @@ class MainWindowGui(Ui_MainWindow):
                 if fileEntry["IsAnnotation"] is False:
                     self.annoter.Delete(fileEntry)
 
-    def CallbackNextFile(self):
+    def CallbackNextFile(self) -> None:
         """Callback"""
         image_id = self.annoter.GetFileID()
         # Next table row : From image_id
