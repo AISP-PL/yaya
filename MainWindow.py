@@ -30,6 +30,7 @@ from PyQt5.QtWidgets import (
     QMessageBox,
 )
 from ViewerEditorImage import ViewerEditorImage
+from views.ViewAnnotations import ViewAnnotations
 from views.ViewFilters import ViewFilters
 from views.ViewImagesSummary import ViewImagesSummary
 from views.ViewImagesTable import ViewImagesTable
@@ -401,17 +402,17 @@ class MainWindowGui(Ui_MainWindow):
             buttons_group=ViewFilters.filter_detections_group,
         )
 
-        # Files : Get
-        files = self.annoter.GetFiles(
-            filter_annotations_classnames=self.FilterClassesGet(),
-            filter_detections_classnames=self.FilterDetectionClassesGet(),
-        )
+        # # Files : Get
+        # files = self.annoter.GetFiles(
+        #     filter_annotations_classnames=self.FilterClassesGet(),
+        #     filter_detections_classnames=self.FilterDetectionClassesGet(),
+        # )
 
-        # Images table : Setup
-        ViewImagesTable.View(self.ui.fileSelectorTableWidget, files)
+        # # Images table : Setup
+        # ViewImagesTable.View(self.ui.fileSelectorTableWidget, files)
 
-        # Images summary : Setup
-        ViewImagesSummary.View(self.ui.fileSummaryLabel, files)
+        # # Images summary : Setup
+        # ViewImagesSummary.View(self.ui.fileSummaryLabel, files)
 
     def Setup(self, table_refresh: bool = False):
         """Setup again UI."""
@@ -477,6 +478,9 @@ class MainWindowGui(Ui_MainWindow):
 
             # Images summary : Setup
             ViewImagesSummary.View(self.ui.fileSummaryLabel, files)
+
+            # Annotations summary : Setup
+            ViewAnnotations.View(self.ui.tableAnnotations, files)
 
     def Run(self):
         """Run gui window thread and return exit code."""
@@ -800,7 +804,7 @@ class MainWindowGui(Ui_MainWindow):
 
         self.annoter.OpenLocation(FixPath(filepath), force_detector=force_detector)
         self.SetupDefault()
-        self.Setup()
+        self.Setup(table_refresh=True)
         return True
 
     def CallbackClose(self):

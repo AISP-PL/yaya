@@ -116,6 +116,11 @@ class Annote:
         return self.box[3] - self.box[1]
 
     @property
+    def area(self) -> float:
+        """Returns area."""
+        return self.width * self.height
+
+    @property
     def class_abbrev(self):
         """Returns class abbrev."""
         # Split text by '.'
