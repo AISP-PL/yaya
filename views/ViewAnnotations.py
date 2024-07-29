@@ -61,13 +61,11 @@ class ViewAnnotations:
 
                 # Column : Category
                 item = QTableWidgetItem(str(annotation.className))
-                item.setData(QtCore.Qt.UserRole, fileEntry["ID"])
                 table.setItem(row_index, colIndex, item)
                 colIndex += 1
 
                 # Column : Evaluation
                 item = EvaluationTableWidgetItem(annotation.evalution)
-                item.setData(QtCore.Qt.UserRole, fileEntry["ID"])
                 table.setItem(row_index, colIndex, item)
                 colIndex += 1
 
@@ -77,7 +75,6 @@ class ViewAnnotations:
                     annotation.height_px(visuals.height),
                     decimals=2,
                 )
-                item.setData(QtCore.Qt.UserRole, fileEntry["ID"])
                 table.setItem(row_index, colIndex, item)
                 colIndex += 1
 
@@ -85,7 +82,6 @@ class ViewAnnotations:
                 item = FloatTableWidgetItem(
                     annotation.area_px(visuals.width, visuals.height), decimals=2
                 )
-                item.setData(QtCore.Qt.UserRole, fileEntry["ID"])
                 table.setItem(row_index, colIndex, item)
                 colIndex += 1
 
