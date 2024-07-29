@@ -6,6 +6,7 @@
 from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 import os
+from typing import Optional
 import cv2
 import numpy as np
 import imagehash
@@ -24,12 +25,8 @@ class Visuals:
     width: float = field(init=True, default=0)
     # Image height
     height: float = field(init=True, default=0)
-    # Hue - dominant hue color
-    hue: float = 0
-    # Saturation of colors 0 to 1.0
-    saturation: float = 0
-    # Brightness from 0 to 1.0
-    brightness: float = 0
+    # Grid 20x20 of tuples(h,s,v) of image informations
+    grid: list[tuple[float, float, float]] = field(init=True, default_factory=list)
     # Diffrential (perceptual) hash of image
     dhash: str = 0
     # True if it's duplicate of other image
@@ -37,6 +34,21 @@ class Visuals:
 
     def __post_init__(self):
         """Post initiliatizaton."""
+
+    @property
+    def hue(self) -> float:
+        """Returns average hue of image."""
+        return np.mean([item[0] for item in self.grid])
+
+    @property
+    def saturation(self) -> float:
+        """Returns average saturation of image."""
+        return np.mean([item[1] for item in self.grid])
+
+    @property
+    def brightness(self) -> float:
+        """Returns average brightness of image."""
+        return np.mean([item[2] for item in self.grid])
 
     def Save(self):
         """Save data to file."""
@@ -66,7 +78,7 @@ class Visuals:
         return visuals
 
     @staticmethod
-    def Load(imagepath: str) -> Visuals:
+    def Load(imagepath: str) -> Optional[Visuals]:
         """Load visuals from image annotations json file."""
         # Create visuals annotations json filepath.
         jsonpath = ChangeExtension(imagepath, ".visuals.json")
@@ -75,7 +87,11 @@ class Visuals:
 
         # Load json dict.
         json = jsonRead(jsonpath)
-        return Visuals(**json)
+        try:
+            return Visuals(**json)
+        except Exception as e:
+            print(f"Error loading visuals from {jsonpath}: {e}")
+            return None
 
     @staticmethod
     def Create(imagepath: str) -> Visuals:
@@ -92,11 +108,25 @@ class Visuals:
         # Get image size
         height, width, _ = image.shape
 
-        # Obliczenie średniej jasności, saturacji oraz barwy
         image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-        hue = np.mean(image_hsv[:, :, 0])  # Średnia barwa (hue)
-        saturation = np.mean(image_hsv[:, :, 1])  # Średnia saturacja
-        brightness = np.mean(image_hsv[:, :, 2])  # Średnia jasność
+
+        # Grid : Calculate HSV of every grid part
+        grid: list[tuple[float, float, float]] = []
+        for row in range(20):
+            for col in range(20):
+                # Get grid part
+                grid_part = image_hsv[
+                    row * height // 20 : (row + 1) * height // 20,
+                    col * width // 20 : (col + 1) * width // 20,
+                ]
+
+                # Calculate mean of HSV
+                h = np.mean(grid_part[:, :, 0])
+                s = np.mean(grid_part[:, :, 1])
+                v = np.mean(grid_part[:, :, 2])
+
+                # Add to grid
+                grid.append((h, s, v))
 
         # Image hash : Calculate hash of image
         image_pil = Image.fromarray(image)
@@ -107,9 +137,7 @@ class Visuals:
             imagepath=imagepath,
             width=width,
             height=height,
-            hue=hue,
-            saturation=saturation,
-            brightness=brightness,
+            grid=grid,
             dhash=dhash_normalized,
         )
 
