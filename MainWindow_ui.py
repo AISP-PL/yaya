@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1713, 898)
+        MainWindow.resize(1778, 898)
         MainWindow.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         sizePolicy = QtWidgets.QSizePolicy(
@@ -819,11 +819,21 @@ class Ui_MainWindow(object):
         self.tableAnnotations.setRowCount(0)
         self.verticalLayout_10.addWidget(self.tableAnnotations)
         self.tabWidget.addTab(self.tabAnnotations, "")
+        self.tabDetections = QtWidgets.QWidget()
+        self.tabDetections.setObjectName("tabDetections")
+        self.verticalLayout_11 = QtWidgets.QVBoxLayout(self.tabDetections)
+        self.verticalLayout_11.setObjectName("verticalLayout_11")
+        self.tableDetections = QtWidgets.QTableWidget(self.tabDetections)
+        self.tableDetections.setObjectName("tableDetections")
+        self.tableDetections.setColumnCount(0)
+        self.tableDetections.setRowCount(0)
+        self.verticalLayout_11.addWidget(self.tableDetections)
+        self.tabWidget.addTab(self.tabDetections, "")
         self.verticalLayoutRight.addWidget(self.tabWidget)
         self.gridLayout.addWidget(self.splitter_4, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1713, 30))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1778, 30))
         self.menubar.setObjectName("menubar")
         self.menuMenu = QtWidgets.QMenu(self.menubar)
         self.menuMenu.setObjectName("menuMenu")
@@ -906,7 +916,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuPomoc.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(3)
         self.toolSettingsStackedWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -1027,6 +1037,10 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(
             self.tabWidget.indexOf(self.tabAnnotations),
             _translate("MainWindow", "Annotations"),
+        )
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tabDetections),
+            _translate("MainWindow", "Detections"),
         )
         self.menuMenu.setTitle(_translate("MainWindow", "File"))
         self.menuPomoc.setTitle(_translate("MainWindow", "Help"))

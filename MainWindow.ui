@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1713</width>
+    <width>1778</width>
     <height>898</height>
    </rect>
   </property>
@@ -522,7 +522,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="tabEdit">
            <attribute name="title">
@@ -1390,6 +1390,16 @@
             </item>
            </layout>
           </widget>
+          <widget class="QWidget" name="tabDetections">
+           <attribute name="title">
+            <string>Detections</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_11">
+            <item>
+             <widget class="QTableWidget" name="tableDetections"/>
+            </item>
+           </layout>
+          </widget>
          </widget>
         </item>
        </layout>
@@ -1403,7 +1413,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1713</width>
+     <width>1778</width>
      <height>30</height>
     </rect>
    </property>

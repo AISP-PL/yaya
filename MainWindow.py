@@ -32,6 +32,7 @@ from PyQt5.QtWidgets import (
 )
 from ViewerEditorImage import ViewerEditorImage
 from views.ViewAnnotations import ViewAnnotations
+from views.ViewDetections import ViewDetections
 from views.ViewFilters import ViewFilters
 from views.ViewImagesSummary import ViewImagesSummary
 from views.ViewImagesTable import ViewImagesTable
@@ -487,6 +488,9 @@ class MainWindowGui(Ui_MainWindow):
 
             # Annotations summary : Setup
             ViewAnnotations.View(self.ui.tableAnnotations, files)
+
+            # Detections summary : Setup
+            ViewDetections.View(self.ui.tableDetections, files)
 
     def Run(self):
         """Run gui window thread and return exit code."""
