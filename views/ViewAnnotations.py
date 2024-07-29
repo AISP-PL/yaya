@@ -8,9 +8,11 @@ from tqdm import tqdm
 
 from PyQt5.QtWidgets import QTableWidgetItem
 
+from Gui.widgets.EvalTableWidgetItem import EvaluationTableWidgetItem
 from Gui.widgets.FloatTableWidgetItem import FloatTableWidgetItem
 from Gui.widgets.RectTableWidgetItem import RectTableWidgetItem
 from engine.annote import Annote
+from helpers.visuals import Visuals
 
 
 class ViewAnnotations:
@@ -33,7 +35,7 @@ class ViewAnnotations:
 
         # Update GUI data
         table.clear()
-        labels = _translate("ViewAnnotations", "File/ID;Cat;Size;Area").split(";")
+        labels = _translate("ViewAnnotations", "File/ID;Cat;Eval;Size;Area").split(";")
         table.setSortingEnabled(False)
         table.setColumnCount(len(labels))
         table.setHorizontalHeaderLabels(labels)
@@ -43,6 +45,7 @@ class ViewAnnotations:
         row_index = 0
         for fileEntry in tqdm(files, desc="Annotations view creation"):
             annotations: list[Annote] = fileEntry["Annotations"]
+            visuals: Visuals = fileEntry["Visuals"]
 
             for index, annotation in enumerate(annotations):
 
@@ -62,16 +65,26 @@ class ViewAnnotations:
                 table.setItem(row_index, colIndex, item)
                 colIndex += 1
 
+                # Column : Evaluation
+                item = EvaluationTableWidgetItem(annotation.evalution)
+                item.setData(QtCore.Qt.UserRole, fileEntry["ID"])
+                table.setItem(row_index, colIndex, item)
+                colIndex += 1
+
                 # Column : Size
                 item = RectTableWidgetItem(
-                    annotation.width, annotation.height, decimals=3
+                    annotation.width_px(visuals.width),
+                    annotation.height_px(visuals.height),
+                    decimals=2,
                 )
                 item.setData(QtCore.Qt.UserRole, fileEntry["ID"])
                 table.setItem(row_index, colIndex, item)
                 colIndex += 1
 
                 # Column : Area
-                item = FloatTableWidgetItem(annotation.area, decimals=3)
+                item = FloatTableWidgetItem(
+                    annotation.area_px(visuals.width, visuals.height), decimals=2
+                )
                 item.setData(QtCore.Qt.UserRole, fileEntry["ID"])
                 table.setItem(row_index, colIndex, item)
                 colIndex += 1

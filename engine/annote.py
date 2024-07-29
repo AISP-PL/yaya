@@ -129,6 +129,18 @@ class Annote:
         # Max 3 letters from front
         return values[0][:3].upper()
 
+    def height_px(self, imwidth: float) -> float:
+        """Returns height in pixels."""
+        return self.height * imwidth
+
+    def width_px(self, imwidth: float) -> float:
+        """Returns width in pixels."""
+        return self.width * imwidth
+
+    def area_px(self, imwidth: float, imheight: float) -> float:
+        """Returns area in pixels."""
+        return self.width_px(imwidth) * self.height_px(imheight)
+
     def SetClassNumber(self, number):
         """Returns class number."""
         self.classNumber = number
