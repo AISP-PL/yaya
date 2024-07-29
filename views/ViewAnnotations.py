@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import QTableWidgetItem
 from Gui.widgets.EvalTableWidgetItem import EvaluationTableWidgetItem
 from Gui.widgets.FloatTableWidgetItem import FloatTableWidgetItem
 from Gui.widgets.HsvTableWidgetItem import HsvTableWidgetItem
+from Gui.widgets.ImageTableWidgetItem import ImageTableWidgetItem
 from Gui.widgets.PercentTableWidgetItem import PercentTableWidgetItem
 from Gui.widgets.RectTableWidgetItem import RectTableWidgetItem
 from engine.annote import Annote
@@ -78,13 +79,12 @@ class ViewAnnotations:
                 colIndex = 0
 
                 # Column : Filename + Image
-                item = QTableWidgetItem(f"{fileEntry['Name']}_{index}")
-                ViewAnnotations.set_cropped_image_tooltip(
-                    item,
-                    fileEntry["Path"],
-                    annotation.xyxy_px(visuals.width, visuals.height),
+                item = ImageTableWidgetItem(
+                    imagePath=fileEntry["Path"],
+                    text=f"{fileEntry['Name']}_{index}",
+                    image_crop=annotation.xyxy_px(visuals.width, visuals.height),
+                    data=fileEntry["ID"],
                 )
-                item.setData(QtCore.Qt.UserRole, fileEntry["ID"])
                 table.setItem(row_index, colIndex, item)
                 colIndex += 1
 
@@ -163,3 +163,13 @@ class ViewAnnotations:
         table.setSortingEnabled(True)
         table.resizeColumnsToContents()
         table.resizeRowsToContents()
+
+        table.setMouseTracking(True)
+
+        table.itemEntered.connect(ViewAnnotations.show_custom_tooltip)
+
+    @staticmethod
+    def show_custom_tooltip(item: QTableWidgetItem):
+        """Show custom tooltip for ImageTableWidgetItem"""
+        if isinstance(item, ImageTableWidgetItem):
+            item.setToolTip(item.generate_tooltip())
