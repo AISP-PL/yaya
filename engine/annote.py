@@ -132,6 +132,14 @@ class Annote:
         return self.width * self.height
 
     @property
+    def ratio(self) -> float:
+        """Returns ratio."""
+        if self.height == 0:
+            return 0
+
+        return self.width / self.height
+
+    @property
     def class_abbrev(self):
         """Returns class abbrev."""
         # Split text by '.'

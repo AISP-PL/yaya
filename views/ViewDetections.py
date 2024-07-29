@@ -94,8 +94,7 @@ class ViewDetections:
 
                 # Column : Ratio w/h
                 item = FloatTableWidgetItem(
-                    annotation.width_px(visuals.width)
-                    / annotation.height_px(visuals.height),
+                    annotation.ratio,
                     decimals=2,
                 )
                 table.setItem(row_index, colIndex, item)
