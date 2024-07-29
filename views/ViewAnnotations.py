@@ -66,8 +66,10 @@ class ViewAnnotations:
                 table.setItem(row_index, colIndex, item)
                 colIndex += 1
 
-                # Column : Confidence
-                item = FloatTableWidgetItem(annotation.confidence, decimals=2)
+                # Column : Confidence of evaluation
+                item = FloatTableWidgetItem(
+                    annotation.evaluation_confidence, decimals=2
+                )
                 table.setItem(row_index, colIndex, item)
                 colIndex += 1
 
