@@ -38,7 +38,7 @@ class ViewAnnotations:
         table.clear()
         labels = _translate(
             "ViewAnnotations",
-            "File/ID;Cat;Conf;Eval;Size;Area;Hue;Saturation;Brightness",
+            "File/ID;Cat;Conf;Eval;Size;Ratio;Area;Hue;Saturation;Brightness",
         ).split(";")
         table.setSortingEnabled(False)
         table.setColumnCount(len(labels))
@@ -84,6 +84,15 @@ class ViewAnnotations:
                 item = RectTableWidgetItem(
                     annotation.width_px(visuals.width),
                     annotation.height_px(visuals.height),
+                    decimals=2,
+                )
+                table.setItem(row_index, colIndex, item)
+                colIndex += 1
+
+                # Column : Ratio w/h
+                item = FloatTableWidgetItem(
+                    annotation.width_px(visuals.width)
+                    / annotation.height_px(visuals.height),
                     decimals=2,
                 )
                 table.setItem(row_index, colIndex, item)
