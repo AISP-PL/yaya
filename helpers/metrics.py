@@ -6,7 +6,7 @@ Created on 15 wrz 2020
 
 from dataclasses import dataclass, field
 
-from engine.annote import AnnoteEvaluation
+from engine.annote import Annote, AnnoteEvaluation
 from helpers import prefilters
 
 from . import boxes
@@ -176,7 +176,10 @@ def dSurplus(annotations, detections, minConfidence=0.5):
 
 
 def EvaluateMetrics(
-    annotations: list, detections: list, minConfidence: float = 0.5, minIOU: float = 0.5
+    annotations: list[Annote],
+    detections: list[Annote],
+    minConfidence: float = 0.5,
+    minIOU: float = 0.5,
 ) -> tuple:
     """
     Definition of terms:
@@ -222,16 +225,25 @@ def EvaluateMetrics(
 
         # Check first(biggest IOU) possibility
         if len(possibilities) and (possibilities[0][0] >= minIOU):
-            _iou, detection = possibilities[0]
+            iou, detection = possibilities[0]
+
             if annotation.classNumber == detection.classNumber:
-                annotation.SetEvalution(AnnoteEvaluation.TruePositiveLabel)
+                annotation.SetEvalution(
+                    AnnoteEvaluation.TruePositiveLabel,
+                    iou=iou,
+                    confidence=detection.confidence,
+                )
             else:
-                annotation.SetEvalution(AnnoteEvaluation.TruePositive)
+                annotation.SetEvalution(
+                    AnnoteEvaluation.TruePositive,
+                    iou=iou,
+                    confidence=detection.confidence,
+                )
             annotationsMatched.append((annotation, detection))
             detections.remove(detection)
         # Otherwise not matched
         else:
-            annotation.SetEvalution(AnnoteEvaluation.FalseNegative)
+            annotation.SetEvalution(AnnoteEvaluation.FalseNegative, iou=0, confidence=0)
             annotationsUnmatched.append(annotation)
 
     # Detections unmatched are detections left in list.

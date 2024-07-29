@@ -35,7 +35,9 @@ class ViewAnnotations:
 
         # Update GUI data
         table.clear()
-        labels = _translate("ViewAnnotations", "File/ID;Cat;Eval;Size;Area").split(";")
+        labels = _translate("ViewAnnotations", "File/ID;Cat;Conf;Eval;Size;Area").split(
+            ";"
+        )
         table.setSortingEnabled(False)
         table.setColumnCount(len(labels))
         table.setHorizontalHeaderLabels(labels)
@@ -61,6 +63,11 @@ class ViewAnnotations:
 
                 # Column : Category
                 item = QTableWidgetItem(str(annotation.className))
+                table.setItem(row_index, colIndex, item)
+                colIndex += 1
+
+                # Column : Confidence
+                item = FloatTableWidgetItem(annotation.confidence, decimals=2)
                 table.setItem(row_index, colIndex, item)
                 colIndex += 1
 

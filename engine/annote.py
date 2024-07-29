@@ -93,7 +93,12 @@ class Annote:
         self.box = box
         self.confidence = confidence
         self.authorType = authorType
+
+        # Evaulation metrics
         self.evalution = AnnoteEvaluation.noEvaluation
+        self.evaluation_iou = 0.0
+        self.evaluation_confidence = 0.0
+
         assert (className is not None) or (classNumber is not None)
         if classNumber is None:
             self.className = className
@@ -150,9 +155,13 @@ class Annote:
         """Returns author type."""
         self.authorType = authorType
 
-    def SetEvalution(self, evalution):
+    def SetEvalution(
+        self, evalution: AnnoteEvaluation, iou: float, confidence: float
+    ) -> None:
         """Returns author type."""
         self.evalution = evalution
+        self.evaluation_iou = iou
+        self.evaluation_confidence = confidence
 
     def GetClassNumber(self):
         """Returns class number."""
