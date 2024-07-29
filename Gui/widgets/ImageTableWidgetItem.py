@@ -3,6 +3,7 @@
 """
 
 from collections import deque
+import logging
 import os
 from typing import Optional
 
@@ -85,10 +86,14 @@ class ImageTableWidgetItem(QtWidgets.QTableWidgetItem):
         # Check : Hashed image not exists
         if cached_file_path not in self.cache:
             # Read image, crop and save temp/temp.png
-            image = cv2.imread(self.image_path)
-            x1, y1, x2, y2 = self.image_crop
-            image_cropped = image[y1:y2, x1:x2]
-            cv2.imwrite(cached_file_path, image_cropped)
+            try:
+                image = cv2.imread(self.image_path)
+                x1, y1, x2, y2 = self.image_crop
+                image_cropped = image[y1:y2, x1:x2]
+                cv2.imwrite(cached_file_path, image_cropped)
+            except Exception as e:
+                logging.error(f"Error cropping image: {e}")
+                return ""
 
             # Cache : Append
             self.cache.append(cached_file_path)
