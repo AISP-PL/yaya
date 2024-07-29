@@ -544,7 +544,7 @@ class Annoter:
                 foundIndex = index
                 break
 
-        if (foundIndex is not None) and (foundIndex) and (foundIndex < len(self.files)):
+        if (foundIndex is not None) and (foundIndex < len(self.files)):
             self.offset = foundIndex
             self.Process()
             return True

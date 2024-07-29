@@ -10,6 +10,7 @@ import shutil
 import sys
 from copy import copy
 from datetime import datetime
+from PyQt5.QtWidgets import QTableWidgetItem
 
 from Detectors.common.Detector import NmsMethod
 from Detectors.common.image_strategy import ImageStrategy
@@ -203,7 +204,12 @@ class MainWindowGui(Ui_MainWindow):
 
         # Images table : Setup
         self.ui.fileSelectorTableWidget.itemClicked.connect(
-            self.CallbackFileSelectorItemClicked
+            lambda item: self.CallbackFileSelectorItemClicked(item, from_data=False)
+        )
+
+        # Annotations table : Setup
+        self.ui.tableAnnotations.itemClicked.connect(
+            lambda item: self.CallbackFileSelectorItemClicked(item, from_data=True)
         )
 
         # Detector : Callbacks for sliders, method
@@ -558,10 +564,16 @@ class MainWindowGui(Ui_MainWindow):
         """Current labels row changed."""
         self.ui.viewerEditor.SetClassNumber(index)
 
-    def CallbackFileSelectorItemClicked(self, item):
+    def CallbackFileSelectorItemClicked(
+        self, item: QTableWidgetItem, from_data: bool = False
+    ):
         """When file selector item was clicked."""
         # Read current file number
-        fileID = int(item.toolTip())
+        if not from_data:
+            fileID = int(item.toolTip())
+        else:
+            fileID = item.data(QtCore.Qt.UserRole)
+
         # Update annoter
         self.annoter.SetImageID(fileID)
         # Setup UI again

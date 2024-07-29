@@ -33,7 +33,7 @@ class ViewAnnotations:
 
         # Update GUI data
         table.clear()
-        labels = _translate("ViewAnnotations", "File/ID;Size;Area").split(";")
+        labels = _translate("ViewAnnotations", "File/ID;Cat;Size;Area").split(";")
         table.setSortingEnabled(False)
         table.setColumnCount(len(labels))
         table.setHorizontalHeaderLabels(labels)
@@ -41,16 +41,24 @@ class ViewAnnotations:
 
         # Rows : View each row in a loop
         row_index = 0
-        for fileEntry in tqdm(files, desc="Table view creation"):
+        for fileEntry in tqdm(files, desc="Annotations view creation"):
             annotations: list[Annote] = fileEntry["Annotations"]
 
             for index, annotation in enumerate(annotations):
+
                 # Start from column zero
                 colIndex = 0
 
                 # Column : Filename + Image
                 item = QTableWidgetItem(f"{fileEntry['Name']}_{index}")
-                item.setToolTip(str(fileEntry["ID"]))
+                item.setToolTip('<img src="{}" width="480">'.format(fileEntry["Path"]))
+                item.setData(QtCore.Qt.UserRole, fileEntry["ID"])
+                table.setItem(row_index, colIndex, item)
+                colIndex += 1
+
+                # Column : Category
+                item = QTableWidgetItem(str(annotation.className))
+                item.setData(QtCore.Qt.UserRole, fileEntry["ID"])
                 table.setItem(row_index, colIndex, item)
                 colIndex += 1
 
@@ -58,13 +66,13 @@ class ViewAnnotations:
                 item = RectTableWidgetItem(
                     annotation.width, annotation.height, decimals=3
                 )
-                item.setToolTip(str(fileEntry["ID"]))
+                item.setData(QtCore.Qt.UserRole, fileEntry["ID"])
                 table.setItem(row_index, colIndex, item)
                 colIndex += 1
 
                 # Column : Area
                 item = FloatTableWidgetItem(annotation.area, decimals=3)
-                item.setToolTip(str(fileEntry["ID"]))
+                item.setData(QtCore.Qt.UserRole, fileEntry["ID"])
                 table.setItem(row_index, colIndex, item)
                 colIndex += 1
 
