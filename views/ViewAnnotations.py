@@ -16,29 +16,11 @@ from Gui.widgets.PercentTableWidgetItem import PercentTableWidgetItem
 from Gui.widgets.RectTableWidgetItem import RectTableWidgetItem
 from engine.annote import Annote
 from helpers.visuals import Visuals
+from PyQt5.QtGui import QColor
 
 
 class ViewAnnotations:
     """View of annotations"""
-
-    @staticmethod
-    def set_cropped_image_tooltip(
-        item: QTableWidgetItem, image_path: str, xyxy: tuple[float, float, float, float]
-    ) -> None:
-        """Set tooltip for item with cropped image"""
-        x1, y1, x2, y2 = xyxy
-        x1 = round(x1)
-        y1 = round(y1)
-        x2 = round(x2)
-        y2 = round(y2)
-        width = x2 - x1
-        height = y2 - y1
-        tooltip = f"""
-        <div style='width:{width}px; height:{height}px; overflow:hidden;'>
-            <img src='{image_path}' style='position:absolute; max-width:{width}px; max-height:{height}px;  top:-{y1}px; left:-{x1}px;'>
-        </div>
-        """
-        item.setToolTip(tooltip)
 
     @staticmethod
     def View(
@@ -84,6 +66,9 @@ class ViewAnnotations:
                     text=f"{fileEntry['Name']}_{index}",
                     image_crop=annotation.xyxy_px(visuals.width, visuals.height),
                     data=fileEntry["ID"],
+                    fontSize=14,
+                    fontColor=QColor("#009970"),
+                    fontUnderline=True,
                 )
                 table.setItem(row_index, colIndex, item)
                 colIndex += 1

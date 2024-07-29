@@ -59,6 +59,10 @@ class ImageTableWidgetItem(QtWidgets.QTableWidgetItem):
             font.setUnderline(True)
             self.setFont(font)
 
+        # Tooltip : Autoset if no cropping
+        if self.image_crop is None:
+            self.setToolTip(self.generate_tooltip())
+
     def generate_tooltip(self, max_width: int = 640) -> str:
         """Generate tooltip for image"""
         # Check : Image path
