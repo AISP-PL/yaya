@@ -182,6 +182,18 @@ class Annote:
         """Returns area in pixels."""
         return self.width_px(imwidth) * self.height_px(imheight)
 
+    def xyxy_px(
+        self, imwidth: float, imheight: float
+    ) -> tuple[float, float, float, float]:
+        """Returns xyxy in pixels."""
+        x1, y1, x2, y2 = self.box
+        return (
+            x1 * imwidth,
+            y1 * imheight,
+            x2 * imwidth,
+            y2 * imheight,
+        )
+
     def SetClassNumber(self, number):
         """Returns class number."""
         self.classNumber = number

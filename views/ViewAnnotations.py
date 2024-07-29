@@ -11,12 +11,33 @@ from PyQt5.QtWidgets import QTableWidgetItem
 from Gui.widgets.EvalTableWidgetItem import EvaluationTableWidgetItem
 from Gui.widgets.FloatTableWidgetItem import FloatTableWidgetItem
 from Gui.widgets.HsvTableWidgetItem import HsvTableWidgetItem
+from Gui.widgets.PercentTableWidgetItem import PercentTableWidgetItem
 from Gui.widgets.RectTableWidgetItem import RectTableWidgetItem
 from engine.annote import Annote
 from helpers.visuals import Visuals
 
 
 class ViewAnnotations:
+    """View of annotations"""
+
+    @staticmethod
+    def set_cropped_image_tooltip(
+        item: QTableWidgetItem, image_path: str, xyxy: tuple[float, float, float, float]
+    ) -> None:
+        """Set tooltip for item with cropped image"""
+        x1, y1, x2, y2 = xyxy
+        x1 = round(x1)
+        y1 = round(y1)
+        x2 = round(x2)
+        y2 = round(y2)
+        width = x2 - x1
+        height = y2 - y1
+        tooltip = f"""
+        <div style='width:{width}px; height:{height}px; overflow:hidden;'>
+            <img src='{image_path}' style='position:absolute; max-width:{width}px; max-height:{height}px;  top:-{y1}px; left:-{x1}px;'>
+        </div>
+        """
+        item.setToolTip(tooltip)
 
     @staticmethod
     def View(
@@ -58,7 +79,11 @@ class ViewAnnotations:
 
                 # Column : Filename + Image
                 item = QTableWidgetItem(f"{fileEntry['Name']}_{index}")
-                item.setToolTip('<img src="{}" width="480">'.format(fileEntry["Path"]))
+                ViewAnnotations.set_cropped_image_tooltip(
+                    item,
+                    fileEntry["Path"],
+                    annotation.xyxy_px(visuals.width, visuals.height),
+                )
                 item.setData(QtCore.Qt.UserRole, fileEntry["ID"])
                 table.setItem(row_index, colIndex, item)
                 colIndex += 1
@@ -69,8 +94,8 @@ class ViewAnnotations:
                 colIndex += 1
 
                 # Column : Confidence of evaluation
-                item = FloatTableWidgetItem(
-                    annotation.evaluation_confidence, decimals=2
+                item = PercentTableWidgetItem(
+                    annotation.evaluation_confidence, is_color=True
                 )
                 table.setItem(row_index, colIndex, item)
                 colIndex += 1
