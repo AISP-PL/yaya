@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QTableWidgetItem
 
 from Gui.widgets.EvalTableWidgetItem import EvaluationTableWidgetItem
 from Gui.widgets.FloatTableWidgetItem import FloatTableWidgetItem
+from Gui.widgets.HsvTableWidgetItem import HsvTableWidgetItem
 from Gui.widgets.RectTableWidgetItem import RectTableWidgetItem
 from engine.annote import Annote
 from helpers.visuals import Visuals
@@ -35,9 +36,10 @@ class ViewAnnotations:
 
         # Update GUI data
         table.clear()
-        labels = _translate("ViewAnnotations", "File/ID;Cat;Conf;Eval;Size;Area").split(
-            ";"
-        )
+        labels = _translate(
+            "ViewAnnotations",
+            "File/ID;Cat;Conf;Eval;Size;Area;Hue;Saturation;Brightness",
+        ).split(";")
         table.setSortingEnabled(False)
         table.setColumnCount(len(labels))
         table.setHorizontalHeaderLabels(labels)
@@ -90,6 +92,30 @@ class ViewAnnotations:
                 # Column : Area
                 item = FloatTableWidgetItem(
                     annotation.area_px(visuals.width, visuals.height), decimals=2
+                )
+                table.setItem(row_index, colIndex, item)
+                colIndex += 1
+
+                # Hue column
+                item = HsvTableWidgetItem(hue=annotation.hue, value=annotation.hue)
+                table.setItem(row_index, colIndex, item)
+                colIndex += 1
+
+                # Saturation column
+                item = HsvTableWidgetItem(
+                    hue=300,
+                    saturation=annotation.saturation,
+                    brightness=255,
+                    value=annotation.saturation,
+                )
+                table.setItem(row_index, colIndex, item)
+                colIndex += 1
+
+                # Brightness column
+                item = HsvTableWidgetItem(
+                    saturation=0,
+                    brightness=annotation.brightness,
+                    value=annotation.brightness,
                 )
                 table.setItem(row_index, colIndex, item)
                 colIndex += 1

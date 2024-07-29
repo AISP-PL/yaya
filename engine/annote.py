@@ -7,6 +7,7 @@ Created on 17 lis 2020
 import logging
 
 import cv2
+import numpy as np
 
 import helpers.boxes as boxes
 from engine.annote_enums import AnnoteAuthorType, AnnoteEvaluation
@@ -94,6 +95,11 @@ class Annote:
         self.confidence = confidence
         self.authorType = authorType
 
+        # Visual annotation HSV info
+        self.hue = 0
+        self.saturation = 0
+        self.brightness = 0
+
         # Evaulation metrics
         self.evalution = AnnoteEvaluation.noEvaluation
         self.evaluation_iou = 0.0
@@ -133,6 +139,23 @@ class Annote:
 
         # Max 3 letters from front
         return values[0][:3].upper()
+
+    def update_hsv_from_grid(
+        self, grid: np.ndarray, rows: int = 20, cols: int = 20
+    ) -> None:
+        """Updates HSV values from image tuple9float,float,float] grid 20x20"""
+        # Bbox : Unpack
+        x1, y1, x2, y2 = self.box
+        row1, col1 = max(0, int(20 * y1)), max(0, int(20 * x1))
+        row2, col2 = min(rows - 1, int(20 * y2)), min(cols - 1, int(20 * x2))
+
+        # Get grid values
+        values = grid[row1:row2, col1:col2]
+
+        # Calculate average
+        self.hue = np.mean(values[:, :, 0])
+        self.saturation = np.mean(values[:, :, 1])
+        self.brightness = np.mean(values[:, :, 2])
 
     def height_px(self, imwidth: float) -> float:
         """Returns height in pixels."""
@@ -235,6 +258,6 @@ class Annote:
             1,
         )
 
-    def IsInside(self, point):
+    def IsInside(self, point: tuple) -> bool:
         """True if point is inside note box."""
         return boxes.IsInside(point, self.box)

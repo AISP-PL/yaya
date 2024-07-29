@@ -356,6 +356,10 @@ class Annoter:
             # VisualsDuplicates : Update set of image hashes
             visualsDuplicates.Add(visuals)
 
+            # Text annotations : Update annotations visuals
+            for annote_item in txtAnnotations:
+                annote_item.update_hsv_from_grid(visuals.numpy_grid)
+
             # Add file entry
             self.files.append(
                 {

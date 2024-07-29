@@ -50,6 +50,11 @@ class Visuals:
         """Returns average brightness of image."""
         return np.mean([item[2] for item in self.grid])
 
+    @property
+    def numpy_grid(self) -> np.ndarray:
+        """Returns grid as numpy array."""
+        return np.array(self.grid).reshape((20, 20, 3))
+
     def Save(self):
         """Save data to file."""
         # Check : Not existing image
