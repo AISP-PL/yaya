@@ -588,7 +588,12 @@ class MainWindowGui(Ui_MainWindow):
 
     def CallbackFileAnnotationSelected(self, item: QTableWidgetItem):
         """When annotations selector item was clicked."""
-        file_id, annotation_id = item.data(QtCore.Qt.UserRole)
+        # Check : Item data
+        data = item.data(QtCore.Qt.UserRole)
+        if data is None:
+            return
+
+        file_id, annotation_id = data
         # Update annoter
         self.annoter.SetImageID(fileID=file_id)
         # Setup UI again
