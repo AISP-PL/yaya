@@ -137,13 +137,13 @@ class ViewImagesTableRow:
         colIndex += 1
 
         # Precision column
-        item = FloatTableWidgetItem(metrics.precision)
+        item = PercentTableWidgetItem(100 * metrics.precision, is_color=True)
         item.setToolTip(str(fileEntry["ID"]))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 
         # Recall column
-        item = FloatTableWidgetItem(metrics.recall)
+        item = PercentTableWidgetItem(100 * metrics.recall, is_color=True)
         item.setToolTip(str(fileEntry["ID"]))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
