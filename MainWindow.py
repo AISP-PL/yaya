@@ -247,6 +247,7 @@ class MainWindowGui(Ui_MainWindow):
         )
         self.ui.actionCopy_annotations.triggered.connect(self.CallbackCopyAnnotations)
         self.ui.actionPaste_annotations.triggered.connect(self.CallbackPasteAnnotations)
+        self.ui.actionThumbnail.triggered.connect(self.CallbackThumbnailSet)
 
         # Menu action group of annotations : Create exclusive group
         self.annotatorTypeGroup = QActionGroup(self.window)
@@ -729,6 +730,10 @@ class MainWindowGui(Ui_MainWindow):
         """Callback"""
         self.annoter.PasteAnnotations()
         self.Setup()
+
+    def CallbackThumbnailSet(self):
+        """Set viewer editor thumbnail to check mode of action"""
+        self.ui.viewerEditor.isThumbnail = self.ui.actionThumbnail.isChecked()
 
     def CallbackAnnotationsFilterButton(self):
         """Remove annotations."""

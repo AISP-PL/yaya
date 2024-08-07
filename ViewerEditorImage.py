@@ -76,6 +76,8 @@ class ViewerEditorImage(QWidget):
             "isAnnotationsHidden": False,
             "isLabelsHidden": False,
         }
+        # Is thumbnail preview
+        self.isThumbnail = True
         # Background image loaded
         self.imageBg = None
         # Mode of scaling image
@@ -526,7 +528,8 @@ class ViewerEditorImage(QWidget):
         widgetPainter.drawPixmap(self.rect(), pixmap)
 
         # Draw miniature
-        self.paintMiniature(widgetPainter, image)
+        if self.isThumbnail:
+            self.paintMiniature(widgetPainter, image)
 
         # Check : Annotations not hidden
         if not self.config["isAnnotationsHidden"]:

@@ -1455,6 +1455,7 @@
      <addaction name="action_annotations_category"/>
     </widget>
     <addaction name="menuAnnotations_type"/>
+    <addaction name="actionThumbnail"/>
    </widget>
    <addaction name="menuMenu"/>
    <addaction name="menuView"/>
@@ -1614,6 +1615,17 @@
    </property>
    <property name="shortcut">
     <string>Alt+C</string>
+   </property>
+  </action>
+  <action name="actionThumbnail">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Thumbnail</string>
    </property>
   </action>
  </widget>

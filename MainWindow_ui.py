@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/spasz/python/qursor-vision/yaya/MainWindow.ui'
+# Form implementation generated from reading ui file 'MainWindow.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.7
 #
@@ -211,9 +211,7 @@ class Ui_MainWindow(object):
         self.translateButton.setText("")
         icon8 = QtGui.QIcon()
         icon8.addPixmap(
-            QtGui.QPixmap("/home/spasz/python/qursor-vision/yaya/Gui/img/move.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
+            QtGui.QPixmap("Gui/img/move.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
         )
         self.translateButton.setIcon(icon8)
         self.translateButton.setObjectName("translateButton")
@@ -233,9 +231,7 @@ class Ui_MainWindow(object):
         self.pointerButton.setText("")
         icon9 = QtGui.QIcon()
         icon9.addPixmap(
-            QtGui.QPixmap("/home/spasz/python/qursor-vision/yaya/Gui/img/pointer.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
+            QtGui.QPixmap("Gui/img/pointer.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
         )
         self.pointerButton.setIcon(icon9)
         self.pointerButton.setObjectName("pointerButton")
@@ -896,6 +892,10 @@ class Ui_MainWindow(object):
         self.actionPaste_annotations.setObjectName("actionPaste_annotations")
         self.actionClear_detections = QtWidgets.QAction(MainWindow)
         self.actionClear_detections.setObjectName("actionClear_detections")
+        self.actionThumbnail = QtWidgets.QAction(MainWindow)
+        self.actionThumbnail.setCheckable(True)
+        self.actionThumbnail.setChecked(True)
+        self.actionThumbnail.setObjectName("actionThumbnail")
         self.menuMenu.addAction(self.actionOtworzLokacje)
         self.menuMenu.addAction(self.actionZapisz)
         self.menuMenu.addAction(self.actionZamknijProgram)
@@ -910,6 +910,7 @@ class Ui_MainWindow(object):
         self.menuAnnotations_type.addAction(self.action_annotations_confidence_heat)
         self.menuAnnotations_type.addAction(self.action_annotations_category)
         self.menuView.addAction(self.menuAnnotations_type.menuAction())
+        self.menuView.addAction(self.actionThumbnail)
         self.menubar.addAction(self.menuMenu.menuAction())
         self.menubar.addAction(self.menuView.menuAction())
         self.menubar.addAction(self.menuEdit.menuAction())
@@ -1094,6 +1095,7 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Clear detections")
         )
         self.actionClear_detections.setShortcut(_translate("MainWindow", "Alt+C"))
+        self.actionThumbnail.setText(_translate("MainWindow", "Thumbnail"))
 
 
 from ViewerEditorImage import ViewerEditorImage
