@@ -185,6 +185,7 @@ class Annoter:
         try:
             image = cv2.imread(filepath)
             return image
+
         except Exception as e:
             logging.fatal(
                 "(Annoter) CV2 error when readings image `%s`! %s", filepath, e
@@ -793,7 +794,8 @@ class Annoter:
                 (processImage is True) or (len(txtAnnotations) == 0)
             ):
                 # Detector : Process
-                detAnnotes = self.ProcessDetections(im, fileEntry["Path"])
+                im_rgb = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
+                detAnnotes = self.ProcessDetections(im_rgb, fileEntry["Path"])
 
                 # Calculate metrics
                 metrics = self.CalculateYoloMetrics(txtAnnotations, detAnnotes)
