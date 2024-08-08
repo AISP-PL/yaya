@@ -332,7 +332,8 @@ class Annoter:
             # Force detector to process every image
             if force_detector is True:
                 im = self.GetFileImage(path + filename)
-                detections = self.ProcessDetections(im, path + filename)
+                im_rgb = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
+                detections = self.ProcessDetections(im_rgb, path + filename)
 
             # Read historical detections
             else:
