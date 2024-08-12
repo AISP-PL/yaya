@@ -37,6 +37,10 @@ class HsvTableWidgetItem(QtWidgets.QTableWidgetItem):
                Value of item converted to text.
         """
         super().__init__()
+
+        if value is None or value == float("nan"):
+            value = 0
+
         # Set variables
         self.value = value
 
