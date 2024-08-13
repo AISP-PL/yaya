@@ -22,6 +22,8 @@ class Metrics:
     AvgWidth: float = field(init=True, default=-1.0)
     # Average height of all annotations
     AvgHeight: float = field(init=True, default=-1.0)
+    # Average of best IOU of all annotations
+    iou_avg: float = field(init=True, default=0.0)
     # True postive validated annotations
     TP: int = field(init=True, default=0)
     # False positive validated annotations
@@ -212,39 +214,53 @@ def EvaluateMetrics(
     annotationsUnmatched = []
     # Detection lonely. => FP
     detectionsUnmatched = []
+    # List of all best IOUs for all annotations
+    ious_best: list[float] = []
 
     # For all annotations
     for annotation in annotations:
+        # Check : Any detections
+        if len(detections) == 0:
+            annotation.SetEvalution(AnnoteEvaluation.FalseNegative, iou=0, confidence=0)
+            annotationsUnmatched.append(annotation)
+            ious_best.append(0)
+            continue
+
         # 1. Calculate all possibilities (detections)
-        possibilities = [
+        possibilities: list[tuple[float, Annote]] = [
             (boxes.iou(annotation.box, detection.box), detection)
             for detection in detections
         ]
-        # Sort possibilities by IOU
+
+        # Sort and get best
         possibilities = sorted(possibilities, key=lambda x: x[0], reverse=True)
+        iou_best, detection = possibilities[0]
 
-        # Check first(biggest IOU) possibility
-        if len(possibilities) and (possibilities[0][0] >= minIOU):
-            iou, detection = possibilities[0]
-
-            if annotation.classNumber == detection.classNumber:
-                annotation.SetEvalution(
-                    AnnoteEvaluation.TruePositiveLabel,
-                    iou=iou,
-                    confidence=detection.confidence,
-                )
-            else:
-                annotation.SetEvalution(
-                    AnnoteEvaluation.TruePositive,
-                    iou=iou,
-                    confidence=detection.confidence,
-                )
-            annotationsMatched.append((annotation, detection))
-            detections.remove(detection)
-        # Otherwise not matched
-        else:
+        # Check : Not matched
+        if iou_best < minIOU:
             annotation.SetEvalution(AnnoteEvaluation.FalseNegative, iou=0, confidence=0)
             annotationsUnmatched.append(annotation)
+            ious_best.append(0)
+            continue
+
+        # Match : Box and class number
+        if annotation.classNumber == detection.classNumber:
+            annotation.SetEvalution(
+                AnnoteEvaluation.TruePositiveLabel,
+                iou=iou_best,
+                confidence=detection.confidence,
+            )
+        # Match : Box only
+        else:
+            annotation.SetEvalution(
+                AnnoteEvaluation.TruePositive,
+                iou=iou_best,
+                confidence=detection.confidence,
+            )
+
+        annotationsMatched.append((annotation, detection))
+        detections.remove(detection)
+        ious_best.append(iou_best)
 
     # Detections unmatched are detections left in list.
     detectionsUnmatched = detections
@@ -276,6 +292,7 @@ def EvaluateMetrics(
         All=len(annotations),
         AvgWidth=avgWidth,
         AvgHeight=avgHeight,
+        iou_avg=sum(ious_best) / len(ious_best),
         TP=TP,
         FP=FP,
         FN=FN,
