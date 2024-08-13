@@ -25,7 +25,7 @@ class Metrics:
     # Average of best IOU of all annotations
     iou_avg: float = field(init=True, default=0.0)
     # Overallping IOU (rest of all detections)
-    iou_rest_avg: float = field(init=True, default=0.0)
+    overlapping_iou: float = field(init=True, default=0.0)
     # True postive validated annotations
     TP: int = field(init=True, default=0)
     # False positive validated annotations
@@ -210,6 +210,24 @@ def EvaluateMetrics(
     # 1. Drop detections with (confidence < minConfidence)
     detections = [item for item in detections if (item.confidence > minConfidence)]
 
+    # Metric : Annotations overlapping.
+    # Calculate total sum of all IOU overlapings with other annotations.
+    overlapping_iou_avg: float = 0.0
+    for i, annotation in enumerate(annotations):
+        # Calculate IOU with all other annotations.
+        annotation_ious_sum: float = 0.0
+        for j, other in enumerate(annotations):
+            if i == j:
+                continue
+
+            annotation_ious_sum += boxes.iou(annotation.box, other.box)
+
+        # Sum of all IOU overlapiings with other annotations.
+        overlapping_iou_avg += annotation_ious_sum / len(annotations)
+
+    # Average of all IOU overlapiings with other annotations.
+    overlapping_iou_avg /= len(annotations)
+
     # Annotation with Detection => TP or FN
     annotationsMatched = []
     # Annotation lonely. => FN
@@ -218,8 +236,6 @@ def EvaluateMetrics(
     detectionsUnmatched = []
     # List of all best IOUs for all annotations
     ious_best: list[float] = []
-    # List of sum of all iou overlapping (rest of detections)
-    ious_rest: list[float] = []
 
     # For all annotations
     for annotation in annotations:
@@ -228,10 +244,9 @@ def EvaluateMetrics(
             annotation.SetEvalution(AnnoteEvaluation.FalseNegative, iou=0, confidence=0)
             annotationsUnmatched.append(annotation)
             ious_best.append(0)
-            ious_rest.append(0)
             continue
 
-        # 1. Calculate all possibilities (detections)
+        # 1. IOU (annotations, detections)
         possibilities: list[tuple[float, Annote]] = [
             (boxes.iou(annotation.box, detection.box), detection)
             for detection in detections
@@ -240,14 +255,12 @@ def EvaluateMetrics(
         # Sort and get best
         possibilities = sorted(possibilities, key=lambda x: x[0], reverse=True)
         iou_best, detection = possibilities[0]
-        ious_rest_sum = sum([iou for iou, _ in possibilities[1:]])
 
         # Check : Not matched
         if iou_best < minIOU:
             annotation.SetEvalution(AnnoteEvaluation.FalseNegative, iou=0, confidence=0)
             annotationsUnmatched.append(annotation)
             ious_best.append(0)
-            ious_rest.append(ious_rest_sum)
             continue
 
         # Match : Box and class number
@@ -268,7 +281,6 @@ def EvaluateMetrics(
         annotationsMatched.append((annotation, detection))
         detections.remove(detection)
         ious_best.append(iou_best)
-        ious_rest.append(ious_rest_sum)
 
     # Detections unmatched are detections left in list.
     detectionsUnmatched = detections
@@ -301,7 +313,7 @@ def EvaluateMetrics(
         AvgWidth=avgWidth,
         AvgHeight=avgHeight,
         iou_avg=sum(ious_best) / len(ious_best),
-        iou_rest_avg=sum(ious_rest) / len(ious_rest),
+        overlapping_iou=overlapping_iou_avg,
         TP=TP,
         FP=FP,
         FN=FN,
