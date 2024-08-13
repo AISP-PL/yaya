@@ -124,6 +124,12 @@ class ViewImagesTableRow:
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 
+        # Overlappping IOU
+        item = PercentTableWidgetItem(100 * metrics.iou_rest_avg, is_color=True)
+        item.setToolTip(str(fileEntry["ID"]))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1
+
         # Average width, height, size
         item = RectTableWidgetItem(metrics.AvgWidth, metrics.AvgHeight)
         item.setToolTip(str(fileEntry["ID"]))
