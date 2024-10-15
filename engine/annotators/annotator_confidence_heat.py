@@ -103,7 +103,7 @@ class AnnotatorConfidenceHeat:
         )
 
         # Text
-        if isLabel or isConfidence:
+        if isLabel:
             QDrawText(
                 painter=painter,
                 point=text_point,
