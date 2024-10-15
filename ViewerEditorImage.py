@@ -162,11 +162,26 @@ class ViewerEditorImage(QWidget):
         """Set class number."""
         self.classNumber = index
 
-    def SetEditorMode(self, mode, argument=None):
+    def __autosetCursor(self, mode : int) -> None:
+        ''' Auto set cursor based on editor mode '''
+        # Cursor : Cross when adding annotation
+        if mode == self.ModeAddAnnotation:
+            self.setCursor(Qt.CrossCursor)
+        # Cursor: Delete when removing annotation
+        elif mode == self.ModeRemoveAnnotation:
+            self.setCursor(Qt.ForbiddenCursor)
+        # Cursor : Rename when renaming annotation
+        elif mode == self.ModeRenameAnnotation:
+            self.setCursor(Qt.IBeamCursor)
+        else:
+            self.setCursor(Qt.ArrowCursor)
+
+    def SetEditorMode(self, mode : int, argument : Any =None) -> bool:
         """Sets editor mode."""
         self.__resetEditorMode()
         self.editorMode = mode
         self.editorModeArgument = argument
+        self.__autosetCursor(self.editorMode)
         return True
 
     def SetEditorModeArgument(self, argument):
@@ -180,6 +195,7 @@ class ViewerEditorImage(QWidget):
         self.mouseClicks = []
         self.mouseDragging = False
         self.editorMode = defaultMode
+        self.__autosetCursor(self.editorMode)
 
     def SetAnnoter(self, annoter):
         """Set annoter handle."""
@@ -590,8 +606,8 @@ class ViewerEditorImage(QWidget):
                 radius = round((self.editorModeArgument / imWidth) * viewportWidth)
                 QDrawElipse(widgetPainter, mousePosition, radius)
 
-        # Draw crosshair
-        if mousePosition is not None:
+        # Draw crosshair : Only in specific modes
+        if (mousePosition is not None) and self.editorMode in {self.ModeAddAnnotation}:
             QDrawCrosshair(
                 widgetPainter,
                 mousePosition.x(),
