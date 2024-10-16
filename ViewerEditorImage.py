@@ -162,8 +162,8 @@ class ViewerEditorImage(QWidget):
         """Set class number."""
         self.classNumber = index
 
-    def __autosetCursor(self, mode : int) -> None:
-        ''' Auto set cursor based on editor mode '''
+    def __autosetCursor(self, mode: int) -> None:
+        """Auto set cursor based on editor mode"""
         # Cursor : Cross when adding annotation
         if mode == self.ModeAddAnnotation:
             self.setCursor(Qt.CrossCursor)
@@ -176,7 +176,7 @@ class ViewerEditorImage(QWidget):
         else:
             self.setCursor(Qt.ArrowCursor)
 
-    def SetEditorMode(self, mode : int, argument : Any =None) -> bool:
+    def SetEditorMode(self, mode: int, argument: Any = None) -> bool:
         """Sets editor mode."""
         self.__resetEditorMode()
         self.editorMode = mode

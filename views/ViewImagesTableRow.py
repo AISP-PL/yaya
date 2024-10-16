@@ -137,7 +137,7 @@ class ViewImagesTableRow:
         colIndex += 1
 
         # New detections [j]
-        item = FloatTableWidgetItem(metrics.new_detections, decimals=0)
+        item = AnnotationsTableWidgetItem(metrics.new_detections)
         item.setToolTip(str(fileEntry["ID"]))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1

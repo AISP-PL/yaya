@@ -38,6 +38,8 @@ class Metrics:
     LTP: int = field(init=True, default=0)
     # List of all detections
     detections: list = field(init=True, default_factory=list)
+    # List of new detections
+    new_detections: list = field(init=True, default_factory=list)
     # List of matched pairs (annotation, detection)
     matches: list = field(init=True, default_factory=list)
 
@@ -115,11 +117,6 @@ class Metrics:
             return 0
 
         return 100 * self.TP / self.All
-
-    @property
-    def new_detections(self) -> int:
-        """Newly detected bboxes"""
-        return self.FP
 
     @property
     def precision(self):
@@ -319,5 +316,6 @@ def EvaluateMetrics(
         FN=FN,
         LTP=LTP,
         detections=original_detections,
+        new_detections=detectionsUnmatched,
         matches=annotationsMatched,
     )
