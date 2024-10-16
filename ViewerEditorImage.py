@@ -6,12 +6,12 @@ Created on 30 gru 2020
 
 from enum import Enum
 import logging
-from typing import Any, Optional
+from typing import Any, List, Optional
 
 import cv2
 import numpy as np
 from PyQt5.QtCore import QPointF, QPoint, Qt, pyqtSignal
-from PyQt5.QtGui import QPainter, QPixmap, QPen
+from PyQt5.QtGui import QPainter, QPixmap, QPen, QTransform
 from PyQt5.QtWidgets import QWidget
 
 from engine.annotators.annotator import Annotator
@@ -57,6 +57,7 @@ class ViewerEditorImage(QWidget):
     ImageScalingResize = 0
     ImageScalingResizeAspectRatio = 1
     ImageScalingOriginalSize = 2
+    ImageScalingDynamicZoom = 3
 
     # Image scaling algorithm
     ImageScalingLinear = 0
@@ -81,7 +82,7 @@ class ViewerEditorImage(QWidget):
         # Background image loaded
         self.imageBg = None
         # Mode of scaling image
-        self.imageScaling = self.ImageScalingResize
+        self.imageScaling = self.ImageScalingDynamicZoom
         # Annoter for image
         self.annoter = None
         # Selected annotation index
@@ -107,6 +108,18 @@ class ViewerEditorImage(QWidget):
         # Miniature current position
         self.miniaturePosition = ViewerEditorImage.MiniatureLeft
 
+        self.imageScaling = (
+            self.ImageScalingDynamicZoom
+        )  # Ustawienie domyślnego trybu skalowania
+        self.scale_factor = 1.0  # Współczynnik skalowania dla zoomu
+
+        # Zmienne do obsługi przesuwania (panning)
+        self._pan = False
+        self._pan_start_x = 0
+        self._pan_start_y = 0
+        self._offset_x = 0
+        self._offset_y = 0
+
         # UI init and show
         self.setMouseTracking(True)
         self.show()
@@ -124,7 +137,9 @@ class ViewerEditorImage(QWidget):
 
         return qtrajectory
 
-    def AbsoluteQTrajectoryToTrajectory(self, qtrajectory, width, height):
+    def AbsoluteQTrajectoryToTrajectory(
+        self, qtrajectory, width, height
+    ) -> List[QPoint]:
         """Recalculate trajectory to Q absolute trajectory."""
         trajectory = []
         for qpoint in qtrajectory:
@@ -142,6 +157,14 @@ class ViewerEditorImage(QWidget):
         item["QViewWidth"] = width
         item["QViewHeight"] = height
         return item
+
+    def mapToTransformed(self, point: QPoint) -> QPoint:
+        """Mapuje punkt do układu współrzędnych po transformacji."""
+        inv_transform = QTransform()
+        inv_transform.translate(self._offset_x, self._offset_y)
+        inv_transform.scale(self.scale_factor, self.scale_factor)
+        inv_transform = inv_transform.inverted()[0]
+        return inv_transform.map(point)
 
     def GetOption(self, name):
         """Set configuration option."""
@@ -211,11 +234,16 @@ class ViewerEditorImage(QWidget):
 
         self.annotation_selected_id = None
         self.imageBg = image
+        self.scale_factor = 1.0
+        self._pan = False
+        self._pan_start_x = 0
+        self._pan_start_y = 0
+        self._offset_x = 0
+        self._offset_y = 0
         self.update()
 
     def SetImageScaling(self, scalingMode):
         """Sets image scaling mode."""
-        self.imageScaling = scalingMode
 
     def GetImageSize(self):
         """Returns ."""
@@ -264,11 +292,64 @@ class ViewerEditorImage(QWidget):
         # Save to filepath (return bool)
         return pixmap.save(path)
 
+    def wheelEvent(self, event):
+        """Obsługa zdarzenia przewijania myszy dla zoomu."""
+        # Pozycja kursora w momencie zdarzenia
+        cursor_x = event.pos().x()
+        cursor_y = event.pos().y()
+
+        # Pozycja kursora w układzie współrzędnych obrazu przed zmianą skalowania
+        img_pos_x = (cursor_x - self._offset_x) / self.scale_factor
+        img_pos_y = (cursor_y - self._offset_y) / self.scale_factor
+
+        delta = event.angleDelta().y()
+        if delta > 0:
+            self.scale_factor *= 1.1
+        else:
+            self.scale_factor /= 1.1
+
+        # Ograniczenie współczynnika skalowania do sensownych wartości
+        self.scale_factor = max(1, min(self.scale_factor, 10))
+
+        # Aktualizacja przesunięć, aby zoomować do pozycji kursora
+        self._offset_x = cursor_x - img_pos_x * self.scale_factor
+        self._offset_y = cursor_y - img_pos_y * self.scale_factor
+
+        self.clamp_offsets()
+        self.update()
+
+    def clamp_offsets(self):
+        imWidth, imHeight = self.GetImageSize()
+        viewportWidth = int(imWidth * self.scale_factor)
+        viewportHeight = int(imHeight * self.scale_factor)
+        widgetWidth, widgetHeight = self.GetViewSize()
+        min_offset_x = widgetWidth - viewportWidth if viewportWidth > widgetWidth else 0
+        max_offset_x = (
+            0 if viewportWidth > widgetWidth else (widgetWidth - viewportWidth) // 2
+        )
+        min_offset_y = (
+            widgetHeight - viewportHeight if viewportHeight > widgetHeight else 0
+        )
+        max_offset_y = (
+            0 if viewportHeight > widgetHeight else (widgetHeight - viewportHeight) // 2
+        )
+        self._offset_x = min(max(self._offset_x, min_offset_x), max_offset_x)
+        self._offset_y = min(max(self._offset_y, min_offset_y), max_offset_y)
+
     def mouseMoveEvent(self, event):
         """Handle mouse move event."""
         self.mousePosition = event.pos()
         if self.mouseTrajectory is not None:
             self.mouseTrajectory.append(event.pos())
+
+        if self._pan:
+            dx = event.x() - self._pan_start_x
+            dy = event.y() - self._pan_start_y
+            self._offset_x += dx
+            self._offset_y += dy
+            self._pan_start_x = event.x()
+            self._pan_start_y = event.y()
+            self.clamp_offsets()
 
         self.update()
 
@@ -291,9 +372,12 @@ class ViewerEditorImage(QWidget):
                     self.mouseClicks.clear()
 
                 x, y = event.pos().x(), event.pos().y()
+                transf_point = self.mapToTransformed(QPoint(x, y))
                 viewWidth, viewHeight = self.GetViewSize()
                 toDelete = self.GetHoveredAnnotation(
-                    boxes.PointToRelative((x, y), viewWidth, viewHeight)
+                    boxes.PointToRelative(
+                        (transf_point.x(), transf_point.y()), viewWidth, viewHeight
+                    )
                 )
 
                 if toDelete is not None:
@@ -307,9 +391,12 @@ class ViewerEditorImage(QWidget):
             # LPM finds annotation
             if event.buttons() == Qt.LeftButton:
                 x, y = event.pos().x(), event.pos().y()
+                transf_point = self.mapToTransformed(QPoint(x, y))
                 viewWidth, viewHeight = self.GetViewSize()
                 toDelete = self.GetHoveredAnnotation(
-                    boxes.PointToRelative((x, y), viewWidth, viewHeight)
+                    boxes.PointToRelative(
+                        (transf_point.x(), transf_point.y()), viewWidth, viewHeight
+                    )
                 )
                 # If clicked on annotation the return
                 if toDelete is not None:
@@ -323,9 +410,12 @@ class ViewerEditorImage(QWidget):
             # LPM finds annotation
             if event.buttons() == Qt.LeftButton:
                 x, y = event.pos().x(), event.pos().y()
+                transf_point = self.mapToTransformed(QPoint(x, y))
                 viewWidth, viewHeight = self.GetViewSize()
                 toDelete = self.GetHoveredAnnotation(
-                    boxes.PointToRelative((x, y), viewWidth, viewHeight)
+                    boxes.PointToRelative(
+                        (transf_point.x(), transf_point.y()), viewWidth, viewHeight
+                    )
                 )
 
                 # If clicked on annotation the return
@@ -348,6 +438,13 @@ class ViewerEditorImage(QWidget):
         if self.editorMode == self.ModePaintCircle:
             self.CallbackEditorFinished(mouse_button=MouseButton.LeftMouseButton)
 
+        if event.button() == Qt.LeftButton and self._pan:
+            self._pan = False
+            self.setCursor(Qt.ArrowCursor)
+            return
+
+        super().mouseReleaseEvent(event)
+
     def CallbackEditorFinished(
         self, mouse_button: MouseButton = MouseButton.NoButton
     ) -> None:
@@ -356,20 +453,9 @@ class ViewerEditorImage(QWidget):
         widgetWidth, widgetHeight = self.GetViewSize()
         # Get image width & height
         imWidth, imHeight = self.GetImageSize()
-        # ---------- Select scaling mode -----------
+
         # Resize
-        if self.imageScaling == self.ImageScalingResize:
-            viewportWidth, viewportHeight = widgetWidth, widgetHeight
-
-        # Resize with aspect ratio
-        elif self.imageScaling == self.ImageScalingResizeAspectRatio:
-            viewportWidth, viewportHeight = GetFixedFitToBox(
-                imWidth, imHeight, widgetWidth, widgetHeight
-            )
-
-        # Original size
-        elif self.imageScaling == self.ImageScalingOriginalSize:
-            viewportWidth, viewportHeight = imWidth, imHeight
+        viewportWidth, viewportHeight = widgetWidth, widgetHeight
 
         # Mode : Adding
         if self.editorMode == self.ModeAddAnnotation:
@@ -386,9 +472,14 @@ class ViewerEditorImage(QWidget):
                     self.mouseClicks.clear()
                     return
 
+                # Zoom transform of clicks
+                transformed_clicks = [
+                    self.mapToTransformed(point) for point in self.mouseClicks
+                ]
+
                 # Mouse clicks to relative
                 clicks_rel = self.AbsoluteQTrajectoryToTrajectory(
-                    self.mouseClicks, viewportWidth, viewportHeight
+                    transformed_clicks, viewportWidth, viewportHeight
                 )
                 box = PointsToRect(clicks_rel[0], clicks_rel[1])
                 self.annoter.AddAnnotation(box, self.classNumber)
@@ -412,8 +503,12 @@ class ViewerEditorImage(QWidget):
             # Mouse trajectory relative
             trajectoryRel = []
             if self.mouseTrajectory is not None:
+                # Zoom transform of clicks
+                transformed_clicks = [
+                    self.mapToTransformed(point) for point in self.mouseTrajectory
+                ]
                 trajectoryRel = self.AbsoluteQTrajectoryToTrajectory(
-                    self.mouseTrajectory, viewportWidth, viewportHeight
+                    transformed_clicks, viewportWidth, viewportHeight
                 )
 
             imWidth, imHeight = self.GetImageSize()
@@ -489,8 +584,7 @@ class ViewerEditorImage(QWidget):
         # Get Preview info width & height
         widgetWidth, widgetHeight = self.GetViewSize()
         # Create painter
-        widgetPainter = QPainter()
-        widgetPainter.begin(self)
+        widgetPainter = QPainter(self)
 
         # If image is loaded?
         if self.imageBg is not None:
@@ -501,43 +595,40 @@ class ViewerEditorImage(QWidget):
         else:
             # Setup image width & height
             imWidth, imHeight = self.GetViewSize()
-            image = np.zeros([imWidth, imHeight, 3], dtype=np.uint8)
+            image = np.zeros([imHeight, imWidth, 3], dtype=np.uint8)
 
-        # ---------- Select scaling mode -----------
-        # Resize
-        if self.imageScaling == self.ImageScalingResize:
-            viewportWidth, viewportHeight = widgetWidth, widgetHeight
+        viewportWidth, viewportHeight = widgetWidth, widgetHeight
 
-        # Resize with aspect ratio
-        elif self.imageScaling == self.ImageScalingResizeAspectRatio:
-            viewportWidth, viewportHeight = GetFixedFitToBox(
-                imWidth, imHeight, widgetWidth, widgetHeight
-            )
-            widgetPainter.setViewport(0, 0, viewportWidth, viewportHeight)
+        # Save the current transformation
+        widgetPainter.save()
 
-        # Original size
-        elif self.imageScaling == self.ImageScalingOriginalSize:
-            widgetPainter.setViewport(0, 0, imWidth, imHeight)
-            viewportWidth, viewportHeight = imWidth, imHeight
+        # Apply scaling and translation after drawing everything
+        # Create a transform
+        transform = QTransform()
+
+        # Apply panning offsets
+        transform.translate(self._offset_x, self._offset_y)
+        # Apply scaling centered at the top-left corner (adjust if needed)
+        transform.scale(self.scale_factor, self.scale_factor)
+
+        # Set the transform to the painter
+        widgetPainter.setTransform(transform)
 
         # Recalculate mouse position to viewport
         mousePosition = None
         if self.mousePosition is not None:
-            mx, my = boxes.PointToRelative(
-                (self.mousePosition.x(), self.mousePosition.y()),
-                viewportWidth,
-                viewportHeight,
-            )
-            mousePosition = QPointF(mx * widgetWidth, my * widgetHeight)
+            # Adjust for scaling and translation
+            inv_transform = widgetPainter.transform().inverted()[0]
+            mapped_point = inv_transform.map(self.mousePosition)
+            mousePosition = mapped_point
 
         # Recalculate mouse clicks to viewport
         mouseClicks = []
         if len(self.mouseClicks):
+            inv_transform = widgetPainter.transform().inverted()[0]
             for mouseClick in self.mouseClicks:
-                mx, my = boxes.PointToRelative(
-                    (mouseClick.x(), mouseClick.y()), viewportWidth, viewportHeight
-                )
-                mouseClicks.append(QPointF(mx * widgetWidth, my * widgetHeight))
+                mapped_point = inv_transform.map(mouseClick)
+                mouseClicks.append(mapped_point)
 
         # Draw current OpenCV image as pixmap
         pixmap = CvImage2QtImage(image)
@@ -545,7 +636,11 @@ class ViewerEditorImage(QWidget):
 
         # Draw miniature
         if self.isThumbnail:
+            # Need to save and restore the transformation around drawing the miniature
+            widgetPainter.save()
+            widgetPainter.resetTransform()
             self.paintMiniature(widgetPainter, image)
+            widgetPainter.restore()
 
         # Check : Annotations not hidden
         if not self.config["isAnnotationsHidden"]:
@@ -576,13 +671,11 @@ class ViewerEditorImage(QWidget):
             # Draw hovered annotation
             if mousePosition is not None:
                 # Get hovered annotation
-                annote = self.GetHoveredAnnotation(
-                    boxes.PointToRelative(
-                        (self.mousePosition.x(), self.mousePosition.y()),
-                        viewportWidth,
-                        viewportHeight,
-                    )
-                )
+                x = mousePosition.x()
+                y = mousePosition.y()
+                viewWidth, viewHeight = self.GetViewSize()
+                rel_x, rel_y = boxes.PointToRelative((x, y), viewWidth, viewHeight)
+                annote = self.GetHoveredAnnotation((rel_x, rel_y))
                 if annote is not None:
                     Annotator.QtDraw(
                         annote,
@@ -623,4 +716,5 @@ class ViewerEditorImage(QWidget):
                 Qt.red,
             )
 
-        widgetPainter.end()
+        # Restore the previous transformation
+        widgetPainter.restore()

@@ -80,9 +80,6 @@ class ViewImagesSummary:
         if (files is None) or (len(files) == 0):
             return
 
-        # Get translations
-        _translate = QtCore.QCoreApplication.translate
-
         # Files summary create
         summary = Summary()
         for fileEntry in files:
