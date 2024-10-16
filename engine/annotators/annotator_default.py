@@ -3,6 +3,7 @@
 """
 
 from PyQt5.QtCore import QPoint, Qt
+from PyQt5.QtGui import QColor
 from engine.annote_enums import AnnoteAuthorType, AnnoteEvaluation
 import helpers.boxes as boxes
 from helpers.QtDrawing import QDrawElipse, QDrawRectangle, QDrawText, TextAlignment
@@ -33,15 +34,15 @@ class AnnotatorDefault:
                 AnnoteEvaluation.noEvaluation,
                 AnnoteEvaluation.TruePositiveLabel,
             ]:
-                brushColor = Qt.black
+                brush_color = Qt.black
             elif self.evalution == AnnoteEvaluation.TruePositive:
-                brushColor = Qt.darkYellow
+                brush_color = Qt.darkYellow
             elif self.evalution == AnnoteEvaluation.FalseNegative:
-                brushColor = Qt.red
+                brush_color = Qt.red
 
         # Created by detector YOLO
         elif self.authorType == AnnoteAuthorType.byDetector:
-            brushColor = Qt.darkBlue
+            brush_color = QColor(0, 200, 0)
             brush_opacity = 0.6
             label = "{}".format(self.className)
             # If confidence drawing enabled
@@ -50,16 +51,16 @@ class AnnotatorDefault:
 
         # Created by hand
         elif self.authorType == AnnoteAuthorType.byHand:
-            brushColor = Qt.darkGreen
+            brush_color = Qt.darkGreen
             brush_opacity = 0.6
 
         # Draw rectangle box
         QDrawRectangle(
             painter,
             [QPoint(x1, y1), QPoint(x2, y2)],
-            pen=brushColor,
+            pen=brush_color,
             penThickness=thickness,
-            brushColor=brushColor,
+            brushColor=brush_color,
             brushOpacity=brush_opacity,
         )
 
@@ -69,7 +70,7 @@ class AnnotatorDefault:
                 painter=painter,
                 point=QPoint(x1, y1),
                 text=label,
-                bgColor=brushColor,
+                bgColor=brush_color,
                 textAlign=TextAlignment.Center,
             )
 

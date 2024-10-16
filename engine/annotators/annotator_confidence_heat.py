@@ -85,22 +85,32 @@ class AnnotatorConfidenceHeat:
             pen_color = Qt.black
             text_color = Qt.black
             pen_thickness = 2
-        elif annote.authorType == AnnoteAuthorType.byDetector:
-            text_point = QPoint(x1, y1)
-            brush_color = Qt.darkBlue
-            pen_color = brush_color
-            text_color = Qt.white
-            pen_thickness = 2
+            # Draw rectangle box
+            QDrawRectangle(
+                painter,
+                [QPoint(x1, y1), QPoint(x2, y2)],
+                pen=pen_color,
+                penThickness=pen_thickness,
+                brushColor=brush_color,
+                brushOpacity=brush_opacity,
+            )
 
-        # Draw rectangle box
-        QDrawRectangle(
-            painter,
-            [QPoint(x1, y1), QPoint(x2, y2)],
-            pen=pen_color,
-            penThickness=pen_thickness,
-            brushColor=brush_color,
-            brushOpacity=brush_opacity,
-        )
+        # From detector (new detection)
+        else:
+            text_point = QPoint(x1, y1)
+            text_color = Qt.white
+            # Green
+            brush_color = QColor(0, 200, 0)
+            # Draw rectangle box with bold pen and dark color
+            QDrawRectangle(
+                painter,
+                [QPoint(x1, y1), QPoint(x2, y2)],
+                pen=QColor(0, 200, 0),  # green
+                penThickness=1,
+                brushColor=QColor(0, 200, 0),  # green
+                brushStyle=Qt.SolidPattern,
+                brushOpacity=0.6,
+            )
 
         # Text
         if isLabel:

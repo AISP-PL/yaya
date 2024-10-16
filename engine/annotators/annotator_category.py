@@ -72,8 +72,7 @@ class AnnotatorCategory:
 
             # Extra check : If it is not detected
             if annote.evalution == AnnoteEvaluation.FalseNegative:
-                brush_color = Qt.red
-                brush_opacity = 0.80
+                pen_color = Qt.red
 
             # Draw rectangle box
             QDrawRectangle(
@@ -89,31 +88,17 @@ class AnnotatorCategory:
         elif annote.authorType == AnnoteAuthorType.byDetector:
             text_point = QPoint(x1, y1)
             text_color = Qt.white
-
+            # Green
+            brush_color = QColor(0, 200, 0)
             # Draw rectangle box with bold pen and dark color
             QDrawRectangle(
                 painter,
                 [QPoint(x1, y1), QPoint(x2, y2)],
-                pen=QColor(0, 0, 139),  # dark BLue
-                penThickness=6,
-                brushColor=QColor(173, 216, 230),  # LightBlue
-                brushStyle=Qt.BDiagPattern,
-            )
-            # Draw empty rectangle box with thin pen and bright color
-            QDrawRectangle(
-                painter,
-                [QPoint(x1, y1), QPoint(x2, y2)],
-                pen=QColor(173, 216, 230),  # LightBlue
-                penThickness=3,
-                brushStyle=Qt.NoBrush,
-            )
-            # Draw empty rectangle box with 1px pen and white color
-            QDrawRectangle(
-                painter,
-                [QPoint(x1, y1), QPoint(x2, y2)],
-                pen=Qt.red,
+                pen=QColor(0, 200, 0),  # green
                 penThickness=1,
-                brushStyle=Qt.NoBrush,
+                brushColor=QColor(0, 200, 0),  # green
+                brushStyle=Qt.SolidPattern,
+                brushOpacity=0.6,
             )
 
         # Text
