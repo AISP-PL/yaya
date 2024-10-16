@@ -27,7 +27,7 @@ class AnnotationsTableWidgetItem(QtWidgets.QTableWidgetItem):
         class_counts = dict(sorted(class_counts.items()))
 
         # Text : Create list of texts "N x class_id"
-        texts = [f"{count} x {class_id}" for class_id, count in class_counts.items()]
+        texts = [f"{count} x C{class_id}" for class_id, count in class_counts.items()]
         text = "\n".join(texts)
         self.setText(text)
         self.setTextAlignment(QtCore.Qt.AlignCenter)

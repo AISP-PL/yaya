@@ -550,8 +550,14 @@ class ViewerEditorImage(QWidget):
         # Check : Annotations not hidden
         if not self.config["isAnnotationsHidden"]:
 
+            # Annotations : Get
+            annotations = self.annoter.GetAnnotations()
+
+            # Sort by area (biggest first)
+            annotations.sort(key=lambda x: x.area, reverse=True)
+
             # Draw : All annotations
-            for index, annotate in enumerate(self.annoter.GetAnnotations()):
+            for index, annotate in enumerate(annotations):
                 Annotator.QtDraw(
                     annotate,
                     widgetPainter,

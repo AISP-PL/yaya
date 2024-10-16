@@ -208,22 +208,26 @@ def QDrawRectangle(
     brushColor=Qt.white,
     brushStyle=Qt.SolidPattern,
     brushOpacity=1,
-):
+) -> None:
     """Helper function for polygon drawing."""
     p1 = points[0]
     p2 = points[1]
-    polygon = QPolygon()
-    polygon.append(QPoint(int(p2.x()), int(p1.y())))  # top right
-    polygon.append(QPoint(int(p1.x()), int(p1.y())))  # top left
-    polygon.append(QPoint(int(p1.x()), int(p2.y())))  # bottom left
-    polygon.append(QPoint(int(p2.x()), int(p2.y())))  # bottom right
+    # Create polygon zero-shot from points list
+    polygon = QPolygon(
+        [
+            QPoint(int(p2.x()), int(p1.y())),
+            QPoint(int(p1.x()), int(p1.y())),
+            QPoint(int(p1.x()), int(p2.y())),
+            QPoint(int(p2.x()), int(p2.y())),
+        ]
+    )
 
     # Set pen and brush
-    pen = QPen(pen, penThickness, penStyle)
-    painter.setPen(pen)
+    painter.setPen(QPen(pen, penThickness, penStyle))
     color = QColor(brushColor)
     color.setAlphaF(brushOpacity)
     painter.setBrush(QBrush(color, brushStyle))
+
     # Draw
     painter.drawPolygon(polygon)
 

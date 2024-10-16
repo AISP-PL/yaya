@@ -28,6 +28,7 @@ class AnnotatorCategory:
         brush_opacity: float = 0.30
         if highlight:
             brush_opacity = 0.60
+
         # Get image size
         width, height = painter.window().getRect()[2:]
         # Get box coordinates
@@ -65,25 +66,55 @@ class AnnotatorCategory:
 
         # Pen properties  : Depends on author type
         if annote.authorType in {AnnoteAuthorType.byHuman, AnnoteAuthorType.byHand}:
-            pen_color = Qt.black
+            pen_color = brush_color
             text_color = Qt.black
             pen_thickness = 2
+
+            # Extra check : If it is not detected
+            if annote.evalution == AnnoteEvaluation.FalseNegative:
+                brush_color = Qt.red
+                brush_opacity = 0.80
+
+            # Draw rectangle box
+            QDrawRectangle(
+                painter,
+                [QPoint(x1, y1), QPoint(x2, y2)],
+                pen=pen_color,
+                penThickness=pen_thickness,
+                brushColor=brush_color,
+                brushOpacity=brush_opacity,
+            )
+
+        # New detection
         elif annote.authorType == AnnoteAuthorType.byDetector:
             text_point = QPoint(x1, y1)
-            brush_color = Qt.darkBlue
-            pen_color = brush_color
             text_color = Qt.white
-            pen_thickness = 2
 
-        # Draw rectangle box
-        QDrawRectangle(
-            painter,
-            [QPoint(x1, y1), QPoint(x2, y2)],
-            pen=pen_color,
-            penThickness=pen_thickness,
-            brushColor=brush_color,
-            brushOpacity=brush_opacity,
-        )
+            # Draw rectangle box with bold pen and dark color
+            QDrawRectangle(
+                painter,
+                [QPoint(x1, y1), QPoint(x2, y2)],
+                pen=QColor(0, 0, 139),  # dark BLue
+                penThickness=6,
+                brushColor=QColor(173, 216, 230),  # LightBlue
+                brushStyle=Qt.BDiagPattern,
+            )
+            # Draw empty rectangle box with thin pen and bright color
+            QDrawRectangle(
+                painter,
+                [QPoint(x1, y1), QPoint(x2, y2)],
+                pen=QColor(173, 216, 230),  # LightBlue
+                penThickness=3,
+                brushStyle=Qt.NoBrush,
+            )
+            # Draw empty rectangle box with 1px pen and white color
+            QDrawRectangle(
+                painter,
+                [QPoint(x1, y1), QPoint(x2, y2)],
+                pen=Qt.red,
+                penThickness=1,
+                brushStyle=Qt.NoBrush,
+            )
 
         # Text
         if isLabel:
