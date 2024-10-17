@@ -15,20 +15,20 @@ from typing import Optional
 class Dataset:
     """Class containing the file dataset informations."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Init."""
         # Path
         self._path: Optional[str] = None
         # Dataset
-        self._dataset: set[str] = {}
+        self._dataset: set[str] = set()
         # Is not saved
         self._is_not_saved: bool = False
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Return length of dataset."""
         return len(self._dataset)
 
-    def add(self, path: str):
+    def add(self, path: str) -> None:
         """Add path to dataset."""
         if self.is_inside(path):
             logging.error("Path %s is already in dataset.", path)
@@ -37,7 +37,7 @@ class Dataset:
         self._dataset.add(path)
         self._is_not_saved = True
 
-    def remove(self, path: str):
+    def remove(self, path: str) -> None:
         """Remove path from dataset."""
         if not self.is_inside(path):
             logging.error("Path %s is not in dataset.", path)
@@ -46,7 +46,7 @@ class Dataset:
         self._dataset.remove(path)
         self._is_not_saved = True
 
-    def load(self, path: str):
+    def load(self, path: str) -> None:
         """Load dataset from file."""
         self._path = path
 
@@ -63,7 +63,7 @@ class Dataset:
         # Info
         logging.info("Loaded %d paths from dataset.", len(self._dataset))
 
-    def save(self):
+    def save(self) -> None:
         """Save dataset to file."""
         if self._path is None:
             logging.error("Path is not set.")
