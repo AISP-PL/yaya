@@ -8,21 +8,19 @@ from helpers.files import FixPath, IsImageFile
 from helpers.textAnnotations import IsExistsAnnotations
 
 
-def GetAnnotatedImages(path: str):
+def GetAnnotatedImages(path: str) -> list[str]:
     """List directory images."""
     # filter only images and not excludes
     excludes = [".", "..", "./", ".directory"]
     filenames = os.listdir(path)
 
-    # Filter images only
-    filenames = [f for f in filenames if (f not in excludes) and (IsImageFile(f))]
-
-    # Get only images with annotations
-    filenamesAnnotated = [
-        f for f in filenames if (IsExistsAnnotations(path + f) == True)
+    # Filter images with annotations only
+    filtered = [
+        f
+        for f in filenames
+        if (f not in excludes) and (IsImageFile(f)) and IsExistsAnnotations(path + f)
     ]
-
-    return filenamesAnnotated
+    return filtered
 
 
 def main():
@@ -54,14 +52,15 @@ def main():
 
     # Get annotated images
     annotated = GetAnnotatedImages(path)
+    logging.info("(Logging) Found %u annotated images in %s.", len(annotated), path)
 
     # Save results
     with open(args.output, "w") as f:
         for line in annotated:
             f.write(path + line + "\n")
 
-    # Logging informations
-    logging.info("(Logging) Found %u annotations.", len(annotated))
+    # Logg save
+    logging.info("(Logging) Saved %u annotations to %s.", len(annotated), args.output)
 
 
 if __name__ == "__main__":

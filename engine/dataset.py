@@ -17,8 +17,11 @@ class Dataset:
 
     def __init__(self):
         """Init."""
+        # Path
         self._path: Optional[str] = None
-        self._dataset: list[str] = []
+        # Dataset
+        self._dataset: set[str] = {}
+        # Is not saved
         self._is_not_saved: bool = False
 
     def __len__(self):
@@ -31,7 +34,7 @@ class Dataset:
             logging.error("Path %s is already in dataset.", path)
             return
 
-        self._dataset.append(path)
+        self._dataset.add(path)
         self._is_not_saved = True
 
     def remove(self, path: str):
@@ -53,7 +56,7 @@ class Dataset:
 
         with open(self._path, "r") as file:
             for line in file:
-                self._dataset.append(line.strip())
+                self._dataset.add(line.strip())
 
         self._is_not_saved = False
 
@@ -68,6 +71,11 @@ class Dataset:
 
         with open(self._path, "w") as file:
             for path in self._dataset:
+                # Check : Path exists still
+                if not os.path.exists(path):
+                    logging.warning("Dataset path %s not exists. Removed.", path)
+                    continue
+
                 file.write(path + "\n")
 
     def is_inside(self, path: str) -> bool:
