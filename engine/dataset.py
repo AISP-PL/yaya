@@ -57,6 +57,8 @@ class Dataset:
         if not os.path.exists(path):
             return
 
+        # Validation file : Read all lines
+        is_any_removed: bool = False
         with open(self._path, "r") as file:
             for line in file:
                 # Full filepath : Create
@@ -65,11 +67,14 @@ class Dataset:
                 # Check : File exists
                 if not os.path.exists(filepath):
                     logging.warning("File %s does not exists. Removed.", filepath)
+                    is_any_removed = True
                     continue
 
                 self._dataset.add(line.strip())
 
         self._is_not_saved = False
+        if is_any_removed:
+            self.save()
 
         # Info
         logging.info("Loaded %d paths from dataset.", len(self._dataset))
@@ -84,6 +89,7 @@ class Dataset:
             for path in self._dataset:
                 file.write(path + "\n")
 
+        self._is_not_saved = False
         logging.info("Saved %d paths to dataset %s.", len(self._dataset), self._path)
 
     def is_inside(self, path: str) -> bool:
