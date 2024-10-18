@@ -48,7 +48,10 @@ class Dataset:
 
     def load(self, path: str) -> None:
         """Load dataset from file."""
+        # Validation file path
         self._path = path
+        # Validation directory path
+        directory_path = os.path.dirname(path)
 
         # Check if file exists
         if not os.path.exists(path):
@@ -56,6 +59,14 @@ class Dataset:
 
         with open(self._path, "r") as file:
             for line in file:
+                # Full filepath : Create
+                filepath = os.path.join(directory_path, line.strip())
+
+                # Check : File exists
+                if not os.path.exists(filepath):
+                    logging.warning("File %s does not exists. Removed.", filepath)
+                    continue
+
                 self._dataset.add(line.strip())
 
         self._is_not_saved = False
@@ -71,12 +82,9 @@ class Dataset:
 
         with open(self._path, "w") as file:
             for path in self._dataset:
-                # Check : Path exists still
-                if not os.path.exists(path):
-                    logging.warning("Dataset path %s not exists. Removed.", path)
-                    continue
-
                 file.write(path + "\n")
+
+        logging.info("Saved %d paths to dataset %s.", len(self._dataset), self._path)
 
     def is_inside(self, path: str) -> bool:
         """Check if path is in dataset."""

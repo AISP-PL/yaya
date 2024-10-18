@@ -694,7 +694,7 @@ class Annoter:
         self.filenames.insert(self.offset, filename)
         logging.info("(Annoter) New image %s created!", filename)
 
-    def AddRemoveValidationDataset(self):
+    def AddRemoveValidationDataset(self) -> None:
         """Add or remove current file to validation dataset"""
         filename = self.GetFilename()
 
