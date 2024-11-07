@@ -5,17 +5,9 @@ from typing import Optional
 from helpers.files import FixPath, GetFilename, GetFiles
 
 
-def IsDarknet():
+def IsDarknet() -> bool:
     """Checks if darknet exists cuda is installed and working."""
-    if os.system("ls /usr/local/lib/libdarknet.so") == 0:
-        return True
-
-    return False
-
-
-def IsCuda():
-    """Checks if GPU cuda is installed and working."""
-    if os.system("nvcc --version") == 0:
+    if os.path.exists("/usr/local/lib/libdarknet.so") == 0:
         return True
 
     return False
