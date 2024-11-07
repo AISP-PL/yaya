@@ -184,8 +184,11 @@ class DetectorCVDNN(Detector):
         if (imwidth == 0) or (imheight == 0):
             return []
 
+        # Frame : Swap BGR to RGB
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
         yolo_classids, yolo_confidences, yolo_bboxes = self.model.detect(
-            frame=frame, confThreshold=confidence, nmsThreshold=nms_thresh
+            frame=frame_rgb, confThreshold=confidence, nmsThreshold=nms_thresh
         )
 
         # Check : Empty
