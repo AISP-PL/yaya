@@ -65,16 +65,22 @@ def CreateDetector(detectorID: int = 0, gpuID: int = 0, path: str = None):
     if detectorID >= len(detectors):
         return None
 
+    # Darknet : Creation
     if IsDarknet():
         from Detectors.DetectorYOLOv4 import DetectorYOLOv4
 
-        cfgPath, weightPath, metaPath, namesPath = detectors[detectorID]
-        return DetectorYOLOv4(cfgPath, weightPath, metaPath)
-    else:
-        from Detectors.detector_yolov4_cvdnn import DetectorCVDNN
+        try:
+            cfgPath, weightPath, metaPath, namesPath = detectors[detectorID]
+            detector = DetectorYOLOv4(cfgPath, weightPath, metaPath)
+            return detector
+        except Exception as e:
+            logging.error("Darknet loading error! Fallback to CVDNN. %s", e)
 
-        cfgPath, weightPath, metaPath, namesPath = detectors[detectorID]
-        return DetectorCVDNN(cfgPath, weightPath, metaPath, namesPath)
+    # CVDNN : Creation
+    from Detectors.detector_yolov4_cvdnn import DetectorCVDNN
+
+    cfgPath, weightPath, metaPath, namesPath = detectors[detectorID]
+    return DetectorCVDNN(cfgPath, weightPath, metaPath, namesPath)
 
 
 def GetDetectorLabels(detectorID=0):
