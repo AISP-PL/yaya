@@ -36,11 +36,27 @@
             "console": "integratedTerminal",
             "args": [
                 "-i",
-                "input/",
+                "/home/spasz/Obrazy/aisp_nowe/",
+                "-det",
+                "1",
+                "-detc",
+                "0.25",
+            ],
+            "justMyCode": false
+        },
+        {
+            "name": "YAYA-ALPR",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/yolo-annotate.py",
+            "console": "integratedTerminal",
+            "args": [
+                "-i",
+                "/home/spasz/Obrazy/alpr_nowe/",
                 "-det",
                 "0",
                 "-detc",
-                "0.25",
+                "0.20",
             ],
             "justMyCode": false
         },

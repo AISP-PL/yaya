@@ -318,7 +318,7 @@ class ViewerEditorImage(QWidget):
         self.clamp_offsets()
         self.update()
 
-    def clamp_offsets(self):
+    def clamp_offsets(self) -> None:
         imWidth, imHeight = self.GetImageSize()
         viewportWidth = int(imWidth * self.scale_factor)
         viewportHeight = int(imHeight * self.scale_factor)
