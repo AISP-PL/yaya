@@ -43,7 +43,7 @@ class ViewAnnotations:
         table.clear()
         labels = _translate(
             "ViewAnnotations",
-            "File/ID;Cat;Conf;Eval;Size;Ratio;Area;Hue;Saturation;Brightness",
+            "File/ID;Cat;Conf;Eval;Size;Ratio;Area;Area/Image;Hue;Saturation;Brightness",
         ).split(";")
         table.setSortingEnabled(False)
         table.setColumnCount(len(labels))
@@ -115,6 +115,11 @@ class ViewAnnotations:
                 item = FloatTableWidgetItem(
                     annotation.area_px(visuals.width, visuals.height), decimals=2
                 )
+                table.setItem(row_index, colIndex, item)
+                colIndex += 1
+
+                # Column : Area according to image size
+                item = FloatTableWidgetItem(annotation.area, decimals=2)
                 table.setItem(row_index, colIndex, item)
                 colIndex += 1
 
