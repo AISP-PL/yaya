@@ -119,7 +119,7 @@ class ViewAnnotations:
                 colIndex += 1
 
                 # Column : Area according to image size
-                item = FloatTableWidgetItem(annotation.area, decimals=2)
+                item = FloatTableWidgetItem(annotation.area, decimals=4)
                 table.setItem(row_index, colIndex, item)
                 colIndex += 1
 
