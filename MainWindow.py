@@ -10,7 +10,18 @@ import shutil
 import sys
 from copy import copy
 from datetime import datetime
-from PyQt5.QtWidgets import QTableWidgetItem
+
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import (
+    QActionGroup,
+    QApplication,
+    QButtonGroup,
+    QFileDialog,
+    QListWidgetItem,
+    QMainWindow,
+    QMessageBox,
+    QTableWidgetItem,
+)
 
 from Detectors.common.Detector import NmsMethod
 from Detectors.common.image_strategy import ImageStrategy
@@ -20,16 +31,6 @@ from engine.annoter import Annoter, DetectorSelected
 from engine.session import Session
 from helpers.files import ChangeExtension, FixPath
 from MainWindow_ui import Ui_MainWindow
-from PyQt5 import QtCore
-from PyQt5.QtWidgets import (
-    QApplication,
-    QButtonGroup,
-    QActionGroup,
-    QFileDialog,
-    QListWidgetItem,
-    QMainWindow,
-    QMessageBox,
-)
 from ViewerEditorImage import ViewerEditorImage
 from views.ViewAnnotations import ViewAnnotations
 from views.ViewDetections import ViewDetections
@@ -479,9 +480,11 @@ class MainWindowGui(Ui_MainWindow):
 
         # Table : Refresh
         if table_refresh:
+            filter_annotations = self.FilterClassesGet()
+            filter_detections = self.FilterDetectionClassesGet()
             files = self.annoter.GetFiles(
-                filter_annotations_classnames=self.FilterClassesGet(),
-                filter_detections_classnames=self.FilterDetectionClassesGet(),
+                filter_annotations_classnames=filter_annotations,
+                filter_detections_classnames=filter_detections,
             )
 
             # Images table : Setup
@@ -491,10 +494,14 @@ class MainWindowGui(Ui_MainWindow):
             ViewImagesSummary.View(self.ui.fileSummaryLabel, files)
 
             # Annotations summary : Setup
-            ViewAnnotations.View(self.ui.tableAnnotations, files)
+            ViewAnnotations.View(
+                self.ui.tableAnnotations, files, filter_classes=filter_annotations
+            )
 
             # Detections summary : Setup
-            ViewDetections.View(self.ui.tableDetections, files)
+            ViewDetections.View(
+                self.ui.tableDetections, files, filter_classes=filter_detections
+            )
 
     def Run(self):
         """Run gui window thread and return exit code."""

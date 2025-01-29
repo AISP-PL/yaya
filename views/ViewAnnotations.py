@@ -2,21 +2,21 @@
     View of annotations
 """
 
+from typing import Any
+
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import QTableWidget
+from PyQt5.QtGui import QColor
+from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
 from tqdm import tqdm
 
-from PyQt5.QtWidgets import QTableWidgetItem
-
+from engine.annote import Annote
 from Gui.widgets.EvalTableWidgetItem import EvaluationTableWidgetItem
 from Gui.widgets.FloatTableWidgetItem import FloatTableWidgetItem
 from Gui.widgets.HsvTableWidgetItem import HsvTableWidgetItem
 from Gui.widgets.ImageTableWidgetItem import ImageTableWidgetItem
 from Gui.widgets.PercentTableWidgetItem import PercentTableWidgetItem
 from Gui.widgets.RectTableWidgetItem import RectTableWidgetItem
-from engine.annote import Annote
 from helpers.visuals import Visuals
-from PyQt5.QtGui import QColor
 
 
 class ViewAnnotations:
@@ -25,7 +25,8 @@ class ViewAnnotations:
     @staticmethod
     def View(
         table: QTableWidget,
-        files: list,
+        files: list[dict[str, Any]],
+        filter_classes: list[str] = [],
     ):
         """View images in table."""
         # Check : Files, correct None
@@ -56,6 +57,9 @@ class ViewAnnotations:
             visuals: Visuals = fileEntry["Visuals"]
 
             for index, annotation in enumerate(annotations):
+                # Filter classes: Enabled if at least 1 class is selected
+                if len(filter_classes) and annotation.className not in filter_classes:
+                    continue
 
                 # Start from column zero
                 colIndex = 0
