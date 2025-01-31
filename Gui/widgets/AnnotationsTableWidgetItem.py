@@ -4,18 +4,31 @@ Created on 14 gru 2022
 @author: spasz
 """
 
+from typing import Optional
+
 from PyQt5 import QtCore, QtWidgets
 
 from engine.annote import Annote
+from engine.annote_enums import AnnoteAuthorType
 
 
 class AnnotationsTableWidgetItem(QtWidgets.QTableWidgetItem):
     # value
     value: int = 0
 
-    def __init__(self, annotations: list[Annote]):
+    def __init__(
+        self,
+        annotations: list[Annote],
+        filter_auth: Optional[AnnoteAuthorType] = None,
+    ):
         """Constructor."""
         super().__init__()
+
+        # Filter author
+        if filter_auth is not None:
+            annotations = [
+                annote for annote in annotations if annote.authorType == filter_auth
+            ]
 
         # Count classes occurences
         class_counts = {}

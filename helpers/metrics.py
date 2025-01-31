@@ -181,7 +181,7 @@ def EvaluateMetrics(
     detections: list[Annote],
     minConfidence: float = 0.5,
     minIOU: float = 0.5,
-) -> tuple:
+) -> Metrics:
     """
     Definition of terms:
         True Positive (TP) — Correct detection made by the model.
@@ -195,7 +195,9 @@ def EvaluateMetrics(
     """
     # Check : No annotations, then all detections as FP.
     if (annotations is None) or (len(annotations) == 0):
-        return Metrics(FP=len(detections))
+        return Metrics(
+            FP=len(detections), new_detections=detections, detections=detections
+        )
 
     # Check : No detections, all annotations as missed.
     if (detections is None) or (len(detections) == 0):

@@ -15,12 +15,12 @@ import numpy as np
 from tqdm import tqdm
 
 import engine.annote as annote
-from engine.dataset import Dataset
 import helpers.boxes as boxes
 import helpers.prefilters as prefilters
 import helpers.transformations as transformations
 from Detectors.common.Detector import NmsMethod
 from Detectors.common.image_strategy import ImageStrategy
+from engine.dataset import Dataset
 
 # from Detectors.DetectorYoloWorld import DetectorYOLOWorld
 from helpers.files import (
@@ -266,10 +266,7 @@ class Annoter:
 
     def CalculateYoloMetrics(self, txtAnnotes: list, detAnnotes: list) -> Metrics:
         """Calculate mAP between two annotations sets."""
-        metrics = Metrics()
-        if len(txtAnnotes):
-            metrics = EvaluateMetrics(txtAnnotes, detAnnotes)
-
+        metrics = EvaluateMetrics(txtAnnotes, detAnnotes)
         return metrics
 
     def OpenLocation(self, path: str, force_detector: bool = False):
@@ -786,6 +783,9 @@ class Annoter:
             if processImage is True:
                 self.image = im = self.GetFileImage(fileEntry["Path"])
 
+            # Visuals : Update
+            visuals = Visuals.Create(fileEntry["Path"])
+            fileEntry["Visuals"] = visuals
             # All txt annotations
             txtAnnotations = self.GetFileAnnotations(fileEntry["Path"])
             # Detector annotations list

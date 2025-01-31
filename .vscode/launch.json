@@ -36,11 +36,9 @@
             "console": "integratedTerminal",
             "args": [
                 "-i",
-                "/home/spasz/Obrazy/aisp_nowe/",
+                "/home/spasz/Obrazy/vision_negatives/",
                 "-det",
                 "1",
-                "-detc",
-                "0.25",
             ],
             "justMyCode": false
         },

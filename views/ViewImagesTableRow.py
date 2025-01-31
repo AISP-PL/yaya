@@ -5,6 +5,7 @@
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QTableWidget
 
+from engine.annote_enums import AnnoteAuthorType
 from Gui.widgets.AnnotationsTableWidgetItem import AnnotationsTableWidgetItem
 from Gui.widgets.BoolTableWidgetItem import BoolTableWidgetItem
 from Gui.widgets.FloatTableWidgetItem import FloatTableWidgetItem
@@ -76,7 +77,9 @@ class ViewImagesTableRow:
         colIndex += 1
 
         # Annotation classes
-        item = AnnotationsTableWidgetItem(fileEntry["Annotations"])
+        item = AnnotationsTableWidgetItem(
+            fileEntry["Annotations"], filter_auth=AnnoteAuthorType.byHuman
+        )
         item.setToolTip(str(fileEntry["ID"]))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
@@ -137,7 +140,9 @@ class ViewImagesTableRow:
         colIndex += 1
 
         # New detections [j]
-        item = AnnotationsTableWidgetItem(metrics.new_detections)
+        item = AnnotationsTableWidgetItem(
+            metrics.new_detections, filter_auth=AnnoteAuthorType.byDetector
+        )
         item.setToolTip(str(fileEntry["ID"]))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
