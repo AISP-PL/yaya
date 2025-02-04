@@ -4,6 +4,8 @@ import logging
 import os
 import sys
 
+from tqdm import tqdm
+
 import engine.annote as annote
 from Detectors import CreateDetector, GetDetectorLabels, ListDetectors
 from Detectors.common.Detector import Detector
@@ -136,6 +138,18 @@ def main():
     # Check - input argument
     if (args.input is not None) and (len(args.input) > 0):
         args.input = FixPath(GetFileLocation(args.input))
+
+    # Check : Force clean all *.detector, *.json files inside dataset path
+    if args.forceDetector:
+        for root, dirs, files in tqdm(
+            os.walk(args.input), desc="Cleaning previous detection files"
+        ):
+            for file in files:
+                if file.endswith(".detector") or file.endswith(".json"):
+                    try:
+                        os.remove(os.path.join(root, file))
+                    except Exception as e:
+                        logging.error(f"Error removing file: {file} - {e}")
 
     # Create annoter
     annoter = Annoter(

@@ -36,9 +36,10 @@
             "console": "integratedTerminal",
             "args": [
                 "-i",
-                "/home/spasz/Obrazy/vision_negatives/",
+                "/home/spasz/python/model-traffic/images/",
                 "-det",
                 "1",
+                "-f"
             ],
             "justMyCode": false
         },
