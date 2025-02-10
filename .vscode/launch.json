@@ -38,8 +38,7 @@
                 "-i",
                 "/home/spasz/python/model-traffic/images/",
                 "-det",
-                "1",
-                "-f"
+                "2",
             ],
             "justMyCode": false
         },

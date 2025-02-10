@@ -141,15 +141,21 @@ def main():
 
     # Check : Force clean all *.detector, *.json files inside dataset path
     if args.forceDetector:
+        removed_count: int = 0
         for root, dirs, files in tqdm(
             os.walk(args.input), desc="Cleaning previous detection files"
         ):
             for file in files:
-                if file.endswith(".detector") or file.endswith(".json"):
-                    try:
-                        os.remove(os.path.join(root, file))
-                    except Exception as e:
-                        logging.error(f"Error removing file: {file} - {e}")
+                if not file.endswith(".detector") or file.endswith(".json"):
+                    continue
+
+                try:
+                    os.remove(os.path.join(root, file))
+                    removed_count += 1
+                except Exception as e:
+                    logging.error(f"Error removing file: {file} - {e}")
+
+        logging.info(f"Removed {removed_count} files.")
 
     # Create annoter
     annoter = Annoter(
