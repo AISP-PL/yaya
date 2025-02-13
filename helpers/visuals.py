@@ -4,13 +4,16 @@
 """
 
 from __future__ import annotations
-from dataclasses import asdict, dataclass, field
+
 import os
+from dataclasses import asdict, dataclass, field
 from typing import Optional
+
 import cv2
-import numpy as np
 import imagehash
+import numpy as np
 from PIL import Image
+
 from helpers.files import ChangeExtension
 from helpers.json import jsonRead, jsonWrite
 
@@ -32,23 +35,26 @@ class Visuals:
     # True if it's duplicate of other image
     isDuplicate: bool = False
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Post initiliatizaton."""
 
     @property
     def hue(self) -> float:
         """Returns average hue of image."""
-        return np.mean([item[0] for item in self.grid])
+        value = np.mean([item[0] for item in self.grid])
+        return float(value) if not np.isnan(value) else 0.0
 
     @property
     def saturation(self) -> float:
         """Returns average saturation of image."""
-        return np.mean([item[1] for item in self.grid])
+        value = np.mean([item[1] for item in self.grid])
+        return float(value) if not np.isnan(value) else 0.0
 
     @property
     def brightness(self) -> float:
         """Returns average brightness of image."""
-        return np.mean([item[2] for item in self.grid])
+        value = float(np.mean([item[2] for item in self.grid]))
+        return float(value) if not np.isnan(value) else 0.0
 
     @property
     def numpy_grid(self) -> np.ndarray:
