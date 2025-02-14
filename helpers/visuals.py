@@ -59,7 +59,11 @@ class Visuals:
     @property
     def numpy_grid(self) -> np.ndarray:
         """Returns grid as numpy array."""
-        array = np.array(self.grid).reshape((20, 20, 3))
+        array = np.array(self.grid)
+        if array.size == 0:
+            return np.zeros((20, 20, 3))
+
+        array = array.reshape((20, 20, 3))
         # Replace NaN as zeroes
         array = np.nan_to_num(array, copy=False, nan=0.0)
         return array
