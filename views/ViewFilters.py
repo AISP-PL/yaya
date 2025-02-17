@@ -2,10 +2,11 @@
     View of images QTableWidget.
 """
 
-from helpers.texts import abbrev
 from PyQt5 import QtCore
 from PyQt5.Qt import QSizePolicy, QSpacerItem
 from PyQt5.QtWidgets import QButtonGroup, QGridLayout, QLabel, QPushButton
+
+from helpers.texts import abbrev
 
 
 class ViewFilters:
@@ -25,7 +26,7 @@ class ViewFilters:
         button_callback: callable,
         buttons_group: QButtonGroup,
         rowStart: int = 0,
-        itemsPerRow: int = 6,
+        itemsPerRow: int = 10,
         default_checked: bool = False,
         label_max_length: int = 12,
     ):
@@ -44,8 +45,8 @@ class ViewFilters:
             del child
 
         # Label : Add title
-        layoutHandle.addWidget(QLabel(layout_title), rowStart, 0)
-        rowStart += 1
+        # layoutHandle.addWidget(QLabel(layout_title), rowStart, 0)
+        # rowStart += 1
 
         # ButtonGroup : Create group with multiple selection
         buttons_group.setExclusive(False)
