@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
 from tqdm import tqdm
 
 from engine.annote import Annote
+from Gui.widgets.BoolTableWidgetItem import BoolTableWidgetItem
 from Gui.widgets.FloatTableWidgetItem import FloatTableWidgetItem
 from Gui.widgets.HsvTableWidgetItem import HsvTableWidgetItem
 from Gui.widgets.ImageTableWidgetItem import ImageTableWidgetItem
@@ -42,7 +43,7 @@ class ViewDetections:
         table.clear()
         labels = _translate(
             "ViewDetections",
-            "File/ID;Cat;Conf;Size;Ratio;Area;Area/Image;Hue;Saturation;Brightness",
+            "File/ID;Cat;Conf;Eval;Size;Ratio;Area;Area/Image;Hue;Saturation;Brightness",
         ).split(";")
         table.setSortingEnabled(False)
         table.setColumnCount(len(labels))
@@ -54,6 +55,7 @@ class ViewDetections:
         for fileEntry in tqdm(files, desc="Annotations view creation"):
             annotations: list[Annote] = fileEntry["Detections"]
             visuals: Visuals = fileEntry["Visuals"]
+            is_annotated = fileEntry["IsAnnotation"]
 
             for index, annotation in enumerate(annotations):
                 # Filter classes: Enabled if at least 1 class is selected
@@ -84,6 +86,11 @@ class ViewDetections:
 
                 # Column : Confidence of evaluation
                 item = PercentTableWidgetItem(annotation.confidence, is_color=True)
+                table.setItem(row_index, colIndex, item)
+                colIndex += 1
+
+                # Column : Bool if file is annotated
+                item = BoolTableWidgetItem(is_annotated)
                 table.setItem(row_index, colIndex, item)
                 colIndex += 1
 
@@ -159,3 +166,33 @@ class ViewDetections:
         """Show custom tooltip for ImageTableWidgetItem"""
         if isinstance(item, ImageTableWidgetItem):
             item.setToolTip(item.generate_tooltip())
+
+    @staticmethod
+    def filter_classes(table: QTableWidget, filter_classes: list[str]) -> None:
+        """
+        Filter detections by selected classes.
+        Show only rows with selected classes.
+        """
+        total_rows = table.rowCount()
+        for row in range(total_rows):
+            # Show all rows if filter_classes is empty
+            if filter_classes == []:
+                table.setRowHidden(row, False)
+                continue
+
+            # Category : Get
+            item = table.item(row, 1)
+
+            # Hide : Category missing
+            if item is None:
+                table.setRowHidden(row, True)
+                continue
+
+            # Hide : Category not in filter_classes
+            class_name = item.text()
+            if class_name not in filter_classes:
+                table.setRowHidden(row, True)
+                continue
+
+            # Show : otherwise
+            table.setRowHidden(row, False)

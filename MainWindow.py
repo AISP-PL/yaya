@@ -393,7 +393,7 @@ class MainWindowGui(Ui_MainWindow):
             layout_title="Filter of annotations",
             button_ids=labels,
             button_labels=labels,
-            button_callback=self.CallbackFilterClassesClicked,
+            button_callback=self.CallbackFilterAnnotationsClicked,
             buttons_group=ViewFilters.filter_classes_group,
         )
         # Filters detections : Setup
@@ -403,7 +403,7 @@ class MainWindowGui(Ui_MainWindow):
             layout_title="Filter of detections",
             button_ids=det_labels,
             button_labels=det_labels,
-            button_callback=self.CallbackFilterClassesClicked,
+            button_callback=self.CallbackFilterDetectionsClicked,
             buttons_group=ViewFilters.filter_detections_group,
         )
 
@@ -533,9 +533,15 @@ class MainWindowGui(Ui_MainWindow):
 
         return checked
 
-    def CallbackFilterClassesClicked(self, label: str):
+    def CallbackFilterAnnotationsClicked(self, label: str):
         """Callback for filter classes button clicked."""
-        self.Setup(table_refresh=True)
+        filter_annotations = self.FilterClassesGet()
+        ViewDetections.filter_classes(self.ui.tableAnnotations, filter_annotations)
+
+    def CallbackFilterDetectionsClicked(self, label: str) -> None:
+        """Callback for filter detections button clicked."""
+        filter_detections = self.FilterDetectionClassesGet()
+        ViewDetections.filter_classes(self.ui.tableDetections, filter_detections)
 
     def CallbackImageScalingTextChanged(self, text):
         """Callback when image scaling text changed."""
