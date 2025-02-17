@@ -85,8 +85,11 @@ class Dataset:
             logging.error("Path is not set.")
             return
 
+        # Create : Sorted list of paths
+        sorted_paths = sorted(self._dataset)
+
         with open(self._path, "w") as file:
-            for path in self._dataset:
+            for path in sorted_paths:
                 file.write(path + "\n")
 
         self._is_not_saved = False

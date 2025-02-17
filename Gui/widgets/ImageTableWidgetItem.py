@@ -2,14 +2,14 @@
  ImageTableWidgetItem.py with images buffer cropped creation.
 """
 
-from collections import deque
 import logging
 import os
+from collections import deque
 from typing import Optional
 
+import cv2
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtGui import QColor
-import cv2
 
 
 class ImageTableWidgetItem(QtWidgets.QTableWidgetItem):
@@ -68,7 +68,7 @@ class ImageTableWidgetItem(QtWidgets.QTableWidgetItem):
         if self.image_crop is None:
             self.setToolTip(self.generate_tooltip())
 
-    def generate_tooltip(self, max_width: int = 640) -> str:
+    def generate_tooltip(self, target_width: int = 320) -> str:
         """Generate tooltip for image"""
         # Check : Image path
         if self.image_path is None or len(self.image_path) == 0:
@@ -76,7 +76,7 @@ class ImageTableWidgetItem(QtWidgets.QTableWidgetItem):
 
         # Check : No crop
         if self.image_crop is None:
-            return f"<img src='{self.image_path}' width='{max_width}'>"
+            return f"<img src='{self.image_path}' width='{target_width}'>"
 
         # Cropped image : Generate hash
         x1, y1, x2, y2 = self.image_crop
@@ -91,6 +91,7 @@ class ImageTableWidgetItem(QtWidgets.QTableWidgetItem):
                 x1, y1, x2, y2 = self.image_crop
                 image_cropped = image[y1:y2, x1:x2]
                 cv2.imwrite(cached_file_path, image_cropped)
+
             except Exception as e:
                 logging.error(f"Error cropping image: {e}")
                 return ""
@@ -104,8 +105,5 @@ class ImageTableWidgetItem(QtWidgets.QTableWidgetItem):
                 if os.path.exists(oldest_file):
                     os.remove(oldest_file)
 
-        # Calculate max width
-        cropped_max_width = min(max_width, x2 - x1)
-
         # Tooltip : Return
-        return f"<img src='{cached_file_path}' width='{cropped_max_width}'>"
+        return f"<img src='{cached_file_path}' width='{target_width}'>"

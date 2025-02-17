@@ -1,9 +1,3 @@
-"""
-Created on 29 gru 2020
-
-@author: spasz
-"""
-
 import logging
 import os
 import shutil
@@ -37,7 +31,6 @@ from views.ViewDetections import ViewDetections
 from views.ViewFilters import ViewFilters
 from views.ViewImagesSummary import ViewImagesSummary
 from views.ViewImagesTable import ViewImagesTable
-from views.ViewImagesTableRow import ViewImagesTableRow
 
 
 class MainWindowGui(Ui_MainWindow):
@@ -462,7 +455,7 @@ class MainWindowGui(Ui_MainWindow):
 
         if (fileEntry is not None) and (rowIndex is not None):
             self.ui.fileSelectorTableWidget.setSortingEnabled(False)
-            ViewImagesTableRow.View(
+            ViewImagesTable.ViewRow(
                 self.ui.fileSelectorTableWidget, rowIndex, fileEntry, isSelected=True
             )
             self.ui.fileSelectorTableWidget.setSortingEnabled(True)
