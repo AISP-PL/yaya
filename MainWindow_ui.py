@@ -128,94 +128,35 @@ class Ui_MainWindow(object):
         self.verticalLayoutRight.addWidget(self.fileSummaryLabel)
         self.gridLayout_2 = QtWidgets.QGridLayout()
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.annotationFilterButton = QtWidgets.QPushButton(self.layoutWidget)
-        self.annotationFilterButton.setCursor(
-            QtGui.QCursor(QtCore.Qt.PointingHandCursor)
-        )
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(
-            QtGui.QPixmap(":/icons/32x32/edit-find.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
-        )
-        self.annotationFilterButton.setIcon(icon2)
-        self.annotationFilterButton.setObjectName("annotationFilterButton")
-        self.gridLayout_2.addWidget(self.annotationFilterButton, 1, 6, 1, 1)
-        self.addAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(
-            QtGui.QPixmap(":/icons/16x16/list-add.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
-        )
-        self.addAnnotationsButton.setIcon(icon3)
-        self.addAnnotationsButton.setCheckable(True)
-        self.addAnnotationsButton.setFlat(False)
-        self.addAnnotationsButton.setObjectName("addAnnotationsButton")
-        self.gridLayout_2.addWidget(self.addAnnotationsButton, 0, 3, 1, 1)
-        self.removeAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(
-            QtGui.QPixmap(":/icons/16x16/list-remove.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
-        )
-        self.removeAnnotationsButton.setIcon(icon4)
-        self.removeAnnotationsButton.setCheckable(True)
-        self.removeAnnotationsButton.setObjectName("removeAnnotationsButton")
-        self.gridLayout_2.addWidget(self.removeAnnotationsButton, 0, 5, 1, 1)
-        self.detFilterButton = QtWidgets.QPushButton(self.layoutWidget)
-        self.detFilterButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.detFilterButton.setIcon(icon2)
-        self.detFilterButton.setObjectName("detFilterButton")
-        self.gridLayout_2.addWidget(self.detFilterButton, 1, 7, 1, 1)
         self.detectionsClearButton = QtWidgets.QPushButton(self.layoutWidget)
         self.detectionsClearButton.setObjectName("detectionsClearButton")
-        self.gridLayout_2.addWidget(self.detectionsClearButton, 1, 4, 1, 1)
+        self.gridLayout_2.addWidget(self.detectionsClearButton, 2, 4, 1, 1)
+        self.paintCircleButton = QtWidgets.QPushButton(self.layoutWidget)
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(
+            QtGui.QPixmap(":/icons/32x32/list-add.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        self.paintCircleButton.setIcon(icon2)
+        self.paintCircleButton.setCheckable(True)
+        self.paintCircleButton.setObjectName("paintCircleButton")
+        self.gridLayout_2.addWidget(self.paintCircleButton, 1, 7, 1, 1)
+        self.renameAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(
+            QtGui.QPixmap(":/icons/32x32/accessories-text-editor.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        self.renameAnnotationsButton.setIcon(icon3)
+        self.renameAnnotationsButton.setCheckable(True)
+        self.renameAnnotationsButton.setObjectName("renameAnnotationsButton")
+        self.gridLayout_2.addWidget(self.renameAnnotationsButton, 1, 4, 1, 1)
         spacerItem1 = QtWidgets.QSpacerItem(
             40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
         )
-        self.gridLayout_2.addItem(spacerItem1, 0, 12, 1, 1)
-        self.hideLabelsButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(
-            QtGui.QPixmap(":/icons/32x32/go-jump.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
-        )
-        self.hideLabelsButton.setIcon(icon5)
-        self.hideLabelsButton.setObjectName("hideLabelsButton")
-        self.gridLayout_2.addWidget(self.hideLabelsButton, 0, 9, 1, 1)
-        self.hideAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(
-            QtGui.QPixmap(":/icons/16x16/go-jump.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
-        )
-        self.hideAnnotationsButton.setIcon(icon6)
-        self.hideAnnotationsButton.setObjectName("hideAnnotationsButton")
-        self.gridLayout_2.addWidget(self.hideAnnotationsButton, 0, 10, 1, 1)
-        self.yoloWorldButton = QtWidgets.QPushButton(self.layoutWidget)
-        self.yoloWorldButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(
-            QtGui.QPixmap(":/icons/32x32/camera-photo.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
-        )
-        self.yoloWorldButton.setIcon(icon7)
-        self.yoloWorldButton.setObjectName("yoloWorldButton")
-        self.gridLayout_2.addWidget(self.yoloWorldButton, 1, 5, 1, 1)
-        self.translateButton = QtWidgets.QToolButton(self.layoutWidget)
-        self.translateButton.setText("")
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(
-            QtGui.QPixmap("Gui/img/move.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
-        )
-        self.translateButton.setIcon(icon8)
-        self.translateButton.setObjectName("translateButton")
-        self.gridLayout_2.addWidget(self.translateButton, 1, 1, 1, 1)
+        self.gridLayout_2.addItem(spacerItem1, 1, 12, 1, 1)
         self.label = QtWidgets.QLabel(self.layoutWidget)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum
@@ -226,117 +167,176 @@ class Ui_MainWindow(object):
         self.label.setSizePolicy(sizePolicy)
         self.label.setMinimumSize(QtCore.QSize(90, 0))
         self.label.setObjectName("label")
-        self.gridLayout_2.addWidget(self.label, 0, 0, 1, 1)
-        self.pointerButton = QtWidgets.QToolButton(self.layoutWidget)
-        self.pointerButton.setText("")
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(
-            QtGui.QPixmap("Gui/img/pointer.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
-        )
-        self.pointerButton.setIcon(icon9)
-        self.pointerButton.setObjectName("pointerButton")
-        self.gridLayout_2.addWidget(self.pointerButton, 0, 1, 1, 1)
-        self.renameAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon10 = QtGui.QIcon()
-        icon10.addPixmap(
-            QtGui.QPixmap(":/icons/32x32/accessories-text-editor.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
-        )
-        self.renameAnnotationsButton.setIcon(icon10)
-        self.renameAnnotationsButton.setCheckable(True)
-        self.renameAnnotationsButton.setObjectName("renameAnnotationsButton")
-        self.gridLayout_2.addWidget(self.renameAnnotationsButton, 0, 4, 1, 1)
-        self.detectAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon11 = QtGui.QIcon()
-        icon11.addPixmap(
-            QtGui.QPixmap(":/icons/16x16/camera-photo.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
-        )
-        self.detectAnnotationsButton.setIcon(icon11)
-        self.detectAnnotationsButton.setObjectName("detectAnnotationsButton")
-        self.gridLayout_2.addWidget(self.detectAnnotationsButton, 1, 3, 1, 1)
-        self.ClearAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon12 = QtGui.QIcon()
-        icon12.addPixmap(
-            QtGui.QPixmap(":/icons/16x16/edit-clear.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
-        )
-        self.ClearAnnotationsButton.setIcon(icon12)
-        self.ClearAnnotationsButton.setObjectName("ClearAnnotationsButton")
-        self.gridLayout_2.addWidget(self.ClearAnnotationsButton, 0, 6, 1, 1)
-        self.paintCircleButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon13 = QtGui.QIcon()
-        icon13.addPixmap(
-            QtGui.QPixmap(":/icons/32x32/list-add.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
-        )
-        self.paintCircleButton.setIcon(icon13)
-        self.paintCircleButton.setCheckable(True)
-        self.paintCircleButton.setObjectName("paintCircleButton")
-        self.gridLayout_2.addWidget(self.paintCircleButton, 0, 7, 1, 1)
-        self.label_2 = QtWidgets.QLabel(self.layoutWidget)
-        self.label_2.setObjectName("label_2")
-        self.gridLayout_2.addWidget(self.label_2, 2, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.label, 1, 0, 1, 1)
         self.CacheImageButton = QtWidgets.QPushButton(self.layoutWidget)
         self.CacheImageButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        icon14 = QtGui.QIcon()
-        icon14.addPixmap(
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(
             QtGui.QPixmap(":/icons/32x32/document-save.png"),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off,
         )
-        self.CacheImageButton.setIcon(icon14)
+        self.CacheImageButton.setIcon(icon4)
         self.CacheImageButton.setObjectName("CacheImageButton")
-        self.gridLayout_2.addWidget(self.CacheImageButton, 2, 4, 1, 1)
-        self.SaveFileAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
-        self.SaveFileAnnotationsButton.setCursor(
-            QtGui.QCursor(QtCore.Qt.PointingHandCursor)
-        )
-        icon15 = QtGui.QIcon()
-        icon15.addPixmap(
-            QtGui.QPixmap(":/icons/16x16/document-save-as.png"),
+        self.gridLayout_2.addWidget(self.CacheImageButton, 3, 4, 1, 1)
+        self.detectAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(
+            QtGui.QPixmap(":/icons/16x16/camera-photo.png"),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off,
         )
-        self.SaveFileAnnotationsButton.setIcon(icon15)
-        self.SaveFileAnnotationsButton.setObjectName("SaveFileAnnotationsButton")
-        self.gridLayout_2.addWidget(self.SaveFileAnnotationsButton, 2, 3, 1, 1)
-        self.AddRemoveValidationButton = QtWidgets.QPushButton(self.layoutWidget)
-        self.AddRemoveValidationButton.setIcon(icon13)
-        self.AddRemoveValidationButton.setObjectName("AddRemoveValidationButton")
-        self.gridLayout_2.addWidget(self.AddRemoveValidationButton, 2, 5, 1, 1)
+        self.detectAnnotationsButton.setIcon(icon5)
+        self.detectAnnotationsButton.setObjectName("detectAnnotationsButton")
+        self.gridLayout_2.addWidget(self.detectAnnotationsButton, 2, 3, 1, 1)
+        self.label_2 = QtWidgets.QLabel(self.layoutWidget)
+        self.label_2.setObjectName("label_2")
+        self.gridLayout_2.addWidget(self.label_2, 3, 0, 1, 1)
         self.DeleteImageAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
         self.DeleteImageAnnotationsButton.setCursor(
             QtGui.QCursor(QtCore.Qt.PointingHandCursor)
         )
-        icon16 = QtGui.QIcon()
-        icon16.addPixmap(
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(
             QtGui.QPixmap(":/icons/16x16/process-stop.png"),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off,
         )
-        self.DeleteImageAnnotationsButton.setIcon(icon16)
+        self.DeleteImageAnnotationsButton.setIcon(icon6)
         self.DeleteImageAnnotationsButton.setObjectName("DeleteImageAnnotationsButton")
-        self.gridLayout_2.addWidget(self.DeleteImageAnnotationsButton, 2, 6, 1, 1)
+        self.gridLayout_2.addWidget(self.DeleteImageAnnotationsButton, 3, 6, 1, 1)
+        self.annotationFilterButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.annotationFilterButton.setCursor(
+            QtGui.QCursor(QtCore.Qt.PointingHandCursor)
+        )
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(
+            QtGui.QPixmap(":/icons/32x32/edit-find.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        self.annotationFilterButton.setIcon(icon7)
+        self.annotationFilterButton.setObjectName("annotationFilterButton")
+        self.gridLayout_2.addWidget(self.annotationFilterButton, 2, 6, 1, 1)
+        self.translateButton = QtWidgets.QToolButton(self.layoutWidget)
+        self.translateButton.setText("")
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(
+            QtGui.QPixmap("Gui/img/move.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
+        self.translateButton.setIcon(icon8)
+        self.translateButton.setObjectName("translateButton")
+        self.gridLayout_2.addWidget(self.translateButton, 2, 1, 1, 1)
+        self.ClearAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(
+            QtGui.QPixmap(":/icons/16x16/edit-clear.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        self.ClearAnnotationsButton.setIcon(icon9)
+        self.ClearAnnotationsButton.setObjectName("ClearAnnotationsButton")
+        self.gridLayout_2.addWidget(self.ClearAnnotationsButton, 1, 6, 1, 1)
+        self.hideAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(
+            QtGui.QPixmap(":/icons/16x16/go-jump.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        self.hideAnnotationsButton.setIcon(icon10)
+        self.hideAnnotationsButton.setObjectName("hideAnnotationsButton")
+        self.gridLayout_2.addWidget(self.hideAnnotationsButton, 1, 10, 1, 1)
+        self.AddRemoveValidationButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.AddRemoveValidationButton.setIcon(icon2)
+        self.AddRemoveValidationButton.setObjectName("AddRemoveValidationButton")
+        self.gridLayout_2.addWidget(self.AddRemoveValidationButton, 3, 5, 1, 1)
+        self.SaveFileAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.SaveFileAnnotationsButton.setCursor(
+            QtGui.QCursor(QtCore.Qt.PointingHandCursor)
+        )
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(
+            QtGui.QPixmap(":/icons/16x16/document-save-as.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        self.SaveFileAnnotationsButton.setIcon(icon11)
+        self.SaveFileAnnotationsButton.setObjectName("SaveFileAnnotationsButton")
+        self.gridLayout_2.addWidget(self.SaveFileAnnotationsButton, 3, 3, 1, 1)
+        self.pointerButton = QtWidgets.QToolButton(self.layoutWidget)
+        self.pointerButton.setText("")
+        icon12 = QtGui.QIcon()
+        icon12.addPixmap(
+            QtGui.QPixmap("Gui/img/pointer.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
+        self.pointerButton.setIcon(icon12)
+        self.pointerButton.setObjectName("pointerButton")
+        self.gridLayout_2.addWidget(self.pointerButton, 1, 1, 1, 1)
         self.DeleteNotAnnotatedFilesButton = QtWidgets.QPushButton(self.layoutWidget)
         self.DeleteNotAnnotatedFilesButton.setCursor(
             QtGui.QCursor(QtCore.Qt.PointingHandCursor)
         )
-        icon17 = QtGui.QIcon()
-        icon17.addPixmap(
+        icon13 = QtGui.QIcon()
+        icon13.addPixmap(
             QtGui.QPixmap(":/icons/32x32/process-stop.png"),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off,
         )
-        self.DeleteNotAnnotatedFilesButton.setIcon(icon17)
+        self.DeleteNotAnnotatedFilesButton.setIcon(icon13)
         self.DeleteNotAnnotatedFilesButton.setObjectName(
             "DeleteNotAnnotatedFilesButton"
         )
-        self.gridLayout_2.addWidget(self.DeleteNotAnnotatedFilesButton, 2, 7, 1, 1)
+        self.gridLayout_2.addWidget(self.DeleteNotAnnotatedFilesButton, 3, 7, 1, 1)
+        self.removeAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
+        icon14 = QtGui.QIcon()
+        icon14.addPixmap(
+            QtGui.QPixmap(":/icons/16x16/list-remove.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        self.removeAnnotationsButton.setIcon(icon14)
+        self.removeAnnotationsButton.setCheckable(True)
+        self.removeAnnotationsButton.setObjectName("removeAnnotationsButton")
+        self.gridLayout_2.addWidget(self.removeAnnotationsButton, 1, 5, 1, 1)
+        self.detFilterButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.detFilterButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.detFilterButton.setIcon(icon7)
+        self.detFilterButton.setObjectName("detFilterButton")
+        self.gridLayout_2.addWidget(self.detFilterButton, 2, 7, 1, 1)
+        self.addAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
+        icon15 = QtGui.QIcon()
+        icon15.addPixmap(
+            QtGui.QPixmap(":/icons/16x16/list-add.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        self.addAnnotationsButton.setIcon(icon15)
+        self.addAnnotationsButton.setCheckable(True)
+        self.addAnnotationsButton.setFlat(False)
+        self.addAnnotationsButton.setObjectName("addAnnotationsButton")
+        self.gridLayout_2.addWidget(self.addAnnotationsButton, 1, 3, 1, 1)
+        self.hideLabelsButton = QtWidgets.QPushButton(self.layoutWidget)
+        icon16 = QtGui.QIcon()
+        icon16.addPixmap(
+            QtGui.QPixmap(":/icons/32x32/go-jump.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        self.hideLabelsButton.setIcon(icon16)
+        self.hideLabelsButton.setObjectName("hideLabelsButton")
+        self.gridLayout_2.addWidget(self.hideLabelsButton, 1, 9, 1, 1)
+        self.yoloWorldButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.yoloWorldButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        icon17 = QtGui.QIcon()
+        icon17.addPixmap(
+            QtGui.QPixmap(":/icons/32x32/camera-photo.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        self.yoloWorldButton.setIcon(icon17)
+        self.yoloWorldButton.setObjectName("yoloWorldButton")
+        self.gridLayout_2.addWidget(self.yoloWorldButton, 2, 5, 1, 1)
         self.verticalLayoutRight.addLayout(self.gridLayout_2)
         self.tabWidget = QtWidgets.QTabWidget(self.layoutWidget)
         self.tabWidget.setObjectName("tabWidget")
@@ -376,7 +376,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addWidget(self.detectorClassesLabel)
         self.labelsListWidget = QtWidgets.QListWidget(self.pageAnnotations)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -745,12 +745,6 @@ class Ui_MainWindow(object):
         self.pageAnnFilter.setObjectName("pageAnnFilter")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.pageAnnFilter)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
-        self.annotationsFilterGrid = QtWidgets.QGridLayout()
-        self.annotationsFilterGrid.setObjectName("annotationsFilterGrid")
-        self.label_3 = QtWidgets.QLabel(self.pageAnnFilter)
-        self.label_3.setObjectName("label_3")
-        self.annotationsFilterGrid.addWidget(self.label_3, 0, 0, 1, 1)
-        self.verticalLayout_5.addLayout(self.annotationsFilterGrid)
         spacerItem9 = QtWidgets.QSpacerItem(
             20, 289, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
         )
@@ -760,12 +754,6 @@ class Ui_MainWindow(object):
         self.pageDetFilter.setObjectName("pageDetFilter")
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.pageDetFilter)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
-        self.detectionsFilterGrid = QtWidgets.QGridLayout()
-        self.detectionsFilterGrid.setObjectName("detectionsFilterGrid")
-        self.label_5 = QtWidgets.QLabel(self.pageDetFilter)
-        self.label_5.setObjectName("label_5")
-        self.detectionsFilterGrid.addWidget(self.label_5, 0, 0, 1, 1)
-        self.verticalLayout_6.addLayout(self.detectionsFilterGrid)
         spacerItem10 = QtWidgets.QSpacerItem(
             20, 289, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
         )
@@ -809,6 +797,9 @@ class Ui_MainWindow(object):
         self.tabAnnotations.setObjectName("tabAnnotations")
         self.verticalLayout_10 = QtWidgets.QVBoxLayout(self.tabAnnotations)
         self.verticalLayout_10.setObjectName("verticalLayout_10")
+        self.annotationsFilterGrid = QtWidgets.QGridLayout()
+        self.annotationsFilterGrid.setObjectName("annotationsFilterGrid")
+        self.verticalLayout_10.addLayout(self.annotationsFilterGrid)
         self.tableAnnotations = QtWidgets.QTableWidget(self.tabAnnotations)
         self.tableAnnotations.setObjectName("tableAnnotations")
         self.tableAnnotations.setColumnCount(0)
@@ -819,6 +810,12 @@ class Ui_MainWindow(object):
         self.tabDetections.setObjectName("tabDetections")
         self.verticalLayout_11 = QtWidgets.QVBoxLayout(self.tabDetections)
         self.verticalLayout_11.setObjectName("verticalLayout_11")
+        self.detectionsFilterGrid = QtWidgets.QGridLayout()
+        self.detectionsFilterGrid.setObjectName("detectionsFilterGrid")
+        self.label_5 = QtWidgets.QLabel(self.tabDetections)
+        self.label_5.setObjectName("label_5")
+        self.detectionsFilterGrid.addWidget(self.label_5, 0, 0, 1, 1)
+        self.verticalLayout_11.addLayout(self.detectionsFilterGrid)
         self.tableDetections = QtWidgets.QTableWidget(self.tabDetections)
         self.tableDetections.setObjectName("tableDetections")
         self.tableDetections.setColumnCount(0)
@@ -917,8 +914,8 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuPomoc.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(3)
-        self.toolSettingsStackedWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
+        self.toolSettingsStackedWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -940,43 +937,43 @@ class Ui_MainWindow(object):
         self.progressBar.setFormat(_translate("MainWindow", "Annotated %p%"))
         self.fileLabel.setText(_translate("MainWindow", "Filename (number/all)"))
         self.fileSummaryLabel.setText(_translate("MainWindow", "TextLabel"))
-        self.annotationFilterButton.setText(_translate("MainWindow", "Adn. Filter"))
-        self.addAnnotationsButton.setText(_translate("MainWindow", "(A)dd "))
-        self.addAnnotationsButton.setShortcut(_translate("MainWindow", "A"))
-        self.removeAnnotationsButton.setText(_translate("MainWindow", "(R)emove"))
-        self.removeAnnotationsButton.setShortcut(_translate("MainWindow", "R"))
-        self.detFilterButton.setText(_translate("MainWindow", "Det. Filter"))
         self.detectionsClearButton.setText(_translate("MainWindow", "Det clear(Q)"))
         self.detectionsClearButton.setShortcut(_translate("MainWindow", "Q"))
-        self.hideLabelsButton.setText(_translate("MainWindow", "(L)abels hide"))
-        self.hideLabelsButton.setShortcut(_translate("MainWindow", "L"))
-        self.hideAnnotationsButton.setText(_translate("MainWindow", "(H)ide"))
-        self.hideAnnotationsButton.setShortcut(_translate("MainWindow", "H"))
-        self.yoloWorldButton.setText(_translate("MainWindow", "(W)Yolo World"))
-        self.yoloWorldButton.setShortcut(_translate("MainWindow", "W"))
-        self.label.setText(_translate("MainWindow", "Annotations"))
-        self.renameAnnotationsButton.setText(_translate("MainWindow", "Re(N)ame"))
-        self.renameAnnotationsButton.setShortcut(_translate("MainWindow", "N"))
-        self.detectAnnotationsButton.setText(_translate("MainWindow", "(D)etect "))
-        self.detectAnnotationsButton.setShortcut(_translate("MainWindow", "D"))
-        self.ClearAnnotationsButton.setText(_translate("MainWindow", "(C)lear"))
-        self.ClearAnnotationsButton.setShortcut(_translate("MainWindow", "C"))
         self.paintCircleButton.setText(_translate("MainWindow", "Circl(e)"))
         self.paintCircleButton.setShortcut(_translate("MainWindow", "E"))
-        self.label_2.setText(_translate("MainWindow", "Image"))
+        self.renameAnnotationsButton.setText(_translate("MainWindow", "Re(N)ame"))
+        self.renameAnnotationsButton.setShortcut(_translate("MainWindow", "N"))
+        self.label.setText(_translate("MainWindow", "Annotations"))
         self.CacheImageButton.setText(_translate("MainWindow", "Cache(Y)"))
         self.CacheImageButton.setShortcut(_translate("MainWindow", "Y"))
-        self.SaveFileAnnotationsButton.setText(_translate("MainWindow", "(S)ave"))
-        self.SaveFileAnnotationsButton.setShortcut(_translate("MainWindow", "S"))
+        self.detectAnnotationsButton.setText(_translate("MainWindow", "(D)etect "))
+        self.detectAnnotationsButton.setShortcut(_translate("MainWindow", "D"))
+        self.label_2.setText(_translate("MainWindow", "Image"))
+        self.DeleteImageAnnotationsButton.setText(_translate("MainWindow", "(X)Delete"))
+        self.DeleteImageAnnotationsButton.setShortcut(_translate("MainWindow", "X"))
+        self.annotationFilterButton.setText(_translate("MainWindow", "Adn. Filter"))
+        self.ClearAnnotationsButton.setText(_translate("MainWindow", "(C)lear"))
+        self.ClearAnnotationsButton.setShortcut(_translate("MainWindow", "C"))
+        self.hideAnnotationsButton.setText(_translate("MainWindow", "(H)ide"))
+        self.hideAnnotationsButton.setShortcut(_translate("MainWindow", "H"))
         self.AddRemoveValidationButton.setText(
             _translate("MainWindow", "Add/Rem (V)alid.")
         )
         self.AddRemoveValidationButton.setShortcut(_translate("MainWindow", "V"))
-        self.DeleteImageAnnotationsButton.setText(_translate("MainWindow", "(X)Delete"))
-        self.DeleteImageAnnotationsButton.setShortcut(_translate("MainWindow", "X"))
+        self.SaveFileAnnotationsButton.setText(_translate("MainWindow", "(S)ave"))
+        self.SaveFileAnnotationsButton.setShortcut(_translate("MainWindow", "S"))
         self.DeleteNotAnnotatedFilesButton.setText(
             _translate("MainWindow", "Delete not annotated")
         )
+        self.removeAnnotationsButton.setText(_translate("MainWindow", "(R)emove"))
+        self.removeAnnotationsButton.setShortcut(_translate("MainWindow", "R"))
+        self.detFilterButton.setText(_translate("MainWindow", "Det. Filter"))
+        self.addAnnotationsButton.setText(_translate("MainWindow", "(A)dd "))
+        self.addAnnotationsButton.setShortcut(_translate("MainWindow", "A"))
+        self.hideLabelsButton.setText(_translate("MainWindow", "(L)abels hide"))
+        self.hideLabelsButton.setShortcut(_translate("MainWindow", "L"))
+        self.yoloWorldButton.setText(_translate("MainWindow", "(W)Yolo World"))
+        self.yoloWorldButton.setShortcut(_translate("MainWindow", "W"))
         self.detectorClassesLabel.setText(
             _translate("MainWindow", "Selected detector classes :")
         )
@@ -1026,8 +1023,6 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "bus:g.autobusy, person:i1.pieszy, car:c1.osobowe")
         )
         self.paintLabel.setText(_translate("MainWindow", "Painting Size"))
-        self.label_3.setText(_translate("MainWindow", "Annotations filter"))
-        self.label_5.setText(_translate("MainWindow", "Detections filter"))
         self.tabWidget.setTabText(
             self.tabWidget.indexOf(self.tabEdit), _translate("MainWindow", "Edit")
         )
@@ -1039,6 +1034,7 @@ class Ui_MainWindow(object):
             self.tabWidget.indexOf(self.tabAnnotations),
             _translate("MainWindow", "Annotations"),
         )
+        self.label_5.setText(_translate("MainWindow", "Detections filter"))
         self.tabWidget.setTabText(
             self.tabWidget.indexOf(self.tabDetections),
             _translate("MainWindow", "Detections"),
@@ -1098,5 +1094,5 @@ class Ui_MainWindow(object):
         self.actionThumbnail.setText(_translate("MainWindow", "Thumbnail"))
 
 
-from ViewerEditorImage import ViewerEditorImage
 import tango_rc
+from ViewerEditorImage import ViewerEditorImage
