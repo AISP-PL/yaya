@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 6.0.2, 2024-06-27T21:48:36. -->
+<!-- Written by QtCreator 6.0.2, 2025-02-17T23:20:25. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -116,16 +116,16 @@
     <valuelist type="QVariantList" key="CustomOutputParsers"/>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">/home/spasz/python/qursor-vision/yaya/Ui_MainWindow.py</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/spasz/python/qursor-vision/yaya/Ui_MainWindow.py</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/spasz/python/qursor-vision/yaya/Ui_MainWindow.py</value>
-    <value type="QString" key="PythonEditor.RunConfiguation.Interpreter">{6f331605-1414-4b4d-bf57-ca3282be6948}</value>
-    <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/spasz/python/qursor-vision/yaya/Ui_MainWindow.py</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">/home/spasz/python/aisp-tools/yaya/YoloAnnotateQtGui.py</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/spasz/python/aisp-tools/yaya/YoloAnnotateQtGui.py</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/spasz/python/aisp-tools/yaya/YoloAnnotateQtGui.py</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Interpreter">{15402495-4b36-4f9b-82ed-4278a9520d6b}</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/spasz/python/aisp-tools/yaya/YoloAnnotateQtGui.py</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/spasz/python/qursor-vision/yaya</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/spasz/python/aisp-tools/yaya</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.1">
     <value type="bool" key="Analyzer.Perf.Settings.UseGlobalSettings">true</value>
@@ -134,16 +134,15 @@
     <valuelist type="QVariantList" key="CustomOutputParsers"/>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">/home/spasz/python/qursor-vision/yaya/YoloAnnotateQtGui.py</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/spasz/python/qursor-vision/yaya/YoloAnnotateQtGui.py</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/spasz/python/qursor-vision/yaya/YoloAnnotateQtGui.py</value>
-    <value type="QString" key="PythonEditor.RunConfiguation.Interpreter">{6f331605-1414-4b4d-bf57-ca3282be6948}</value>
-    <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/spasz/python/qursor-vision/yaya/YoloAnnotateQtGui.py</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">/home/spasz/python/aisp-tools/yaya/Ui_MainWindow.py</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/spasz/python/aisp-tools/yaya/Ui_MainWindow.py</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/spasz/python/aisp-tools/yaya/Ui_MainWindow.py</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/spasz/python/aisp-tools/yaya/Ui_MainWindow.py</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/spasz/python/qursor-vision/yaya</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/spasz/python/aisp-tools/yaya</value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">2</value>
   </valuemap>
