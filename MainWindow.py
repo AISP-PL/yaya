@@ -386,7 +386,18 @@ class MainWindowGui(Ui_MainWindow):
         for strategy in ImageStrategy:
             self.ui.imageStrategyCombo.addItem(strategy.value)
 
-        # Filters classes : Setup
+        # Filters images : Setup
+        labels = GetClasses()
+        ViewFilters.ViewClasses(
+            self.ui.images_filter_grid,
+            layout_title="Filter of Images",
+            button_ids=labels,
+            button_labels=labels,
+            button_callback=self.CallbackFilterAnnotationsClicked,
+            buttons_group=ViewFilters.filter_images_group,
+        )
+
+        # Filters annotations : Setup
         labels = GetClasses()
         ViewFilters.ViewClasses(
             self.ui.annotationsFilterGrid,
@@ -396,6 +407,7 @@ class MainWindowGui(Ui_MainWindow):
             button_callback=self.CallbackFilterAnnotationsClicked,
             buttons_group=ViewFilters.filter_classes_group,
         )
+
         # Filters detections : Setup
         det_labels = self.annoter.detectors_labels
         ViewFilters.ViewClasses(
@@ -473,8 +485,8 @@ class MainWindowGui(Ui_MainWindow):
 
         # Table : Refresh
         if table_refresh:
-            filter_annotations = self.FilterClassesGet()
-            filter_detections = self.FilterDetectionClassesGet()
+            filter_annotations = self.filter_annotations_get()
+            filter_detections = self.filter_detections_get()
             files = self.annoter.GetFiles(
                 filter_annotations_classnames=filter_annotations,
                 filter_detections_classnames=filter_detections,
@@ -501,7 +513,7 @@ class MainWindowGui(Ui_MainWindow):
         self.window.show()
         return self.App.exec_()
 
-    def FilterClassesGet(self) -> list[str]:
+    def filter_annotations_get(self) -> list[str]:
         """Get classes filter from every button from
         self.ui.filtersGrid
         """
@@ -517,7 +529,7 @@ class MainWindowGui(Ui_MainWindow):
 
         return checked
 
-    def FilterDetectionClassesGet(self) -> list[str]:
+    def filter_detections_get(self) -> list[str]:
         """Get classes filter from every button from
         self.ui.filtersGrid
         """
@@ -535,12 +547,12 @@ class MainWindowGui(Ui_MainWindow):
 
     def CallbackFilterAnnotationsClicked(self, label: str):
         """Callback for filter classes button clicked."""
-        filter_annotations = self.FilterClassesGet()
+        filter_annotations = self.filter_annotations_get()
         ViewDetections.filter_classes(self.ui.tableAnnotations, filter_annotations)
 
     def CallbackFilterDetectionsClicked(self, label: str) -> None:
         """Callback for filter detections button clicked."""
-        filter_detections = self.FilterDetectionClassesGet()
+        filter_detections = self.filter_detections_get()
         ViewDetections.filter_classes(self.ui.tableDetections, filter_detections)
 
     def CallbackImageScalingTextChanged(self, text):

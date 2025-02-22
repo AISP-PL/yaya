@@ -1,9 +1,3 @@
-"""
-Created on 30 gru 2020
-
-@author: spasz
-"""
-
 import logging
 from enum import Enum
 from typing import Any, List, Optional
@@ -11,7 +5,7 @@ from typing import Any, List, Optional
 import cv2
 import numpy as np
 from PyQt5.QtCore import QPoint, QPointF, Qt, pyqtSignal
-from PyQt5.QtGui import QPainter, QPen, QPixmap, QTransform
+from PyQt5.QtGui import QPainter, QPixmap, QTransform
 from PyQt5.QtWidgets import QWidget
 
 import helpers.boxes as boxes

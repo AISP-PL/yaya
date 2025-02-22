@@ -12,6 +12,8 @@ from helpers.texts import abbrev
 class ViewFilters:
     """View of filters QTableWidget."""
 
+    # Filter images group : Static handle
+    filter_images_group: QButtonGroup = QButtonGroup()
     # Filter classes group : Static handle
     filter_classes_group: QButtonGroup = QButtonGroup()
     # Filter detections group : Static handle

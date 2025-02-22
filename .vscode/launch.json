@@ -36,9 +36,12 @@
             "console": "integratedTerminal",
             "args": [
                 "-i",
-                "/home/spasz/Obrazy/nowe/",
+                "images/"
+                // "/home/spasz/python/model-traffic/images/",
                 "-det",
-                "2",
+                "3",
+                // "-f",
+
             ],
             "justMyCode": false
         },

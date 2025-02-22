@@ -765,6 +765,9 @@ class Ui_MainWindow(object):
         self.tabImages.setObjectName("tabImages")
         self.verticalLayout_9 = QtWidgets.QVBoxLayout(self.tabImages)
         self.verticalLayout_9.setObjectName("verticalLayout_9")
+        self.images_filter_grid = QtWidgets.QGridLayout()
+        self.images_filter_grid.setObjectName("images_filter_grid")
+        self.verticalLayout_9.addLayout(self.images_filter_grid)
         self.fileSelectorTableWidget = QtWidgets.QTableWidget(self.tabImages)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
@@ -914,7 +917,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuPomoc.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(1)
         self.toolSettingsStackedWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
