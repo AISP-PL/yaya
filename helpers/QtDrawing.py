@@ -10,15 +10,7 @@ from random import randint
 import numpy as np
 from PyQt5.Qt import QFontMetrics, QPoint
 from PyQt5.QtCore import QRect, Qt
-from PyQt5.QtGui import (
-    QBrush,
-    QColor,
-    QImage,
-    QPen,
-    QPixmap,
-    QPolygon,
-    QTransform,
-)
+from PyQt5.QtGui import QBrush, QColor, QImage, QPen, QPixmap, QPolygon, QTransform
 from PyQt5.QtWidgets import QTableWidgetItem
 
 import Gui.colors as colors

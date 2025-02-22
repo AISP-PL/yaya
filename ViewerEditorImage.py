@@ -4,19 +4,19 @@ Created on 30 gru 2020
 @author: spasz
 """
 
-from enum import Enum
 import logging
+from enum import Enum
 from typing import Any, List, Optional
 
 import cv2
 import numpy as np
-from PyQt5.QtCore import QPointF, QPoint, Qt, pyqtSignal
-from PyQt5.QtGui import QPainter, QPixmap, QPen, QTransform
+from PyQt5.QtCore import QPoint, QPointF, Qt, pyqtSignal
+from PyQt5.QtGui import QPainter, QPen, QPixmap, QTransform
 from PyQt5.QtWidgets import QWidget
 
+import helpers.boxes as boxes
 from engine.annotators.annotator import Annotator
 from engine.annote import Annote
-import helpers.boxes as boxes
 from engine.annote_enums import AnnotatorType, AnnoteAuthorType
 from helpers.boxes import IsInside, PointsToRect, PointToAbsolute, PointToRelative
 from helpers.images import GetFixedFitToBox
@@ -25,6 +25,7 @@ from helpers.QtDrawing import (
     QDrawCrosshair,
     QDrawElipse,
     QDrawRectangle,
+    QDrawTriangle,
 )
 
 
@@ -567,16 +568,19 @@ class ViewerEditorImage(QWidget):
         # Draw : Red selection circle
         viewWidth, viewHeight = self.GetViewSize()
         x1, y1, x2, y2 = boxes.ToAbsolute(annote.GetBox(), viewWidth, viewHeight)
-        xc, yc = (x1 + x2) // 2, (y1 + y2) // 2
-        radius = max(x2 - x1, y2 - y1) // 2
+        height = abs(y2 - y1)
+        size = min(max(10, height // 10), 40)
+        xc = (x1 + x2) // 2
+        yc = y1 - size
 
-        # Draw : Red circle
-        QDrawElipse(
+        # Draw : Red pointin triangle
+        QDrawTriangle(
             painter=painter,
             point=QPoint(xc, yc),
-            radius=radius,
-            pen=QPen(Qt.red, 10),
-            brushOpacity=0.0,
+            angle=90,
+            size=size,
+            pen=Qt.red,
+            brushColor=Qt.red,
         )
 
     def paintEvent(self, event):

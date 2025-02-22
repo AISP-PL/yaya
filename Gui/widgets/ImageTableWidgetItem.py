@@ -68,7 +68,7 @@ class ImageTableWidgetItem(QtWidgets.QTableWidgetItem):
         if self.image_crop is None:
             self.setToolTip(self.generate_tooltip())
 
-    def generate_tooltip(self, target_width: int = 320) -> str:
+    def generate_tooltip(self, max_width: int = 320, max_height: int = 320) -> str:
         """Generate tooltip for image"""
         # Check : Image path
         if self.image_path is None or len(self.image_path) == 0:
@@ -76,7 +76,7 @@ class ImageTableWidgetItem(QtWidgets.QTableWidgetItem):
 
         # Check : No crop
         if self.image_crop is None:
-            return f"<img src='{self.image_path}' width='{target_width}'>"
+            return f"<img src='{self.image_path}'>"
 
         # Cropped image : Generate hash
         x1, y1, x2, y2 = self.image_crop
@@ -90,6 +90,16 @@ class ImageTableWidgetItem(QtWidgets.QTableWidgetItem):
                 image = cv2.imread(self.image_path)
                 x1, y1, x2, y2 = self.image_crop
                 image_cropped = image[y1:y2, x1:x2]
+                # Resize and preserve aspect ratio
+                aspect_ratio = image_cropped.shape[1] / image_cropped.shape[0]
+                if aspect_ratio > 1:
+                    new_width = max_width
+                    new_height = int(max_width / aspect_ratio)
+                else:
+                    new_width = int(max_height * aspect_ratio)
+                    new_height = max_height
+
+                image_cropped = cv2.resize(image_cropped, (new_width, new_height))
                 cv2.imwrite(cached_file_path, image_cropped)
 
             except Exception as e:
@@ -106,4 +116,4 @@ class ImageTableWidgetItem(QtWidgets.QTableWidgetItem):
                     os.remove(oldest_file)
 
         # Tooltip : Return
-        return f"<img src='{cached_file_path}' width='{target_width}'>"
+        return f"<img src='{cached_file_path}'>"
