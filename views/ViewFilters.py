@@ -2,6 +2,8 @@
     View of images QTableWidget.
 """
 
+from typing import Callable
+
 from PyQt5 import QtCore
 from PyQt5.Qt import QSizePolicy, QSpacerItem
 from PyQt5.QtWidgets import QButtonGroup, QGridLayout, QLabel, QPushButton
@@ -97,3 +99,33 @@ class ViewFilters:
 
         # Return next row start
         return rowIndex + 1
+
+    @staticmethod
+    def ViewImages(
+        layoutHandle: QGridLayout,
+        callback_annotated_only: Callable,
+    ):
+        """
+        Creates errata paint grid layout.
+        Returns : Next row start index.
+        """
+        # Layout : Clear if exists or force clear
+        # Qt : Safe way to clear layout
+        while (child := layoutHandle.takeAt(0)) is not None:
+            widget = child.widget()
+            if widget is not None:
+                widget.setParent(None)
+
+            del child
+
+        # Button : Filter only annotated
+        button = QPushButton("Annotated only")
+        button.setToolTip("Annotated only")
+        button.setCursor(QtCore.Qt.PointingHandCursor)
+        button.setCheckable(True)
+        button.setMinimumWidth(96)
+        button.setMaximumWidth(128)
+
+        # # Button : Clicked callback
+        button.clicked.connect(callback_annotated_only)
+        layoutHandle.addWidget(button, 0, 0)

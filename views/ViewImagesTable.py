@@ -234,3 +234,32 @@ class ViewImagesTable:
         # Selection : Set row as selected
         if isSelected:
             table.selectRow(rowIndex)
+
+    @staticmethod
+    def filter_annotated(table: QTableWidget, only_annotated: bool) -> None:
+        """
+        Filter images only with annotations.
+        """
+        total_rows = table.rowCount()
+        for row in range(total_rows):
+            # Show all rows
+            if only_annotated is False:
+                table.setRowHidden(row, False)
+                continue
+
+            # Is Annotation : Get
+            item = table.item(row, 2)
+
+            # Hide : Category missing
+            if item is None:
+                table.setRowHidden(row, True)
+                continue
+
+            # is annotated : Get Data value
+            is_annotated = item.data(QtCore.Qt.UserRole)
+            if is_annotated is False:
+                table.setRowHidden(row, True)
+                continue
+
+            # Otherwise : Show
+            table.setRowHidden(row, False)

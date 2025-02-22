@@ -388,13 +388,9 @@ class MainWindowGui(Ui_MainWindow):
 
         # Filters images : Setup
         labels = GetClasses()
-        ViewFilters.ViewClasses(
+        ViewFilters.ViewImages(
             self.ui.images_filter_grid,
-            layout_title="Filter of Images",
-            button_ids=labels,
-            button_labels=labels,
-            button_callback=self.CallbackFilterAnnotationsClicked,
-            buttons_group=ViewFilters.filter_images_group,
+            callback_annotated_only=self.CallbackFilterImagesAnnotated,
         )
 
         # Filters annotations : Setup
@@ -544,6 +540,12 @@ class MainWindowGui(Ui_MainWindow):
         ]
 
         return checked
+
+    def CallbackFilterImagesAnnotated(self, only_annotated: bool) -> None:
+        """Callback for filter images button clicked."""
+        ViewImagesTable.filter_annotated(
+            self.ui.fileSelectorTableWidget, only_annotated
+        )
 
     def CallbackFilterAnnotationsClicked(self, label: str):
         """Callback for filter classes button clicked."""
