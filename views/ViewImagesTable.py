@@ -263,3 +263,31 @@ class ViewImagesTable:
 
             # Otherwise : Show
             table.setRowHidden(row, False)
+
+    def filter_validation(table: QTableWidget, only_validation: bool) -> None:
+        """
+        Filter images only with validation.
+        """
+        total_rows = table.rowCount()
+        for row in range(total_rows):
+            # Show all rows
+            if only_validation is False:
+                table.setRowHidden(row, False)
+                continue
+
+            # Is Validation : Get
+            item = table.item(row, 3)
+
+            # Hide : Category missing
+            if item is None:
+                table.setRowHidden(row, True)
+                continue
+
+            # is validation : Get Data value
+            is_validation = item.data(QtCore.Qt.UserRole)
+            if is_validation is False:
+                table.setRowHidden(row, True)
+                continue
+
+            # Otherwise : Show
+            table.setRowHidden(row, False)

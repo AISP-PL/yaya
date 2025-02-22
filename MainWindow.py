@@ -391,6 +391,7 @@ class MainWindowGui(Ui_MainWindow):
         ViewFilters.ViewImages(
             self.ui.images_filter_grid,
             callback_annotated_only=self.CallbackFilterImagesAnnotated,
+            callback_validation_only=self.CallbackFilterImagesValidation,
         )
 
         # Filters annotations : Setup
@@ -540,6 +541,12 @@ class MainWindowGui(Ui_MainWindow):
         ]
 
         return checked
+
+    def CallbackFilterImagesValidation(self, only_validation: bool) -> None:
+        """Callback for filter images button clicked."""
+        ViewImagesTable.filter_validation(
+            self.ui.fileSelectorTableWidget, only_validation
+        )
 
     def CallbackFilterImagesAnnotated(self, only_annotated: bool) -> None:
         """Callback for filter images button clicked."""

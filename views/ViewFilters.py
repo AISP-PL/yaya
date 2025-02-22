@@ -104,10 +104,10 @@ class ViewFilters:
     def ViewImages(
         layoutHandle: QGridLayout,
         callback_annotated_only: Callable,
-    ):
+        callback_validation_only: Callable,
+    ) -> None:
         """
         Creates errata paint grid layout.
-        Returns : Next row start index.
         """
         # Layout : Clear if exists or force clear
         # Qt : Safe way to clear layout
@@ -125,7 +125,15 @@ class ViewFilters:
         button.setCheckable(True)
         button.setMinimumWidth(96)
         button.setMaximumWidth(128)
-
-        # # Button : Clicked callback
         button.clicked.connect(callback_annotated_only)
         layoutHandle.addWidget(button, 0, 0)
+
+        # Button : Filter only validation
+        button = QPushButton("Validation only")
+        button.setToolTip("Validation only")
+        button.setCursor(QtCore.Qt.PointingHandCursor)
+        button.setCheckable(True)
+        button.setMinimumWidth(96)
+        button.setMaximumWidth(128)
+        button.clicked.connect(callback_validation_only)
+        layoutHandle.addWidget(button, 0, 1)
