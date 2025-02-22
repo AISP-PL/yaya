@@ -36,11 +36,10 @@
             "console": "integratedTerminal",
             "args": [
                 "-i",
-                "images/"
-                // "/home/spasz/python/model-traffic/images/",
+                "/home/spasz/python/model-traffic/images/",
                 "-det",
                 "3",
-                // "-f",
+                "-f",
 
             ],
             "justMyCode": false

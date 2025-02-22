@@ -336,16 +336,15 @@ class Annoter:
             else:
                 detections = self.ReadDetections(path + filename)
 
-            # For calculation : Filter detections with itself for multiple detections catches.
-            detections = prefilters.filter_iou_by_confidence(detections, detections)
-
-            # For view : Filter by IOU internal with same annotes and also with txt annotes.
-            detections_filtered = prefilters.filter_iou_by_confidence(
-                detections, detections + txtAnnotations
-            )
-
             # Calculate metrics
             metrics = self.CalculateYoloMetrics(txtAnnotations, detections)
+
+            # For view : Filter by IOU internal with same annotes and also with txt annotes.
+            if len(txtAnnotations):
+                detections_filtered = prefilters.filter_iou_by_confidence(
+                    detections, detections + txtAnnotations, maxIOU=sqrt(self.nms)
+                )
+
             # Calculate visuals
             visuals = Visuals.LoadCreate(
                 path + filename, force=self.config["forceDetector"]
