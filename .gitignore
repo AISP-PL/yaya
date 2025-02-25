@@ -139,3 +139,4 @@ input/*.txt
 icons/tango_rc.py
 temp/session_*
 temp/*.png
+Detectors/yolo_*
