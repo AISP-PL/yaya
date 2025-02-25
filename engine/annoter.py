@@ -218,7 +218,7 @@ class Annoter:
         # Detector : default detector
         return self.ProcessYolov4Detections(im, filepath)
 
-    def ProcessYolov4Detections(self, im, filepath) -> list:
+    def ProcessYolov4Detections(self, im, filepath) -> list[annote.Annote]:
         """Read file annotations if possible."""
         if (self.detector is None) or (im is None):
             return []
@@ -326,6 +326,7 @@ class Annoter:
 
             # Force detector if needed
             detections = []
+            detections_filtered: list[annote.Annote] = []
             # Force detector to process every image
             if force_detector is True:
                 im = self.GetFileImage(path + filename)

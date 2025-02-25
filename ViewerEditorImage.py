@@ -287,7 +287,7 @@ class ViewerEditorImage(QWidget):
         # Save to filepath (return bool)
         return pixmap.save(path)
 
-    def wheelEvent(self, event):
+    def wheelEvent(self, event) -> None:
         """Obsługa zdarzenia przewijania myszy dla zoomu."""
         # Pozycja kursora w momencie zdarzenia
         cursor_x = event.pos().x()
