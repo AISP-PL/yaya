@@ -188,8 +188,10 @@ class MainWindowGui(Ui_MainWindow):
     def SetupCallbacks(self) -> None:
         """Setup only once after init."""
         # Image transformations
-        self.ui.transform_contrast.clicked.connect(self.callback_transform_threshold)
+        self.ui.transform_threshold.clicked.connect(self.callback_transform_threshold)
         self.ui.transform_sharpen.clicked.connect(self.callback_transform_sharpen)
+        self.ui.transform_contrast.clicked.connect(self.callback_transform_contrast)
+        self.ui.transform_clahe.clicked.connect(self.callback_transform_clahe)
 
         # List of detector labels - Create
         self.ui.labelsListWidget.currentRowChanged.connect(
@@ -588,6 +590,14 @@ class MainWindowGui(Ui_MainWindow):
     def callback_transform_sharpen(self, state: bool) -> None:
         """Callback when transform sharpen button clicked."""
         self.ui.viewerEditor.is_sharpen = not self.ui.viewerEditor.is_sharpen
+
+    def callback_transform_contrast(self, state: bool) -> None:
+        """Callback when transform contrast button clicked."""
+        self.ui.viewerEditor.is_contrast = not self.ui.viewerEditor.is_contrast
+
+    def callback_transform_clahe(self, state: bool) -> None:
+        """Callback when transform clahe button clicked."""
+        self.ui.viewerEditor.is_clahe = not self.ui.viewerEditor.is_clahe
 
     def CallbackKeycodeOffsetButtonClicked(self):
         """Callback when keycode offset button clicked."""

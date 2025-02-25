@@ -78,9 +78,12 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="transform_contrast">
+           <widget class="QToolButton" name="transform_threshold">
             <property name="text">
              <string>Threshold</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -88,6 +91,29 @@
            <widget class="QToolButton" name="transform_sharpen">
             <property name="text">
              <string>Sharpen</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="transform_contrast">
+            <property name="text">
+             <string>Contrast</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="transform_clahe">
+            <property name="text">
+             <string>CLAHE</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
             </property>
            </widget>
           </item>

@@ -118,6 +118,8 @@ class ViewerEditorImage(QWidget):
         # Transformations :
         self.is_threshold = False
         self.is_sharpen = False
+        self.is_clahe = False
+        self.is_contrast = False
 
         # UI init and show
         self.setMouseTracking(True)
@@ -634,6 +636,20 @@ class ViewerEditorImage(QWidget):
         # Transformations : Add if enabled
         if self.is_threshold:
             image = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY)[1]
+
+        if self.is_clahe:
+            clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            image = clahe.apply(image)
+            image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
+
+        if self.is_contrast:
+            alpha = 1.5
+            beta = 0
+            image = cv2.convertScaleAbs(image, alpha=alpha, beta=beta)
+            # Apply sharpening filter
+            kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
+            image = cv2.filter2D(image, -1, kernel)
 
         if self.is_sharpen:
             kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
