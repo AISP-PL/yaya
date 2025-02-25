@@ -78,29 +78,17 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_4">
+           <widget class="QToolButton" name="transform_contrast">
             <property name="text">
-             <string>Image scaling:</string>
+             <string>Threshold</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="imageScalingComboBox">
-            <item>
-             <property name="text">
-              <string>Resize</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>ResizeAspectRatio</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>OriginalSize</string>
-             </property>
-            </item>
+           <widget class="QToolButton" name="transform_sharpen">
+            <property name="text">
+             <string>Sharpen</string>
+            </property>
            </widget>
           </item>
           <item>

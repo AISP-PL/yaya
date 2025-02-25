@@ -36,7 +36,7 @@
             "console": "integratedTerminal",
             "args": [
                 "-i",
-                "/home/spasz/python/model-traffic/images/",
+                "input/",
                 "-det",
                 "3",
                 "-f",

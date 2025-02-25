@@ -185,12 +185,11 @@ class MainWindowGui(Ui_MainWindow):
 
         return 0
 
-    def SetupCallbacks(self):
+    def SetupCallbacks(self) -> None:
         """Setup only once after init."""
-        # Image scaling
-        self.ui.imageScalingComboBox.currentTextChanged.connect(
-            self.CallbackImageScalingTextChanged
-        )
+        # Image transformations
+        self.ui.transform_contrast.clicked.connect(self.callback_transform_threshold)
+        self.ui.transform_sharpen.clicked.connect(self.callback_transform_sharpen)
 
         # List of detector labels - Create
         self.ui.labelsListWidget.currentRowChanged.connect(
@@ -564,20 +563,31 @@ class MainWindowGui(Ui_MainWindow):
         filter_detections = self.filter_detections_get()
         ViewDetections.filter_classes(self.ui.tableDetections, filter_detections)
 
-    def CallbackImageScalingTextChanged(self, text):
+    def CallbackImageScalingTextChanged(self, text: str) -> None:
         """Callback when image scaling text changed."""
         if text == "Resize":
             self.ui.viewerEditor.SetImageScaling(ViewerEditorImage.ImageScalingResize)
+
         elif text == "ResizeAspectRatio":
             self.ui.viewerEditor.SetImageScaling(
                 ViewerEditorImage.ImageScalingResizeAspectRatio
             )
+
         elif text == "OriginalSize":
             self.ui.viewerEditor.SetImageScaling(
                 ViewerEditorImage.ImageScalingOriginalSize
             )
+
         else:
             logging.error("(MainWindow) Unknown value!")
+
+    def callback_transform_threshold(self, state: bool) -> None:
+        """Callback when transform threshold button clicked."""
+        self.ui.viewerEditor.is_threshold = not self.ui.viewerEditor.is_threshold
+
+    def callback_transform_sharpen(self, state: bool) -> None:
+        """Callback when transform sharpen button clicked."""
+        self.ui.viewerEditor.is_sharpen = not self.ui.viewerEditor.is_sharpen
 
     def CallbackKeycodeOffsetButtonClicked(self):
         """Callback when keycode offset button clicked."""

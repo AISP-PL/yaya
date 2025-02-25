@@ -75,7 +75,7 @@ class ViewerEditorImage(QWidget):
         # Is thumbnail preview
         self.isThumbnail = True
         # Background image loaded
-        self.imageBg = None
+        self.image_bg = None
         # Mode of scaling image
         self.imageScaling = self.ImageScalingDynamicZoom
         # Annoter for image
@@ -114,6 +114,10 @@ class ViewerEditorImage(QWidget):
         self._pan_start_y = 0
         self._offset_x = 0
         self._offset_y = 0
+
+        # Transformations :
+        self.is_threshold = False
+        self.is_sharpen = False
 
         # UI init and show
         self.setMouseTracking(True)
@@ -228,7 +232,7 @@ class ViewerEditorImage(QWidget):
             return
 
         self.annotation_selected_id = None
-        self.imageBg = image
+        self.image_bg = image
         self.scale_factor = 1.0
         self._pan = False
         self._pan_start_x = 0
@@ -240,10 +244,10 @@ class ViewerEditorImage(QWidget):
     def SetImageScaling(self, scalingMode):
         """Sets image scaling mode."""
 
-    def GetImageSize(self):
+    def GetImageSize(self) -> tuple[int, int]:
         """Returns ."""
-        if self.imageBg is not None:
-            height, width = self.imageBg.shape[0:2]
+        if self.image_bg is not None:
+            height, width = self.image_bg.shape[0:2]
             return width, height
 
         return 0, 0
@@ -289,11 +293,10 @@ class ViewerEditorImage(QWidget):
 
     def wheelEvent(self, event) -> None:
         """Obsługa zdarzenia przewijania myszy dla zoomu."""
-        # Pozycja kursora w momencie zdarzenia
         cursor_x = event.pos().x()
         cursor_y = event.pos().y()
 
-        # Pozycja kursora w układzie współrzędnych obrazu przed zmianą skalowania
+        # Cursor position in image coordinates before scaling change
         img_pos_x = (cursor_x - self._offset_x) / self.scale_factor
         img_pos_y = (cursor_y - self._offset_y) / self.scale_factor
 
@@ -303,10 +306,9 @@ class ViewerEditorImage(QWidget):
         else:
             self.scale_factor /= 1.1
 
-        # Ograniczenie współczynnika skalowania do sensownych wartości
-        self.scale_factor = max(1, min(self.scale_factor, 10))
+        # Limit scale factor
+        self.scale_factor = max(0.1, min(self.scale_factor, 10))
 
-        # Aktualizacja przesunięć, aby zoomować do pozycji kursora
         self._offset_x = cursor_x - img_pos_x * self.scale_factor
         self._offset_y = cursor_y - img_pos_y * self.scale_factor
 
@@ -314,6 +316,7 @@ class ViewerEditorImage(QWidget):
         self.update()
 
     def clamp_offsets(self) -> None:
+        """Clamp offsets to prevent scrolling out of bounds."""
         imWidth, imHeight = self.GetImageSize()
         viewportWidth = int(imWidth * self.scale_factor)
         viewportHeight = int(imHeight * self.scale_factor)
@@ -577,7 +580,7 @@ class ViewerEditorImage(QWidget):
             brushColor=Qt.red,
         )
 
-    def paintEvent(self, event):
+    def paintEvent(self, event) -> None:
         """Draw on every paint event."""
         # Get Preview info width & height
         widgetWidth, widgetHeight = self.GetViewSize()
@@ -585,10 +588,10 @@ class ViewerEditorImage(QWidget):
         widgetPainter = QPainter(self)
 
         # If image is loaded?
-        if self.imageBg is not None:
+        if self.image_bg is not None:
             # Setup image width & height
-            imHeight, imWidth = self.imageBg.shape[0:2]
-            image = self.imageBg
+            imHeight, imWidth = self.image_bg.shape[0:2]
+            image = self.image_bg
         # If there is no image then fill Black and draw text
         else:
             # Setup image width & height
@@ -627,6 +630,14 @@ class ViewerEditorImage(QWidget):
             for mouseClick in self.mouseClicks:
                 mapped_point = inv_transform.map(mouseClick)
                 mouseClicks.append(mapped_point)
+
+        # Transformations : Add if enabled
+        if self.is_threshold:
+            image = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY)[1]
+
+        if self.is_sharpen:
+            kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
+            image = cv2.filter2D(image, -1, kernel)
 
         # Draw current OpenCV image as pixmap
         pixmap = CvImage2QtImage(image)
