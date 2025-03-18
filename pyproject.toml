@@ -13,6 +13,13 @@ opencv-python-headless = "4.7.0.72"
 sahi = "0.11.16"
 
 
+[tool.poetry.group.dev.dependencies]
+flake8 = "^7.1.2"
+mypy = "^1.15.0"
+isort = "^6.0.1"
+flake8-pyproject = "^1.2.3"
+flake8-bugbear = "^24.12.12"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
