@@ -1,6 +1,6 @@
 """
-    Dataclass with image visual properties
-    analyzed from image array.
+Dataclass with image visual properties
+analyzed from image array.
 """
 
 from __future__ import annotations

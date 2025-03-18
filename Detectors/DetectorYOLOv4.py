@@ -10,6 +10,7 @@ from typing import List, NamedTuple, Optional
 
 import cv2
 import numpy as np
+
 from Detectors.common.Detector import Detector, NmsMethod
 from Detectors.common.image_strategy import ImageStrategy
 from Detectors.yolov4 import darknet
@@ -18,9 +19,6 @@ from helpers.detections import tiles_detections_merge
 from helpers.files import GetFilepath
 from helpers.gpu import CudaDeviceLowestMemory
 from helpers.images import GetFixedFitToBox
-from sahi.predict import get_sliced_prediction
-from sahi.prediction import ObjectPrediction
-from sahi.utils.compatibility import fix_full_shape_list, fix_shift_amount_list
 
 
 class ImageTile(NamedTuple):
@@ -395,97 +393,6 @@ class DetectorYOLOv4(Detector):
         image_detections, imheight, imwidth = self.detect_rescale(frame=image)
         self._original_predictions = [image_detections]
 
-    def convert_original_predictions(
-        self,
-        shift_amount: Optional[List[int]] = [0, 0],
-        full_shape: Optional[List[int]] = None,
-    ):
-        """
-        Converts original predictions of the detection model to a list of
-        prediction.ObjectPrediction object. Should be called after perform_inference().
-        Args:
-            shift_amount: list
-                To shift the box and mask predictions from sliced image to full sized image, should be in the form of [shift_x, shift_y]
-            full_shape: list
-                Size of the full image after shifting, should be in the form of [height, width]
-        """
-        self._create_object_prediction_list_from_original_predictions(
-            shift_amount_list=shift_amount,
-            full_shape_list=full_shape,
-        )
-        # if self.category_remapping:
-        #     self._apply_category_remapping()
-
-    def _create_object_prediction_list_from_original_predictions(
-        self,
-        shift_amount_list: Optional[List[List[int]]] = [[0, 0]],
-        full_shape_list: Optional[List[List[int]]] = None,
-    ):
-        """
-        self._original_predictions is converted to a list of prediction.ObjectPrediction and set to
-        self._object_prediction_list_per_image.
-        Args:
-            shift_amount_list: list of list
-                To shift the box and mask predictions from sliced image to full sized image, should
-                be in the form of List[[shift_x, shift_y],[shift_x, shift_y],...]
-            full_shape_list: list of list
-                Size of the full image after shifting, should be in the form of
-                List[[height, width],[height, width],...]
-        """
-        original_predictions = self._original_predictions
-
-        # compatilibty for sahi v0.8.15
-        shift_amount_list = fix_shift_amount_list(shift_amount_list)
-        full_shape_list = fix_full_shape_list(full_shape_list)
-
-        # handle all predictions
-        object_prediction_list_per_image = []
-        for image_ind, image_predictions_in_xyxy_format in enumerate(
-            original_predictions
-        ):
-            shift_amount = shift_amount_list[image_ind]
-            full_shape = None if full_shape_list is None else full_shape_list[image_ind]
-            object_prediction_list = []
-
-            # process predictions
-            for prediction in image_predictions_in_xyxy_format:
-                category_name = prediction[0]
-                score = prediction[1]
-                bbox = list(prediction[2])
-                category_id = self.GetClassNumber(category_name)
-
-                # fix negative box coords
-                bbox[0] = max(0, bbox[0])
-                bbox[1] = max(0, bbox[1])
-                bbox[2] = max(0, bbox[2])
-                bbox[3] = max(0, bbox[3])
-
-                # fix out of image box coords
-                if full_shape is not None:
-                    bbox[0] = min(full_shape[1], bbox[0])
-                    bbox[1] = min(full_shape[0], bbox[1])
-                    bbox[2] = min(full_shape[1], bbox[2])
-                    bbox[3] = min(full_shape[0], bbox[3])
-
-                # ignore invalid predictions
-                if not (bbox[0] < bbox[2]) or not (bbox[1] < bbox[3]):
-                    logging.warning(f"ignoring invalid prediction with bbox: {bbox}")
-                    continue
-
-                object_prediction = ObjectPrediction(
-                    bbox=bbox,
-                    category_id=category_id,
-                    score=score,
-                    bool_mask=None,
-                    category_name=category_name,
-                    shift_amount=shift_amount,
-                    full_shape=full_shape,
-                )
-                object_prediction_list.append(object_prediction)
-            object_prediction_list_per_image.append(object_prediction_list)
-
-        self._object_prediction_list_per_image = object_prediction_list_per_image
-
     def detect_tiling(
         self,
         frame: np.array,
@@ -494,22 +401,23 @@ class DetectorYOLOv4(Detector):
         nmsMethod: NmsMethod = NmsMethod.Nms,
     ):
         """Detect objects in given image using rescale strategy."""
-        results = get_sliced_prediction(
-            frame,
-            self,
-            slice_height=self.netHeight,
-            slice_width=self.netWidth,
-            overlap_height_ratio=0.2,
-            overlap_width_ratio=0.2,
-        )
+        return [], self.imheight, self.imwidth
+        # results = get_sliced_prediction(
+        #     frame,
+        #     self,
+        #     slice_height=self.netHeight,
+        #     slice_width=self.netWidth,
+        #     overlap_height_ratio=0.2,
+        #     overlap_width_ratio=0.2,
+        # )
 
-        # Results : Convert to tuple(label, score, bbox) format.
-        detections = [
-            (item.category.name, item.score.value, item.bbox.to_xyxy())
-            for item in results.object_prediction_list
-        ]
+        # # Results : Convert to tuple(label, score, bbox) format.
+        # detections = [
+        #     (item.category.name, item.score.value, item.bbox.to_xyxy())
+        #     for item in results.object_prediction_list
+        # ]
 
-        return (detections, self.imheight, self.imwidth)
+        # return (detections, self.imheight, self.imwidth)
 
     def Detect(
         self,
@@ -578,4 +486,5 @@ class DetectorYOLOv4(Detector):
                 # Change to relative
                 detections[i] = (className, confidence, ToRelative(box, w, h))
 
+        return detections
         return detections
