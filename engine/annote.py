@@ -116,6 +116,10 @@ class Annote:
             self.classNumber = classNumber
             self.className = className
 
+    def __hash__(self) -> int:
+        """Hash function for Annote class."""
+        return hash((self.box, self.classNumber, self.confidence, self.authorType))
+
     @property
     def width(self) -> float:
         """Returns width."""

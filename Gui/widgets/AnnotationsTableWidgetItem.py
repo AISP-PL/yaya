@@ -45,8 +45,9 @@ class AnnotationsTableWidgetItem(QtWidgets.QTableWidgetItem):
         self.setText(text)
         self.setTextAlignment(QtCore.Qt.AlignCenter)
 
-        # Value : Numer of annotations
-        self.value = len(annotations)
+        # Value : Hash of all annotations
+        total_hash = sum([hash(item) for item in annotations])
+        self.value = total_hash
 
         # Set item data
         self.setData(QtCore.Qt.UserRole, self.value)
