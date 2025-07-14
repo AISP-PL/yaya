@@ -153,7 +153,8 @@ def QDrawTriangle(
     point,
     size=10,
     angle=0,
-    pen=Qt.black,
+    penColor=Qt.black,
+    penThickness=1,
     brushColor=Qt.white,
     brushStyle=Qt.SolidPattern,
     brushOpacity=1,
@@ -161,7 +162,7 @@ def QDrawTriangle(
     """Helper function for polygon drawing."""
     polygon = CreateTraingle(point.x(), point.y(), size, angle)
     # Set pen and brush
-    painter.setPen(pen)
+    painter.setPen(QPen(penColor, penThickness))
     color = QColor(brushColor)
     color.setAlphaF(brushOpacity)
     painter.setBrush(QBrush(color, brushStyle))

@@ -5,7 +5,7 @@ from typing import Any, List, Optional
 import cv2
 import numpy as np
 from PyQt5.QtCore import QPoint, QPointF, Qt, pyqtSignal
-from PyQt5.QtGui import QPainter, QPixmap, QTransform
+from PyQt5.QtGui import QColor, QPainter, QPixmap, QTransform
 from PyQt5.QtWidgets import QWidget
 
 import helpers.boxes as boxes
@@ -716,6 +716,29 @@ class ViewerEditorImage(QWidget):
                         isConfidence=True,
                         isLabel=True,
                     )
+
+        # Selected xywh : Draw
+        if (
+            (self.selected_bboxes is not None)
+            and (len(self.selected_bboxes) > 0)
+            and not self.config["isAnnotationsHidden"]
+        ):
+            for xywh in self.selected_bboxes:
+                x, y, w, h = boxes.ToAbsolute(
+                    tuple(xywh.tolist()), viewportWidth, viewportHeight
+                )
+
+                # Draw green triangle in the top_center (x,y)
+                y_ytop = int(y - h / 2 - 16)
+                QDrawTriangle(
+                    widgetPainter,
+                    QPoint(x, y_ytop),
+                    angle=90,
+                    size=16,
+                    penColor=Qt.black,
+                    penThickness=2,
+                    brushColor=QColor("#FFA500"),
+                )
 
         # -------- Mode Annotation Draw -------
         if self.editorMode == self.ModeAddAnnotation:
