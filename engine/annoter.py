@@ -759,7 +759,7 @@ class Annoter:
         """True if files ended."""
         return self.offset == self.GetFilesCount()
 
-    def __checkOfErrors(self):
+    def __checkOfErrors(self) :
         """Check current image/annotations for errors."""
         errors = set()
         if len(self.annotations) != len(
