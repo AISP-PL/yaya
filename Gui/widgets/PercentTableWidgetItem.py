@@ -23,6 +23,9 @@ class PercentTableWidgetItem(QtWidgets.QTableWidgetItem):
         self.setText(f"{self.value:.2f}%")
         self.setTextAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)
 
+        # Value  :Clip both sides
+        value = max(0, min(value, 100))
+
         # Coloring : Set color from 0% red through yellow to green 100%
         if is_color:
             value_float = value / 100
