@@ -503,9 +503,11 @@ class MainWindowGui(Ui_MainWindow):
 
             # Filter : If GPT results are loaded, filter files
             if not self.gpt_annotations_classified.is_empty():
-                unique_filenames = self.gpt_annotations_classified.filenames_unique()
+                unique_filenames = self.gpt_annotations_classified.get_filenames_where(
+                    result=True
+                )
                 files: list[dict[str, Any]] = [
-                    file for file in files if file["filename"] in unique_filenames
+                    file for file in files if file["Name"] in unique_filenames
                 ]
 
             # Images table : Setup
