@@ -903,6 +903,10 @@ class Ui_MainWindow(object):
         self.actionThumbnail.setCheckable(True)
         self.actionThumbnail.setChecked(True)
         self.actionThumbnail.setObjectName("actionThumbnail")
+        self.action_load_gpt_results = QtWidgets.QAction(MainWindow)
+        self.action_load_gpt_results.setObjectName("action_load_gpt_results")
+        self.action_clear_gpt_results = QtWidgets.QAction(MainWindow)
+        self.action_clear_gpt_results.setObjectName("action_clear_gpt_results")
         self.menuMenu.addAction(self.actionOtworzLokacje)
         self.menuMenu.addAction(self.actionZapisz)
         self.menuMenu.addAction(self.actionZamknijProgram)
@@ -913,6 +917,9 @@ class Ui_MainWindow(object):
         self.menuEdit.addAction(self.actionClear_detections)
         self.menuEdit.addAction(self.actionCopy_annotations)
         self.menuEdit.addAction(self.actionPaste_annotations)
+        self.menuEdit.addSeparator()
+        self.menuEdit.addAction(self.action_load_gpt_results)
+        self.menuEdit.addAction(self.action_clear_gpt_results)
         self.menuAnnotations_type.addAction(self.action_annotations_default)
         self.menuAnnotations_type.addAction(self.action_annotations_confidence_heat)
         self.menuAnnotations_type.addAction(self.action_annotations_category)
@@ -1098,6 +1105,12 @@ class Ui_MainWindow(object):
         )
         self.actionClear_detections.setShortcut(_translate("MainWindow", "Alt+C"))
         self.actionThumbnail.setText(_translate("MainWindow", "Thumbnail"))
+        self.action_load_gpt_results.setText(
+            _translate("MainWindow", "Load GPT results")
+        )
+        self.action_clear_gpt_results.setText(
+            _translate("MainWindow", "Clear GPT results")
+        )
 
 
 import tango_rc

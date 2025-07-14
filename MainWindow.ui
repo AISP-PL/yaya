@@ -1450,6 +1450,9 @@
     <addaction name="actionClear_detections"/>
     <addaction name="actionCopy_annotations"/>
     <addaction name="actionPaste_annotations"/>
+    <addaction name="separator"/>
+    <addaction name="action_load_gpt_results"/>
+    <addaction name="action_clear_gpt_results"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -1635,6 +1638,16 @@
    </property>
    <property name="text">
     <string>Thumbnail</string>
+   </property>
+  </action>
+  <action name="action_load_gpt_results">
+   <property name="text">
+    <string>Load GPT results</string>
+   </property>
+  </action>
+  <action name="action_clear_gpt_results">
+   <property name="text">
+    <string>Clear GPT results</string>
    </property>
   </action>
  </widget>
