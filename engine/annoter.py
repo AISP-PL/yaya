@@ -581,7 +581,7 @@ class Annoter:
             self.image = cv2.circle(self.image, (round(x), round(y)), radius, color, -1)
         self.errors.add("ImageModified!")
 
-    def GetAnnotations(self):
+    def GetAnnotations(self) -> list[annote.Annote]:
         """Returns current annotations."""
         return self.annotations
 

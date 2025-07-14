@@ -490,6 +490,11 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.viewerEditor.SetAnnoter(self.annoter)
         self.ui.viewerEditor.SetImage(self.annoter.GetImage())
 
+        # View : Add extra
+        self.ui.viewerEditor.set_selected_xywh(
+            self.gpt_annotations_classified.get_xywh_where(filename, result=True)
+        )
+
         # Table : Refresh
         if table_refresh:
             filter_annotations = self.filter_annotations_get()

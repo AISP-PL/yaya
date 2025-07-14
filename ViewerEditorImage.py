@@ -82,6 +82,8 @@ class ViewerEditorImage(QWidget):
         self.annoter = None
         # Selected annotation index
         self.annotation_selected_id: Optional[int] = None
+        # Selected bounding boxes
+        self.selected_bboxes: Optional[np.ndarray] = np.array([], dtype=np.float32)
         # Annotator type for annotations
         self.annotator_type = AnnotatorType.Default
         # Current class number
@@ -220,6 +222,10 @@ class ViewerEditorImage(QWidget):
         self.mouseDragging = False
         self.editorMode = defaultMode
         self.__autosetCursor(self.editorMode)
+
+    def set_selected_xywh(self, xywh: np.ndarray) -> None:
+        """Set selected bounding boxes for editor."""
+        self.selected_bboxes = xywh
 
     def SetAnnoter(self, annoter):
         """Set annoter handle."""

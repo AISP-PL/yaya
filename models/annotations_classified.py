@@ -60,6 +60,19 @@ class AnnotationsClassifiedBool:
         """
         return self.filenames[self.bools == result]
 
+    def get_xywh_where(self, filename: str, result: bool) -> NDArray[np.float32]:
+        """Get xywh coordinates where the classified bool matches the result for a specific filename."""
+        indices = np.where((self.filenames == filename) & (self.bools == result))
+        return np.array(
+            [
+                self.x[indices],
+                self.y[indices],
+                self.w[indices],
+                self.h[indices],
+            ],
+            dtype=np.float32,
+        ).T
+
     @staticmethod
     def from_csv(path: str) -> AnnotationsClassifiedBool:
         """
