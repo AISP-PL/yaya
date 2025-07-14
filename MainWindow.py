@@ -4,6 +4,7 @@ import shutil
 import sys
 from copy import copy
 from datetime import datetime
+from typing import Any
 
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import (
@@ -493,10 +494,19 @@ class MainWindowGui(Ui_MainWindow):
         if table_refresh:
             filter_annotations = self.filter_annotations_get()
             filter_detections = self.filter_detections_get()
+
+            # Files : Get with filtering
             files = self.annoter.GetFiles(
                 filter_annotations_classnames=filter_annotations,
                 filter_detections_classnames=filter_detections,
             )
+
+            # Filter : If GPT results are loaded, filter files
+            if not self.gpt_annotations_classified.is_empty():
+                unique_filenames = self.gpt_annotations_classified.filenames_unique()
+                files: list[dict[str, Any]] = [
+                    file for file in files if file["filename"] in unique_filenames
+                ]
 
             # Images table : Setup
             ViewImagesTable.View(self.ui.fileSelectorTableWidget, files)

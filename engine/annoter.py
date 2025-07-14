@@ -8,7 +8,7 @@ import logging
 import os
 from enum import Enum
 from math import sqrt
-from typing import Optional
+from typing import Any, Optional
 
 import cv2
 import numpy as np
@@ -471,7 +471,7 @@ class Annoter:
         self,
         filter_annotations_classnames: list[str] = None,
         filter_detections_classnames: list[str] = None,
-    ):
+    ) -> list[dict[str, Any]] | None:
         """Returns images list"""
         # Check : Empty or none
         if (self.files is None) or (len(self.files) == 0):
@@ -479,12 +479,12 @@ class Annoter:
 
         # Filter : Iterating over all files
         files = []
-        for fileEntry in self.files:
+        for file_entry in self.files:
             # Filter : Classes of annotations
             if (filter_annotations_classnames is not None) and (
                 len(filter_annotations_classnames) > 0
             ):
-                annotations = fileEntry["Annotations"]
+                annotations = file_entry["Annotations"]
                 if not any(
                     annotation.className in filter_annotations_classnames
                     for annotation in annotations
@@ -495,14 +495,14 @@ class Annoter:
             if (filter_detections_classnames is not None) and (
                 len(filter_detections_classnames) > 0
             ):
-                detections = fileEntry["Detections_original"]
+                detections = file_entry["Detections_original"]
                 if not any(
                     annotation.className in filter_detections_classnames
                     for annotation in detections
                 ):
                     continue
 
-            files.append(fileEntry)
+            files.append(file_entry)
 
         return files
 
