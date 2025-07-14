@@ -584,7 +584,7 @@ class ViewerEditorImage(QWidget):
             point=QPoint(xc, yc),
             angle=90,
             size=size,
-            pen=Qt.red,
+            penColor=Qt.red,
             brushColor=Qt.red,
         )
 

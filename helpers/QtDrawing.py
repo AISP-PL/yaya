@@ -368,7 +368,7 @@ def QDrawArrow(
     # Calculate arrow angle
     tupleList = QPointListToTupleList(pointsList)
     angle = algebra.GetTuplePointsAngle(tupleList[-2], tupleList[-1])
-    QDrawTriangle(painter, pointsList[-1], size=15, angle=angle, pen=penColor)
+    QDrawTriangle(painter, pointsList[-1], size=15, angle=angle, penColor=penColor)
 
 
 def QDrawDistances(
