@@ -659,7 +659,7 @@ class Annoter:
 
     def __isClearImageSynchronized(self):
         """True if image was modified."""
-        result = not ("ImageModified!" in self.errors)
+        result = "ImageModified!" not in self.errors
         if result is False:
             self.errors.remove("ImageModified!")
         return result
