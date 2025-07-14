@@ -25,6 +25,7 @@ from engine.annoter import Annoter, DetectorSelected
 from engine.session import Session
 from helpers.files import ChangeExtension, FixPath
 from MainWindow_ui import Ui_MainWindow
+from models.annotations_classified import AnnotationsClassifiedBool
 from ViewerEditorImage import ViewerEditorImage
 from views.ViewAnnotations import ViewAnnotations
 from views.ViewDetections import ViewDetections
@@ -61,6 +62,11 @@ class MainWindowGui(Ui_MainWindow):
         self.keysOffset = 0
         # Keys length
         self.keysSize = 12
+
+        # Annotations Bool classified from GPT
+        self.gpt_annotations_classified: AnnotationsClassifiedBool = (
+            AnnotationsClassifiedBool()
+        )
 
         # UI - creation
         self.App = QApplication(sys.argv)
@@ -243,6 +249,8 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.actionCopy_annotations.triggered.connect(self.CallbackCopyAnnotations)
         self.ui.actionPaste_annotations.triggered.connect(self.CallbackPasteAnnotations)
         self.ui.actionThumbnail.triggered.connect(self.CallbackThumbnailSet)
+        self.ui.action_load_gpt_results.triggered.connect(self.LoadGptResults)
+        self.ui.action_clear_gpt_results.triggered.connect(self.ClearGptResults)
 
         # Menu action group of annotations : Create exclusive group
         self.annotatorTypeGroup = QActionGroup(self.window)
@@ -510,6 +518,41 @@ class MainWindowGui(Ui_MainWindow):
         """Run gui window thread and return exit code."""
         self.window.show()
         return self.App.exec_()
+
+    def LoadGptResults(self) -> None:
+        """Load GPT results."""
+        # Open file dialog
+        path, _ = QFileDialog.getOpenFileName(
+            self.window,
+            "Load GPT results",
+            os.getcwd(),
+            "CSV files (*.csv);;All files (*)",
+        )
+
+        # Check : File selected
+        if not path:
+            return
+
+        # Load annotations from CSV
+        try:
+            annotations = AnnotationsClassifiedBool.from_csv(path)
+            self.gpt_annotations_classified = annotations
+        except Exception as e:
+            logging.error(f"Failed to load GPT results from {path}: {e}")
+            QMessageBox.critical(
+                self.window,
+                "Error",
+                f"Failed to load GPT results from {path}:\n{e}",
+            )
+            return
+
+        # Setup tabl
+        self.Setup(table_refresh=True)
+
+    def ClearGptResults(self) -> None:
+        """Clear GPT results."""
+        self.gpt_annotations_classified = AnnotationsClassifiedBool()
+        self.Setup(table_refresh=True)
 
     def filter_annotations_get(self) -> list[str]:
         """Get classes filter from every button from

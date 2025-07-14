@@ -42,6 +42,12 @@ class AnnotationsClassifiedBool:
         """
         return np.unique(self.filenames)
 
+    def is_empty(self) -> bool:
+        """
+        Check if the classified annotations are empty.
+        """
+        return self.filenames.size == 0
+
     def has_filename(self, filename: str) -> bool:
         """
         Check if the filename exists in the classified annotations.
