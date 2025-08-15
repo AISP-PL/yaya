@@ -27,7 +27,7 @@ def GetClasses():
     return classNames
 
 
-def GetClassName(number):
+def GetClassName(number: int) -> str:
     """Returns class name"""
     if number < len(classNames):
         return classNames[number]
@@ -104,6 +104,8 @@ class Annote:
         self.evalution = AnnoteEvaluation.noEvaluation
         self.evaluation_iou = 0.0
         self.evaluation_confidence = 0.0
+        # Evaluate detector class id
+        self.evaluation_class_id = -1
 
         assert (className is not None) or (classNumber is not None)
         if classNumber is None:
@@ -119,6 +121,14 @@ class Annote:
     def __hash__(self) -> int:
         """Hash function for Annote class."""
         return hash((self.classNumber))
+
+    @property
+    def evaluation_class_name(self) -> str:
+        """Returns evaluation class name."""
+        if self.evaluation_class_id >= 0:
+            return GetClassName(self.evaluation_class_id)
+
+        return "Unset"
 
     @property
     def width(self) -> float:
@@ -206,40 +216,45 @@ class Annote:
             y2 * imheight,
         )
 
-    def SetClassNumber(self, number):
+    def SetClassNumber(self, number: int) -> None:
         """Returns class number."""
         self.classNumber = number
         self.className = GetClassName(number)
 
-    def SetAuthorType(self, authorType):
+    def SetAuthorType(self, authorType: AnnoteAuthorType) -> None:
         """Returns author type."""
         self.authorType = authorType
 
     def SetEvalution(
-        self, evalution: AnnoteEvaluation, iou: float, confidence: float
+        self,
+        evalution: AnnoteEvaluation,
+        iou: float,
+        confidence: float,
+        evaluation_class_id: int = -1,
     ) -> None:
         """Returns author type."""
         self.evalution = evalution
         self.evaluation_iou = iou
         self.evaluation_confidence = confidence
+        self.evaluation_class_id = evaluation_class_id
 
-    def GetClassNumber(self):
+    def GetClassNumber(self) -> int:
         """Returns class number."""
         return self.classNumber
 
-    def GetClassName(self):
+    def GetClassName(self) -> str:
         """Returns class name."""
         return self.className
 
-    def GetBox(self):
+    def GetBox(self) -> tuple:
         """Returns box."""
         return self.box
 
-    def GetAuthorType(self):
+    def GetAuthorType(self) -> AnnoteAuthorType:
         """Returns author type."""
         return self.authorType
 
-    def GetConfidence(self):
+    def GetConfidence(self) -> float:
         """Returns confidence."""
         return self.confidence
 

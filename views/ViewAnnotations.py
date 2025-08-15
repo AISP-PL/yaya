@@ -1,5 +1,5 @@
 """
-    View of annotations
+View of annotations
 """
 
 from typing import Any
@@ -43,7 +43,7 @@ class ViewAnnotations:
         table.clear()
         labels = _translate(
             "ViewAnnotations",
-            "File/ID;Cat;Conf;Eval;Size;Ratio;Area;Area/Image;Hue;Saturation;Brightness",
+            "File/ID;Cat;Conf;Eval;EvalClass;Size;Ratio;Area;Area/Image;Hue;Saturation;Brightness",
         ).split(";")
         table.setSortingEnabled(False)
         table.setColumnCount(len(labels))
@@ -92,6 +92,13 @@ class ViewAnnotations:
                 # Column : Evaluation
                 item = EvaluationTableWidgetItem(annotation.evalution)
                 table.setItem(row_index, colIndex, item)
+                colIndex += 1
+
+                # Column : Evaluation class name (str)
+                item_eval_class_name = QTableWidgetItem(
+                    annotation.evaluation_class_name
+                )
+                table.setItem(row_index, colIndex, item_eval_class_name)
                 colIndex += 1
 
                 # Column : Size
