@@ -268,7 +268,6 @@ def EvaluateMetrics(
                 AnnoteEvaluation.TruePositiveLabel,
                 iou=iou_best,
                 confidence=detection.confidence,
-                evaluation_class_id=detection.classNumber,
             )
         # Match : Box only
         else:

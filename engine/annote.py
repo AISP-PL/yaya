@@ -128,7 +128,7 @@ class Annote:
         if self.evaluation_class_id >= 0:
             return GetClassName(self.evaluation_class_id)
 
-        return "Unset"
+        return ""
 
     @property
     def width(self) -> float:
