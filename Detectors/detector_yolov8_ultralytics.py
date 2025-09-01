@@ -52,7 +52,7 @@ class DetectorYolov8(Detector):
         self.task = config.get("task", "detect")
         # Half precision
         self.half_precision = config.get("half_precision", False)
-        # TensortRT
+        # TensorRT
         self.use_tensorrt = config.get("use_tensorrt", False)
         # Force CPU : Check
         if config.get("force_cpu", False):
@@ -216,7 +216,7 @@ class DetectorYolov8(Detector):
         frame: NumpyArray,
     ) -> list[tuple]:
         """Backward-compatible wrapper calling Detect(...)."""
-        # Wywołujemy nową zunifikowaną metodę Detect z dotychczasowymi argumentami
+        # Call the new unified Detect method with the existing arguments
         return self.Detect(
             frame=frame,
             confidence=confidence,
