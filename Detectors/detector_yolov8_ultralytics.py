@@ -4,7 +4,7 @@ import os
 from shutil import copyfile
 from typing import Any
 
-import supervision as sv  # type: ignore
+import numpy as np
 from ultralytics import YOLO  # type: ignore
 
 from Detectors.common.Detector import Detector, NmsMethod
@@ -210,25 +210,25 @@ class DetectorYolov8(Detector):
         self,
         frame_number: int,
         frame: NumpyArray,
-    ) -> sv.Detections:
+    ) -> list[tuple]:
         """Detect objects in given frame"""
         # Image : Check
         if frame.size == 0:
             logger.error("(Detector) Image is empty!")
-            return sv.Detections.empty()
+            return []
 
         imwidth, imheight = frame.shape[1], frame.shape[0]
 
         # Check : Image is valid
         if (imwidth == 0) or (imheight == 0):
-            return sv.Detections.empty()
+            return []
 
         # Copy image to darknet image
         # YOLO detections format as np.ndarray
         # [[x1, y1, x2, y2, confidence, class_no], [...] ...]
         if self.net is None:
             logger.error("(Detector) Network is not initialized!")
-            return sv.Detections.empty()
+            return []
 
         detections = self.net.predict(
             source=frame,
@@ -241,13 +241,19 @@ class DetectorYolov8(Detector):
 
         # Check : Empty
         if len(detections) == 0:
-            return sv.Detections.empty()
+            return []
+
+        ultralytics_results = detections[0]
+        class_id = ultralytics_results.boxes.cls.cpu().numpy().astype(int)
+        class_names = np.array([ultralytics_results.names[i] for i in class_id])
+        xyxy = ultralytics_results.boxes.xyxy.cpu().numpy()
+        confidence = ultralytics_results.boxes.conf.cpu().numpy()
 
         detections_sv = sv.Detections.from_ultralytics(detections[0])
         detections_sv.xyxy = detections_sv.xyxy.astype(int)
-        return detections_sv
+        return self.ToDetections(boxes=xyxy, scores=confidence, classids=class_id)
 
-    def Detect(
+   def Detect(
         self,
         frame: NumpyArray,
         confidence: float = 0.5,
@@ -255,40 +261,7 @@ class DetectorYolov8(Detector):
         boxRelative: bool = False,
         nmsMethod: NmsMethod = NmsMethod.Nms,
         image_strategy: ImageStrategy = ImageStrategy.Rescale,
-    ) -> list:
+    ) -> list[tuple]:
         """Detect objects in given image"""
-        detections_sv = self.detect(0, frame)
-        return detections_sv
+        return self.detect(0, frame)
 
-    def detect_batch(
-        self,
-        frame_number: int,
-        frames: list[NumpyArray],
-    ) -> list[sv.Detections]:
-        """ """
-        # Image : Check
-        if len(frames) == 0:
-            logger.error("(Detector) No frames provided!")
-            return []
-
-        # Net : Check
-        if self.net is None:
-            logger.error("(Detector) Network is not initialized!")
-            return []
-
-        results = self.net.predict(
-            source=frames,
-            conf=self.confidence,
-            iou=self.nms_thresh,
-            device=str(self.gpuid),
-            half=self.half_precision,
-            verbose=False,
-        )
-
-        detections_sv_list: list[sv.Detections] = []
-        for result in results:
-            detections_sv = sv.Detections.from_ultralytics(result)
-            detections_sv.xyxy = detections_sv.xyxy.astype(int)
-            detections_sv_list.append(detections_sv)
-
-        return detections_sv_list

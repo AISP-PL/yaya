@@ -487,4 +487,3 @@ class DetectorYOLOv4(Detector):
                 detections[i] = (className, confidence, ToRelative(box, w, h))
 
         return detections
-        return detections
