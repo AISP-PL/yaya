@@ -65,8 +65,7 @@ def ListDetectors(path: Optional[str] = None) -> list[tuple[str, str, str]]:
         # Ultralytics detector : Add if found
         if len(pt_files) != 0:
             first_file = pt_files[0]
-            subpath = FixPath(path + first_file)
-            outpath = subpath[: subpath.rfind(".")]
+            outpath = subpath + GetFilename(first_file)
             logging.info("(Found detector) %u - %s.", len(detectors), outpath)
             detectors.append(
                 (

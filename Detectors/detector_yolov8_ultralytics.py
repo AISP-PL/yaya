@@ -27,7 +27,7 @@ class DetectorYolov8(Detector):
         """
         Constructor
         """
-        Detector.__init__(self, gpu_id=gpu_id, name="yolov8")
+        Detector.__init__(self, gpuid=gpu_id, name="yolov8")
         # GPU used
         self.gpuid: str | int = gpu_id
         # Weights file path
@@ -249,11 +249,9 @@ class DetectorYolov8(Detector):
         xyxy = ultralytics_results.boxes.xyxy.cpu().numpy()
         confidence = ultralytics_results.boxes.conf.cpu().numpy()
 
-        detections_sv = sv.Detections.from_ultralytics(detections[0])
-        detections_sv.xyxy = detections_sv.xyxy.astype(int)
         return self.ToDetections(boxes=xyxy, scores=confidence, classids=class_id)
 
-   def Detect(
+    def Detect(
         self,
         frame: NumpyArray,
         confidence: float = 0.5,
@@ -264,4 +262,3 @@ class DetectorYolov8(Detector):
     ) -> list[tuple]:
         """Detect objects in given image"""
         return self.detect(0, frame)
-
