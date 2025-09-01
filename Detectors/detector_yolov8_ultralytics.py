@@ -9,6 +9,7 @@ from ultralytics import YOLO  # type: ignore
 
 from Detectors.common.Detector import Detector, NmsMethod
 from Detectors.common.image_strategy import ImageStrategy
+from engine.config_toml import ConfigToml
 from helpers.aisp_typing import NumpyArray
 from helpers.boxes import ToRelative
 
@@ -42,7 +43,7 @@ class DetectorYolov8(Detector):
         # Network size
         self.netSize = 640
 
-        config: dict[str, Any] = {}
+        config: dict[str, Any] = ConfigToml().get("detector", {}).get("ultralytics", {})
         # Confidence threshold
         self.confidence = 0.20
         # NMS threshold

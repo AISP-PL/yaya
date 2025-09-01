@@ -2,6 +2,7 @@
 This module reads the config file and stores the data in a dictionary.
 """
 
+import os
 import sys
 
 from helpers.Singleton import Singleton
@@ -14,7 +15,7 @@ else:
 from typing import Any, Dict
 
 
-class ConfigToml(Singleton):
+class ConfigToml(metaclass=Singleton):
     """.toml config file reader"""
 
     def __init__(self, path: str = "config.toml") -> None:
@@ -34,6 +35,9 @@ class ConfigToml(Singleton):
 
     def load(self, path: str) -> bool:
         """Load the config .toml file"""
+        if not os.path.exists(path):
+            return False
+
         with open(path, "rb") as f:
             try:
                 self.data = tomllib.load(f)
@@ -43,6 +47,10 @@ class ConfigToml(Singleton):
                 sys.exit(f"Config file has invalid format. {e}")
 
         return False
+
+    def get(self, key: str, default: Any = None) -> Any:
+        """Get the value of a key with a default fallback"""
+        return self.data.get(key, default)
 
     def __getitem__(self, key: str) -> Any:
         """Get the value of a key"""

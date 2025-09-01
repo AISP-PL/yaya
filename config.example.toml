@@ -14,6 +14,14 @@ image_strategy = "resize"
 
 [detector.yolov4]
 
+[detector.ultralytics]
+# Force CPU usage (true/false)
+force_cpu = false
+# Half precision (fp16) inference
+half_precision = true
+# Use TensorRT engine if available
+use_tensorrt = false
+
 [detector.yolo_world]
 # YOLO world default prompt
 default_prompt = "warning lamp:lamp1, emergency light:lamp2"
