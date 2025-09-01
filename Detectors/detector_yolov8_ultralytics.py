@@ -218,25 +218,52 @@ class DetectorYolov8(Detector):
         nms_thresh: float,
         frame: NumpyArray,
     ) -> list[tuple]:
-        """Detect objects in given frame"""
+        """Backward-compatible wrapper calling Detect(...)."""
+        # Wywołujemy nową zunifikowaną metodę Detect z dotychczasowymi argumentami
+        return self.Detect(
+            frame=frame,
+            confidence=confidence,
+            nms_thresh=nms_thresh,
+            boxRelative=False,
+            nmsMethod=NmsMethod.Nms,
+            image_strategy=ImageStrategy.Rescale,
+            frame_number=frame_number,
+        )
+
+    def Detect(
+        self,
+        frame: NumpyArray | None = None,
+        confidence: float = 0.5,
+        nms_thresh: float = 0.45,
+        boxRelative: bool = False,
+        nmsMethod: NmsMethod = NmsMethod.Nms,
+        image_strategy: ImageStrategy = ImageStrategy.Rescale,
+        frame_number: int = 0,
+    ) -> list[tuple]:
+        """Detect objects in given image or frame."""
+        # If frame is None, nothing to do
+        if frame is None:
+            logger.error("(Detector) Image is empty or not provided!")
+            return []
+
         # Image : Check
         if frame.size == 0:
             logger.error("(Detector) Image is empty!")
             return []
 
-        imwidth, imheight = frame.shape[1], frame.shape[0]
+        boundaryHeight, boundaryWidth = frame.shape[0], frame.shape[1]
+
+        imwidth, imheight = boundaryWidth, boundaryHeight
 
         # Check : Image is valid
         if (imwidth == 0) or (imheight == 0):
             return []
 
-        # Copy image to darknet image
-        # YOLO detections format as np.ndarray
-        # [[x1, y1, x2, y2, confidence, class_no], [...] ...]
         if self.net is None:
             logger.error("(Detector) Network is not initialized!")
             return []
 
+        # Run prediction
         detections = self.net.predict(
             source=frame,
             conf=confidence,
@@ -253,30 +280,15 @@ class DetectorYolov8(Detector):
         ultralytics_results = detections[0]
         class_id = ultralytics_results.boxes.cls.cpu().numpy().astype(int)
         xyxy = ultralytics_results.boxes.xyxy.cpu().numpy()
-        confidence = ultralytics_results.boxes.conf.cpu().numpy()
-        return self.ToDetections(boxes=xyxy, scores=confidence, classids=class_id)
+        scores = ultralytics_results.boxes.conf.cpu().numpy()
 
-    def Detect(
-        self,
-        frame: NumpyArray,
-        confidence: float = 0.5,
-        nms_thresh: float = 0.45,
-        boxRelative: bool = False,
-        nmsMethod: NmsMethod = NmsMethod.Nms,
-        image_strategy: ImageStrategy = ImageStrategy.Rescale,
-    ) -> list[tuple]:
-        """Detect objects in given image"""
-        boundaryHeight, boundaryWidth = frame.shape[0], frame.shape[1]
+        detections = self.ToDetections(boxes=xyxy, scores=scores, classids=class_id)
 
-        detections = self.detect(
-            frame_number=0, confidence=confidence, nms_thresh=nms_thresh, frame=frame
-        )
-
-        # Change box coordinates to rectangle
+        # Change box coordinates to rectangle and to relative if requested
         if boxRelative is True:
             h, w = boundaryHeight, boundaryWidth
             for i, d in enumerate(detections):
-                className, confidence, box = d
+                className, conf, box = d
                 # Correct (-x, -y) value to fit inside box
                 x1, y1, x2, y2 = box
                 x1 = max(0, min(x1, w))
@@ -285,6 +297,6 @@ class DetectorYolov8(Detector):
                 y2 = max(0, min(y2, h))
                 box = x1, y1, x2, y2
                 # Change to relative
-                detections[i] = (className, confidence, ToRelative(box, w, h))
+                detections[i] = (className, conf, ToRelative(box, w, h))
 
         return detections
