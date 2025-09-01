@@ -4,6 +4,16 @@ import logging
 import os
 import sys
 
+import cv2  # type: ignore # noqa: F401
+
+os.environ.pop("QT_PLUGIN_PATH", None)
+try:
+    from PyQt5.QtCore import QLibraryInfo as _QL
+
+    os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = _QL.location(_QL.PluginsPath)
+except Exception:
+    pass  # If fails, hope for the best
+
 from tqdm import tqdm
 
 import engine.annote as annote

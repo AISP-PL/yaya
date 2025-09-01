@@ -88,13 +88,12 @@ def CreateDetector(detectorID: int = 0, gpuID: int = 0, path: str = None):
         return None
 
     # Detector type : Get
-    detector_type = detectors[detectorID][0]
+    detector_type, cfgPath, weightPath, metaPath, namesPath = detectors[detectorID]
 
     # Ultralytics : Creation
     if detector_type == DetectorType.Ultralytics:
         from Detectors.detector_yolov8_ultralytics import DetectorYolov8
 
-        cfgPath, weightPath, metaPath, namesPath = detectors[detectorID]
         return DetectorYolov8(
             weights_path=weightPath, names_path=namesPath, gpu_id=gpuID
         )
@@ -104,7 +103,6 @@ def CreateDetector(detectorID: int = 0, gpuID: int = 0, path: str = None):
         from Detectors.DetectorYOLOv4 import DetectorYOLOv4
 
         try:
-            cfgPath, weightPath, metaPath, namesPath = detectors[detectorID]
             detector = DetectorYOLOv4(cfgPath, weightPath, metaPath)
             return detector
         except Exception as e:
@@ -113,7 +111,6 @@ def CreateDetector(detectorID: int = 0, gpuID: int = 0, path: str = None):
     # CVDNN : Creation
     from Detectors.detector_yolov4_cvdnn import DetectorCVDNN
 
-    cfgPath, weightPath, metaPath, namesPath = detectors[detectorID]
     return DetectorCVDNN(cfgPath, weightPath, metaPath, namesPath)
 
 
