@@ -214,6 +214,8 @@ class DetectorYolov8(Detector):
     def detect(
         self,
         frame_number: int,
+        confidence: float,
+        nms_thresh: float,
         frame: NumpyArray,
     ) -> list[tuple]:
         """Detect objects in given frame"""
@@ -237,8 +239,8 @@ class DetectorYolov8(Detector):
 
         detections = self.net.predict(
             source=frame,
-            conf=self.confidence,
-            iou=self.nms_thresh,
+            conf=confidence,
+            iou=nms_thresh,
             device=str(self.gpuid),
             half=self.half_precision,
             verbose=False,
@@ -250,10 +252,8 @@ class DetectorYolov8(Detector):
 
         ultralytics_results = detections[0]
         class_id = ultralytics_results.boxes.cls.cpu().numpy().astype(int)
-        class_names = np.array([ultralytics_results.names[i] for i in class_id])
         xyxy = ultralytics_results.boxes.xyxy.cpu().numpy()
         confidence = ultralytics_results.boxes.conf.cpu().numpy()
-
         return self.ToDetections(boxes=xyxy, scores=confidence, classids=class_id)
 
     def Detect(
@@ -268,7 +268,9 @@ class DetectorYolov8(Detector):
         """Detect objects in given image"""
         boundaryHeight, boundaryWidth = frame.shape[0], frame.shape[1]
 
-        detections = self.detect(0, frame)
+        detections = self.detect(
+            frame_number=0, confidence=confidence, nms_thresh=nms_thresh, frame=frame
+        )
 
         # Change box coordinates to rectangle
         if boxRelative is True:
