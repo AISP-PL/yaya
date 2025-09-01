@@ -174,6 +174,10 @@ class DetectorYolov8(Detector):
         logger.info("Loading new TensorRT model %s.", engine_path)
         return YOLO(engine_path, verbose=False)
 
+    def Init(self) -> None:
+        """Init call with other arguments."""
+        return self.init(batch_size=1)
+
     def init(self, batch_size: int = 1) -> None:
         """Init call with other arguments."""
         # Check : Network weights should exists
