@@ -17,6 +17,8 @@ image_strategy = "resize"
 [detector.ultralytics]
 # Force CPU usage (true/false)
 force_cpu = false
+# Task (detect, segment, classify)
+task = "detect"
 # Half precision (fp16) inference
 half_precision = true
 # Use TensorRT engine if available

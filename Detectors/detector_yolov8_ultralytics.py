@@ -49,11 +49,11 @@ class DetectorYolov8(Detector):
         # NMS threshold
         self.nms_thresh = 0.45
         # Model task
-        self.task = config.get("ultralytics", {}).get("task", "detect")
+        self.task = config.get("task", "detect")
         # Half precision
-        self.half_precision = config.get("ultralytics", {}).get("half_precision", False)
+        self.half_precision = config.get("half_precision", False)
         # TensortRT
-        self.use_tensorrt = config.get("ultralytics", {}).get("use_tensorrt", False)
+        self.use_tensorrt = config.get("use_tensorrt", False)
         # Force CPU : Check
         if config.get("force_cpu", False):
             logger.warning("Forcing CPU usage for YOLOv8 detector!")
