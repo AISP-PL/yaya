@@ -33,8 +33,6 @@ class DetectorYolov8(Detector):
         self.gpuid: str | int = gpu_id
         # Weights file path
         self.weights_path = weights_path
-        # Data file path
-        self.names_path = names_path
 
         # Network configuration
         # ---------------------
@@ -61,17 +59,14 @@ class DetectorYolov8(Detector):
             self.gpuid = "cpu"
             self.use_tensorrt = False
 
-        # Pre-Read and strip all labels
-        with open(self.names_path) as f:
-            self.classes = f.readlines()
-        self.classes = list(map(str.strip, self.classes))  # strip names
+        # List of class names (initialized empty, will be filled after model load)
+        self.classes = []
 
         # Info : Logging
         logger.info(
-            "YOLOv8 Detector created with task=%s weights=%s, names=%s",
+            "YOLOv8 Detector created with task=%s weights=%s",
             self.task,
             self.weights_path,
-            self.names_path,
         )
         logger.info(
             "YOLOv8 Detector created with confidence=%2.2f, nms=%2.2f, half_precision=%d, use_tensorrt=%d",
@@ -194,12 +189,13 @@ class DetectorYolov8(Detector):
         # YOLO net, labels, cfg
         try:
             self.net = self._load_create_tensortt(batch_size)
+            self.classes = list(self.net.names.values())
         except Exception as e:
             raise Exception("Failed to load network!") from e
 
         # Logging
         logger.info(
-            "Created network yolov8 has been initialized with %u classes.",
+            "Created network yolov8 of shape () has been initialized with %u classes.",
             len(self.classes),
         )
 
