@@ -1,8 +1,17 @@
 import logging
 import os
+from enum import Enum
 from typing import Optional
 
 from helpers.files import FixPath, GetFilename, GetFiles
+
+
+class DetectorType(str, Enum):
+    """Different detector types."""
+
+    Darknet = "Darknet"
+    CVDNN = "CVDNN"
+    Ultralytics = "YOLOv8"
 
 
 def IsDarknet() -> bool:
@@ -15,6 +24,8 @@ def IsDarknet() -> bool:
 
 def ListDetectors(path: Optional[str] = None) -> list[tuple[str, str, str]]:
     """List detectors in directory."""
+
+    # List of detectors
     detectors: list[tuple, tuple, tuple] = []
 
     # Handle path
@@ -24,29 +35,48 @@ def ListDetectors(path: Optional[str] = None) -> list[tuple[str, str, str]]:
         path = f"{path}/Detectors/"
 
     for filename in os.listdir(path):
-        filepath = path + filename
+        subpath = path + filename
         # Check : Not a directory, skip
-        if not os.path.isdir(filepath):
+        if not os.path.isdir(subpath):
             continue
 
-        filepath = FixPath(filepath)
+        subpath = FixPath(subpath)
         # Get cfg files
-        files = GetFiles(filepath, "*.cfg")
+        cfg_files = GetFiles(subpath, "*.cfg")
 
-        # Check : If no cfg file found
-        if len(files) == 0:
-            continue
-
-        outpath = filepath + GetFilename(files[0])
-        logging.info("(Found detector) %u - %s.", len(detectors), outpath)
-        detectors.append(
-            (
-                outpath + ".cfg",
-                outpath + ".weights",
-                outpath + ".data",
-                outpath + ".names",
+        # Check : If CFG files found
+        if len(cfg_files) != 0:
+            # Darknet detector : Add
+            outpath = subpath + GetFilename(cfg_files[0])
+            logging.info("(Found detector) %u - %s.", len(detectors), outpath)
+            detectors.append(
+                (
+                    DetectorType.Darknet,
+                    outpath + ".cfg",
+                    outpath + ".weights",
+                    outpath + ".data",
+                    outpath + ".names",
+                )
             )
-        )
+
+        # Find *.pt files as YOLOv5/YOLOv8 detectors
+        pt_files = GetFiles(subpath, "*.pt")
+
+        # Ultralytics detector : Add if found
+        if len(pt_files) != 0:
+            first_file = pt_files[0]
+            subpath = FixPath(path + first_file)
+            outpath = subpath[: subpath.rfind(".")]
+            logging.info("(Found detector) %u - %s.", len(detectors), outpath)
+            detectors.append(
+                (
+                    DetectorType.Ultralytics,
+                    "",  # No cfg file
+                    outpath + ".pt",
+                    "",  # No meta file
+                    outpath + ".names",
+                )
+            )
 
     return detectors
 
@@ -56,6 +86,18 @@ def CreateDetector(detectorID: int = 0, gpuID: int = 0, path: str = None):
     detectors = ListDetectors(path)
     if detectorID >= len(detectors):
         return None
+
+    # Detector type : Get
+    detector_type = detectors[detectorID][0]
+
+    # Ultralytics : Creation
+    if detector_type == DetectorType.Ultralytics:
+        from Detectors.detector_yolov8_ultralytics import DetectorYolov8
+
+        cfgPath, weightPath, metaPath, namesPath = detectors[detectorID]
+        return DetectorYolov8(
+            weights_path=weightPath, names_path=namesPath, gpu_id=gpuID
+        )
 
     # Darknet : Creation
     if IsDarknet():

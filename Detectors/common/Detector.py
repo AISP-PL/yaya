@@ -71,7 +71,7 @@ class Detector:
         boxRelative: bool = False,
         nmsMethod: NmsMethod = NmsMethod.Nms,
         image_strategy: ImageStrategy = ImageStrategy.Rescale,
-    ):
+    ) -> list:
         """Detect objects in given image"""
         return []
 
