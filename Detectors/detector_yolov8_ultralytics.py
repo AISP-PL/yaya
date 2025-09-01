@@ -10,6 +10,7 @@ from ultralytics import YOLO  # type: ignore
 from Detectors.common.Detector import Detector, NmsMethod
 from Detectors.common.image_strategy import ImageStrategy
 from helpers.aisp_typing import NumpyArray
+from helpers.boxes import ToRelative
 
 logger = logging.getLogger(__name__)
 
@@ -265,4 +266,23 @@ class DetectorYolov8(Detector):
         image_strategy: ImageStrategy = ImageStrategy.Rescale,
     ) -> list[tuple]:
         """Detect objects in given image"""
-        return self.detect(0, frame)
+        boundaryHeight, boundaryWidth = frame.shape[0], frame.shape[1]
+
+        detections = self.detect(0, frame)
+
+        # Change box coordinates to rectangle
+        if boxRelative is True:
+            h, w = boundaryHeight, boundaryWidth
+            for i, d in enumerate(detections):
+                className, confidence, box = d
+                # Correct (-x, -y) value to fit inside box
+                x1, y1, x2, y2 = box
+                x1 = max(0, min(x1, w))
+                x2 = max(0, min(x2, w))
+                y1 = max(0, min(y1, h))
+                y2 = max(0, min(y2, h))
+                box = x1, y1, x2, y2
+                # Change to relative
+                detections[i] = (className, confidence, ToRelative(box, w, h))
+
+        return detections
